@@ -1,0 +1,31 @@
+<?php
+
+$title = 'Фильтры номеров';
+$this->headTitle($title);
+?> 
+ <table class="table table-striped table-bordered table-condensed table-hover">
+<tr class="tblheader">
+ <th>Название</th>
+ 
+    <th>&nbsp;</th>
+</tr>
+ <?php foreach ($numbermatches as $numbermatch) : 
+ ?>
+ 
+<tr class="tblcontent">    
+
+<td class="content"><a href="<?php echo $this->url('vpbxui/settings/filter',
+            array('action'=>'edit', 'id' => $numbermatch->id));?>"><?php echo $this->escapeHtml($numbermatch->custname);?></a></td>
+             
+        
+    <td  class="content">
+         <a href="<?php echo $this->url('vpbxui/settings/filter',
+            array('action'=>'edit', 'id' => $numbermatch->id));?>">изменить</a>
+            &nbsp
+        <a href="<?php echo $this->url('vpbxui/settings/filter',
+            array('action'=>'delete', 'id' => $numbermatch->id));?>">удалить</a>
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>
+  

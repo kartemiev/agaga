@@ -1,0 +1,17 @@
+<?php
+$isOutgoing =('vpbx_dialout'==$this->context);
+?>
+<tr class="incall">
+<td colspan = '5'>
+<?php
+echo ($isOutgoing)?'>':'<';
+echo "&nbsp&nbsp";
+echo ($isOutgoing)?$this->extension:$this->caller_i_d_num;
+echo "&nbsp&nbsp";
+echo $this->channelStateDebrief($this->channel_state);
+echo "&nbsp&nbsp";
+echo ($this->seconds)?gmdate("H:i:s", $this->seconds):'';    
+?>
+</td>
+</tr>
+ 

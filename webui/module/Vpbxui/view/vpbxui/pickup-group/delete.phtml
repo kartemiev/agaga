@@ -1,0 +1,25 @@
+<?php
+
+/* module/Vpbxui/view/internal/pickup-group/delete.phtml */
+
+$title = 'Удалить группу перехвата';
+$this->headTitle($title);
+?>
+<h3><?php echo $this->escapeHtml($title); ?></h3>
+
+<p>Подтвердите удаление группы абонентов
+   <b><?php echo $this->escapeHtml($pickupgroup->custname); ?></b>
+ </p>
+<?php
+$url = $this->url('vpbxui/settings/groups/pickup', array(
+    'action' => 'delete',
+    'name'     => $this->name,
+));
+?>
+<form action="<?php echo $url; ?>" method="post">
+<div>
+    <input type="hidden" name="name" value="<?php echo $pickupgroup->name; ?>" />
+    <input type="submit" name="del" value="Да" />
+    <input type="submit" name="del" value="Нет" />
+</div>
+</form>

@@ -1,0 +1,22 @@
+<?php
+$children = $viewmodel
+->getCurrent()
+->getChildren();
+
+$ourView  = $children[0];
+
+if (isset($ourView->flashMessages) && count($ourView->flashMessages)) : ?>
+ <script type="text/javascript">
+ 
+$(function(){
+	Messenger.options = {
+			extraClasses: 'messenger-fixed messenger-on-bottom messenger-on-right',
+			theme: 'block'
+		};
+    <?php foreach ($ourView->flashMessages as $fMessage) : ?>
+    Messenger().post('<?php echo $fMessage; ?>');
+    <?php endforeach; ?>
+});
+</script>
+    
+<?php endif; ?>

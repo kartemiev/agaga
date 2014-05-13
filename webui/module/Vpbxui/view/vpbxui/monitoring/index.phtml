@@ -1,0 +1,83 @@
+<?php
+// module/Vpbxui/view/internal/internal/index.phtml:
+
+$title = 'Мониторинг номерной емкости';
+$this->headTitle($title);
+   $this->headMeta()->appendHttpEquiv('expires',
+                                   'Wed, 26 Feb 1997 08:21:57 GMT')
+                 ->appendHttpEquiv('pragma', 'no-cache')
+                 ->appendHttpEquiv('Cache-Control', 'no-cache');
+?>
+<noscript>
+<br>
+<a href="<?php echo $this->url('vpbxui/callcentre/monitoring');?>">обновить</a>
+<br>
+<p>для активации функции автообновления - включите JavaScript в вашем браузере</p>
+<br>
+</noscript>
+<div id="monitoringview">
+<div class="errormessages">
+<?php echo $this->partial('flashMessengerPartial', 
+      array('viewmodel'=>$this->viewmodel())
+      );?>
+</div>
+<?php echo $this->partial('scheduleleverwidgetPartial.phtml',array('callcentrestatus'=>$callcentrestatus))?>
+<br> 
+<br>
+  <table id="peertable" class="table table-striped table-bordered table-condensed table-hover">
+<tr class="tblheader">
+         <th>SIP ID</th>
+
+    <th>номер</th>
+ <th>сотрудник</th>
+    <th>класс</th>    
+     <!-- <th>имя отобр.</th>-->
+<th>статус</th>
+        <th>IP адрес</th>        
+        <th>порт</th>
+                <th>аб. устройство</th>
+
+        <th>обнов. рег.</th>
+        
+    <th>&nbsp;</th>
+</tr>
+ <?php foreach ($statuses as $status) : 
+     if ('PeerEntry'==$status['name']){
+         ?>
+
+<tr class="tblcontent<?=(count($status['calls'])>0)?' activecall':'';?>">
+             <td class="content"><?php echo $status['object_name'];?></td>
+
+         <td class="content"><?php echo (isset($status['fromdb']))?$status['fromdb']->extension:'&nbsp';?></td>
+         
+         <td class="content"><?php echo (isset($status['fromdb']))?$status['fromdb']->custname:'&nbsp';?></td>
+         
+         
+         
+    <td class="content"><?php $extensiondebrief = array('regular'=>'обычный','operator'=>'оператор')?>
+                <?php echo (isset($status['fromdb']))?$this->escapeHtml($extensiondebrief[$status['fromdb']->extensiontype]):'&nbsp';?></td>
+          
+          <td class="content"><?php 
+          if ((isset($status['fromdb'])) && 'operator'==$status['fromdb']->extensiontype)
+          {
+               echo $this->operatorStatusDebrief($status['fromdb']->operatorstatus);
+          }
+          ?></td>
+          <!--    <td class="content"><?php echo $status['callerid'];?></td>-->
+    
+        <td class="content"><?php echo $status['i_p_address'];?></td>
+        <td class="content"><?php echo $status['i_p_port'];?></td>
+                <td class="content"><?php echo $status['sip-useragent'];?></td>
+
+        <td class="content"><?php echo $status['regexpire'];?></td>
+
+    
+ </tr>
+
+ <?php    
+ 	echo $this->partialloop('callsperpeerPartial.phtml', $status['calls']);
+       } endforeach; ?>
+</table>
+</div>
+<br>
+<a href="#top">наверх</a>

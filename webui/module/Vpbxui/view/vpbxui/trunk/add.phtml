@@ -1,0 +1,12 @@
+<?php
+// module/Vpbxui/view/internal/trunk/add.phtml:
+
+$title = 'Добавить транк';
+$this->headTitle($title);
+$form = $this->form;
+$form->setAttribute('action', $this->url('vpbxui/settings/trunk', array('action' => 'add')));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formCollection($form);
+echo $this->form()->closeTag();
+  

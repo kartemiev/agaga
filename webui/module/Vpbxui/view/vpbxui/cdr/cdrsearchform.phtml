@@ -1,0 +1,42 @@
+<?php
+ 
+$form->setAttribute('action', $this->url(
+		'vpbxui/cdr',
+		array(
+				'action' => 'find'
+		)
+));
+
+$formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
+
+$formRenderer->prepare();
+echo $formRenderer->openTag($form);
+?>
+<fieldset class="<?= $formRenderer->_formStyle; ?>">
+ 		<div class="row">
+
+   <div class="span4">
+    	<?= $formRenderer->formRow($form->get('startdate')); ?>
+    	<?= $formRenderer->formRow($form->get('enddate')); ?>
+ </div>    	
+   <div class="span4">
+     	<?= $formRenderer->formRow($form->get('calldest')); ?>
+    	<?= $formRenderer->formRow($form->get('callerid')); ?>   	
+    	</div>
+    	<div class="span4">
+    	
+		<?= $formRenderer->formRow($form->get('calldirection')); ?>
+		<?= $formRenderer->formRow($form->get('itemsperpage')); ?>	
+		</div>	
+    	<div class="span4 offset4">		
+      	<?= $formRenderer->formRow($form->get('onlyrecorded')); ?>    	  
+       	
+      	 
+      	<?= $formRenderer->formRow($form->get('submit')); ?>
+      	 </div>
+      	 </div>
+      	
+  </fieldset>
+  
+ <?php 
+echo $formRenderer->closeTag();

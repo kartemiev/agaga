@@ -1,0 +1,63 @@
+<?php
+$formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
+
+$formRenderer->prepare();
+echo $formRenderer->openTag($form);
+?>
+<fieldset class="<?= $formRenderer->_formStyle; ?>">
+ 
+    
+    <?php $this->placeholder('general')->captureStart();?>    
+    	<?= $formRenderer->formHidden($form->get('id')); ?>
+    	<?= $formRenderer->formRow($form->get('name')); ?>
+     	<?= $formRenderer->formRow($form->get('transfer')); ?>
+     	<?= $formRenderer->formRow($form->get('statuschange')); ?>
+     	<?= $formRenderer->formRow($form->get('incoming')); ?>
+     	<?= $formRenderer->formRow($form->get('memberofcallcentreque')); ?>     	
+    	<?= $formRenderer->formRow($form->get('hold')); ?>     	
+    	<?= $formRenderer->formRow($form->get('number_status')); ?>     	
+    	<?= $formRenderer->formRow($form->get('forwarding')); ?> 
+    	<?= $formRenderer->formRow($form->get('extensionrecord')); ?>        	   
+    	<?= $formRenderer->formRow($form->get('custdesc')); ?>    
+     	    
+    <?php $this->placeholder('general')->captureEnd();?>
+    
+ 
+    <?php $this->placeholder('calldivert')->captureStart();?>   
+     	<div class="shufflecontainer boxed">
+    		<?= $formRenderer->formRow($form->get('diversion_unconditional_status')); ?>
+     		<?= $formRenderer->formRow($form->get('diversion_unconditional_landingtype')); ?>    	
+    		<?= $formRenderer->formRow($form->get('diversion_unconditional_number')); ?>
+    	</div>
+    	
+    	<div class="shufflecontainer boxed">    	
+    		<?= $formRenderer->formRow($form->get('diversion_noanswer_status')); ?>
+    		<?= $formRenderer->formRow($form->get('diversion_noanswer_duration')); ?>    		    		
+    		<?= $formRenderer->formRow($form->get('diversion_noanswer_landingtype')); ?>    	
+    		<?= $formRenderer->formRow($form->get('diversion_noanswer_number')); ?>
+     	</div>    	
+    	
+    	<div class="shufflecontainer boxed">    	
+     		<?= $formRenderer->formRow($form->get('diversion_busy_status')); ?>
+    		<?= $formRenderer->formRow($form->get('diversion_busy_landingtype')); ?>    	    	
+    		<?= $formRenderer->formRow($form->get('diversion_busy_number')); ?>
+    	</div>
+    	
+    	
+    	<div class="shufflecontainer boxed">    	
+    		<?= $formRenderer->formRow($form->get('diversion_unavail_status')); ?>
+    		<?= $formRenderer->formRow($form->get('diversion_unavail_landingtype')); ?>    	
+    		<?= $formRenderer->formRow($form->get('diversion_unavail_number')); ?>
+    	</div>
+    	  
+    <?php $this->placeholder('calldivert')->captureEnd();?>
+      
+    	<?= $this->placeholder('general');?>    
+    	<?= $this->partial('bootstrapModal', array('id'=>'calldivert', 'body' => $this->placeholder('calldivert'),'header'=>'переадресация'));?>            
+    <span id="bottom"></span>
+     <a data-toggle="modal" data-keyboard="true"  href="#calldivert" class="btnaslink">переадресация</a>         
+	<br>
+      <?= $formRenderer->formRow($form->get('submit')); ?>
+ </fieldset>
+<?php 
+echo $formRenderer->closeTag();

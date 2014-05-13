@@ -1,0 +1,30 @@
+{
+	"name" : "Virtual PBX for NUCRF pbx agi",
+	"description" : "Проект виртульной АТС для Национального Удостоверяющего Центра - ядро управления софтсвитчом Астериск",
+	"authors" : [{
+			"name" : "Konstantin Artemiev",
+			"email" : "kartemiev@gmail.com",
+			"role" : "Developer, Software Architect"
+		}
+	],
+	"keywords" : [
+		"framework",
+		"zf2"
+	],
+	"license" : [
+		"proprietary license"
+	],
+	"require" : {
+		"php" : ">=5.4",
+		"marcelog/pagi" : "dev-master",
+                "zendframework/zendframework" : "2.*"
+ 	},
+	"require-dev" : {
+		"phpunit/phpunit" : "*"
+	},
+    "repositories": [
+    {
+      "type": "pear",
+      "url": "http://pear.apache.org/log4php/"
+    }]
+}

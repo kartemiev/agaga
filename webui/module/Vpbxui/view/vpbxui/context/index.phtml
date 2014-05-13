@@ -1,0 +1,31 @@
+<?php
+
+$title = 'Контекст';
+$this->headTitle($title);
+?> 
+ <table class="table table-striped table-bordered table-condensed table-hover">
+<tr class="tblheader">
+ <th>Название</th>
+ 
+    <th>&nbsp;</th>
+</tr>
+ <?php foreach ($contexts as $context) : 
+ ?>
+ 
+<tr class="tblcontent">    
+
+<td class="content"><a href="<?php echo $this->url('vpbxui/settings/context',
+            array('action'=>'edit', 'id' => $context->id));?>"><?php echo $this->escapeHtml($context->custname);?></a></td>
+             
+        
+    <td  class="content">
+         <a href="<?php echo $this->url('vpbxui/settings/context',
+            array('action'=>'edit', 'id' => $context->id));?>">изменить</a>
+            &nbsp
+        <a href="<?php echo $this->url('vpbxui/settings/context',
+            array('action'=>'delete', 'id' => $context->id));?>">удалить</a>
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>
+  

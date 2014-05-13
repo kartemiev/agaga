@@ -1,0 +1,148 @@
+<?php
+/** module/Vpbxui/view/call-centre-stats-operators/index.phtml **/
+
+$title = 'статистика по операторам';
+$this->headTitle($title);
+$missedcallsgrid = $this->url('vpbxui/callcentre/stats/operators/missed')."#grid";
+?>
+ <?php $columncount = count($operatorstat)+2;?>
+<div id ="operatorstat">
+ <br>
+ <p id="24hrs" class="timeframeheader">24 часа</p>
+  <table id="operatorstattable" class="table table-striped table-bordered table-condensed">
+            <tr class="tblheader">
+            <th>&nbsp</th>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <th><?php echo $extensionstat->extension;?></th>
+            <?php endforeach;?>            
+             </tr>
+            <tr class="tblcontent">
+            <td class="cell-bold content">пропущенных вызовов</td>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <td class="content digitfont"><a href="<?php echo $missedcallsgrid?>"><?php echo $extensionstat->missed_today;?></a></td>
+            <?php endforeach;?>            
+             </tr>
+            <tr class="tblcontent">
+            <td class="cell-bold content">принятых вызовов</td>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <td class="content digitfont"><?php echo $extensionstat->accepted_today;?></td>
+            <?php endforeach;?>            
+             </tr>
+            <tr class="tblcontent">
+            <td class="cell-bold content">среднее время обслуживания</td>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <td class="content digitfont"><?php echo $this->cdrDurationSecDebrief($extensionstat->average_today);?></td>
+            <?php endforeach;?>            
+             </tr>
+            
+             <tr class="tblcontent">
+            <td class="cell-bold content">активность</td>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <td class="content digitfont"><?php 
+            //echo ($extensionstat->activity_today)?$extensionstat->activity_today:'0';
+			echo "";
+            ?></td>
+            <?php endforeach;?>            
+             </tr>
+            
+  </table>
+ <br>
+  <p><a href="#top">наверх</a>&nbsp<a onclick="window.history.back()">назад</a></p>
+ <br>
+ <p id="30days" class="timeframeheader">30 дней</p>
+ 
+  <table id="operatorstattable" class="table table-striped table-bordered table-condensed">
+            <tr class="tblheader">
+            <th>&nbsp</th>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <th><?php echo $extensionstat->extension;?></th>
+            <?php endforeach;?>            
+             </tr>
+      
+            <tr class="tblcontent">
+            <td class="cell-bold content">пропущенных вызовов</td>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <td class="bold content digitfont"><a href="<?php echo $missedcallsgrid?>"><?php echo $extensionstat->missed_thismonth;?></a></td>
+            <?php endforeach;?>            
+             </tr>
+            <tr class="tblcontent">
+            <td class="cell-bold content">принятых вызовов</td>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <td class="content digitfont"><?php echo $extensionstat->accepted_thismonth;?></td>
+            <?php endforeach;?>       
+             </tr>
+            <tr class="tblcontent">
+            <td class="cell-bold content">среднее время обслуживания</td>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <td class="content digitfont"><?php echo $this->cdrDurationSecDebrief($extensionstat->average_thismonth);?></td>
+            <?php endforeach;?>        
+             </tr>
+            
+             <tr class="tblcontent">
+            <td class="cell-bold content">активность</td>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <td class="content digitfont"><?php 
+            //echo $extensionstat->activity_thismonth;
+            echo "";
+            ?></td>
+            <?php endforeach;?>       
+             </tr>
+            
+  </table>
+ <br>
+  <p><a href="#top">наверх</a>&nbsp<a onclick="window.history.back()">назад</a></p>
+ <br>
+ 
+ 
+ <p id="integral" class="timeframeheader">интегрально</p>
+   <table id="operatorstattable" class="table table-striped table-bordered table-condensed">
+            <tr class="tblheader">
+            <th>&nbsp</th>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <th><?php echo $extensionstat->extension;?></th>
+            <?php endforeach;?>            
+             </tr>
+
+            <tr class="tblcontent">
+            <td class="cell-bold content">пропущенных вызовов</td>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <td class="content digitfont"><a href="<?php echo $missedcallsgrid?>"><?php echo $extensionstat->missed_integral;?></a></td>
+            <?php endforeach;?>       
+             </tr>
+            <tr class="tblcontent">
+            <td class="cell-bold content">принятых вызовов</td>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <td class="content digitfont"><?php echo $extensionstat->accepted_integral;?></td>
+            <?php endforeach;?>       
+             </tr>
+            <tr class="tblcontent">
+            <td class="cell-bold content">среднее время обслуживания</td>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <td class="content digitfont"><?php echo $this->cdrDurationSecDebrief($extensionstat->average_integral);?></td>
+            <?php endforeach;?>       
+             </tr> 
+            
+            <tr class="tblcontent">
+            <td class="cell-bold content">активность</td>            
+            <?php foreach ($operatorstat as $extensionstat):?>
+            <td class="content digitfont"><?php 
+            //echo $extensionstat->activity_integral;
+            echo "";
+            ?></td>
+            <?php endforeach;?>            
+             
+            </tr>
+  </table>  
+  <br>
+   <p><a href="#top">наверх</a>&nbsp<a onclick="window.history.back()">назад</a></p>
+   </div>
+ 
+ <br><sub><ul>
+<li>
+учитываются только неотвеченные вызовы длительностью более 7 секунд c момент направления в колл-центр (активируется после 3-х секундной задержки с момента поступления на номер сети ТФОП)
+</li>
+<li>
+отображаются только внутренние номера, являющеся операторами на момент генерации отчета (на текущий момент времени -  <?php echo date('d/m/Y H:i:s')?>)
+</li>
+</ul>
+</sub>

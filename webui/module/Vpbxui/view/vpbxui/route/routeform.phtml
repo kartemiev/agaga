@@ -1,0 +1,37 @@
+<?php
+$formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
+
+$formRenderer->prepare();
+echo $formRenderer->openTag($form);
+?>
+<fieldset class="<?= $formRenderer->_formStyle; ?>">
+  
+    <?php $this->placeholder('general')->captureStart();?>    
+    	<?= $formRenderer->formHidden($form->get('id')); ?>
+    	<?= $formRenderer->formRow($form->get('custname')); ?>
+    	<?= $formRenderer->formRow($form->get('isdefault')); ?>    	    	
+    	<?= $formRenderer->formRow($form->get('custdesc')); ?>    	
+    <?php $this->placeholder('general')->captureEnd();?>
+        
+	<?php $this->placeholder('destinations')->captureStart();?>  
+	<h4>Направления</h4>
+		<fieldset id="destinationsfieldset">	
+     		<?= $this->formCollection($form->get('destinations')); ?>   
+     		<div id="newdestinationsfieldset">
+     		</div>
+     	</fieldset>      
+      	<input type="button" id="addnewdestination" class="addnewdestinationcatbtn" value="новое">             
+      	<input type="button" id="cleardestinations" class="cleardestinations" value="очистить все">               	
+    <?php $this->placeholder('destinations')->captureEnd();?>
+  
+    	<?php echo $this->placeholder('general');?>    
+    	<?= $this->partial('bootstrapModal', array('id'=>'destinations', 'body' => $this->placeholder('destinations'),'header'=>'направления'));?>        
+    <span id="bottom"></span>
+     
+     <a data-toggle="modal" data-keyboard="true"  href="#destinations" class="btnaslink">направления</a>    
+      
+      <?= $formRenderer->formRow($form->get('submit')); ?>
+ </fieldset>
+  
+ <?php 
+echo $formRenderer->closeTag();

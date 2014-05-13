@@ -1,0 +1,8 @@
+<?php
+
+$title = 'Добавить маршрут';
+$this->headTitle($title);
+$form = $this->form;
+$form->setAttribute('action', $this->url('vpbxui/settings/route', array('action' => 'add')));
+
+echo $this->partial('routeFormPartial.phtml',array('form' => $form));

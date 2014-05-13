@@ -1,0 +1,10 @@
+<div style="float:left; padding-right:16px;"><?php echo $this->gravatar($this->zfcUserIdentity()->getEmail()) ?></div>
+<h3>Hello, <?php echo $this->zfcUserDisplayName() ?>!</h3>
+<a href="<?php echo $this->url('zfcuser/logout') ?>">[Sign Out]</a>
+<div style="clear:both;"></div>
+
+<?php if ($this->enableRegistration) : ?>
+Not registered? <a href="<?php echo $this->url('zfcuser/register') .
+($this->redirect ? '?redirect='.$this->redirect : '') ?>">Sign up!</a>
+<?php endif; ?>
+

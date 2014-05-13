@@ -1,0 +1,8 @@
+<?php
+
+$title = 'Добавить контекст';
+$this->headTitle($title);
+$form = $this->form;
+$form->setAttribute('action', $this->url('vpbxui/settings/context', array('action' => 'add')));
+
+echo $this->partial('contextFormPartial.phtml',array('form' => $form));

@@ -1,0 +1,12 @@
+<?php
+
+$title = 'Добавить новый профиль абонента';
+$this->headTitle($title);
+$form = $this->form;
+$form->setAttribute('action', $this->url('vpbxui/settings/profile/internal', array('action' => 'add')));
+$form->prepare();
+echo $this->form()->openTag($form);
+
+ echo $this->formCollection($form);
+echo $this->form()->closeTag();
+  

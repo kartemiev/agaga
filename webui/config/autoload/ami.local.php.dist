@@ -1,0 +1,12 @@
+<?php
+  return array('ami' => array(
+     
+             'log4php.properties' => realpath(__DIR__) . DIRECTORY_SEPARATOR . 'log4php.properties',
+        'host' => '127.0.0.1',
+        'port' => '5038',
+        'username' => 'nucrf',
+        'secret' => 'nucrf',
+        'connect_timeout' => 60,
+        'read_timeout' => 10,
+        'scheme' => 'tcp://' // try tls://
+    ));

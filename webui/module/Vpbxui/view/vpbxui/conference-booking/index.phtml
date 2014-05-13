@@ -1,0 +1,34 @@
+<?php
+
+$title = 'Создание комнаты телеконференции';
+$this->headTitle($title);
+ 
+$form = $this->form; 
+  
+$form->prepare();
+
+echo $this->form()->openTag($form);
+echo $this->formCollection($form);
+echo $this->form()->closeTag();
+
+?>
+<table class="table table-striped table-bordered table-condensed table-hover">
+<tr class="tblheader">
+<th>&nbsp</th>
+<th>&nbsp</th>
+<th>&nbsp</th>
+</tr>
+<?php $extensiontypeimg = array('regular'=>'/img/extension-regular.png','operator'=>'/img/extension-operator.png')?>
+
+ <?php foreach ($conferences as $conference) : ?>
+<tr class="tblcontent">    
+     <td class="content" title="номер"><?= $this->escapeHtml($conference->confnumber);?>
+     <?= (1==$conference->isprotected)?'<img src="img/confprotected.png" title="конференция защищена паролем">':'&nbsp';?>
+     </td>
+     <td class="content" title="срок окончания действия"><?= date('d/m/Y H:i',strtotime($conference->datesettoexpiry));?></td>      
+     <td class="content" title="доступ"><?= ('ALL'==$conference->joinacl)?'доступна внешним абонентам':'только внутренним';?></td>
+         
+</tr>
+<?php endforeach; ?>
+</table>
+

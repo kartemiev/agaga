@@ -1,0 +1,30 @@
+<?php
+// module/Vpbxui/view/internal/pickup-group/index.phtml:
+
+$title = 'Группы перехвата';
+$this->headTitle($title);
+?>
+<h3><?php echo $this->escapeHtml($title); ?></h3>
+
+
+
+ <table class="table table-striped table-bordered table-condensed table-hover">
+<tr class="tblheader">
+ <th>Название</th>
+    <th>Комментарий</th>
+    <th>&nbsp;</th>
+</tr>
+ <?php foreach ($pickupgroups as $pickupgroup) : ?>
+<tr class="tblcontent">
+    <td class="content"><?php echo $this->escapeHtml($pickupgroup->custname);?></td>
+    <td class="content"><?php echo $this->escapeHtml($pickupgroup->description);?></td>
+    
+    <td>
+        <a href="<?php echo $this->url('vpbxui/settings/groups/pickup',
+            array('action'=>'edit', 'name' => $pickupgroup->name));?>">изменить</a>
+        <a href="<?php echo $this->url('vpbxui/settings/groups/pickup',
+            array('action'=>'delete', 'name' => $pickupgroup->name));?>">удалить</a>
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>

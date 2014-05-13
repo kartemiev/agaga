@@ -1,0 +1,28 @@
+<?php
+ 
+$title = 'IVR';
+$this->headTitle($title);
+?> 
+ <table class="table table-striped table-bordered table-condensed table-hover">
+<tr class="tblheader">
+ <th>Название</th>
+  
+    <th>&nbsp;</th>
+</tr>
+ <?php foreach ($ivrs as $ivr) : 
+ ?>
+ 
+<tr class="tblcontent">    
+
+<td class="content"><a href="<?php echo $this->url('vpbxui/settings/ivr',
+            array('action'=>'edit', 'id' => $ivr->id));?>"><?php echo $this->escapeHtml($ivr->custname);?></a></td>
+                 
+    <td  class="content">
+         <a href="<?php echo $this->url('vpbxui/settings/ivr',
+            array('action'=>'edit', 'id' => $ivr->id));?>">изменить</a>
+    
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>
+  

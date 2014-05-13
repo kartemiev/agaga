@@ -1,0 +1,14 @@
+<?php 
+$cdr = $this->cdr;
+if 
+($cdr->disposition=='ANSWERED'&&$cdr->userfield!=='') 
+	{ 
+    	echo "<a class='jquery_jplayer_1' data-call='".
+date('d/m/Y H:i:s',strtotime($cdr->calldate)).
+",номер: ".$this->escapeHtml($cdr->dst).
+",АОН: ".$this->escapeHtml($cdr->clid).
+",id вызова: ".$this->escapeHtml($cdr->linkedid).
+",регион: ".$this->escapeHtml($cdr->calleridname).
+"' href='".$this->url('vpbxui/cdr', array('action' => 'play', 'id' => $cdr->id)).
+                  "'><img src='/img/player-play.png' class='playerimg' /></a>"; 
+	}

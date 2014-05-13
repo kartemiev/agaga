@@ -1,0 +1,24 @@
+<?php
+
+$title = 'Удалить внутренний номер';
+$this->headTitle($title);
+?>
+<h3><?php echo $this->escapeHtml($title); ?></h3>
+
+<p>Подтвердите удаление внутреннего номера
+   <b><?php echo $this->escapeHtml($extension->extension); ?></b> закрепленного за сотрудником
+   <b><?php echo $this->escapeHtml($extension->custname); ?></b>
+</p>
+<?php
+$url = $this->url('vpbxui/internal', array(
+    'action' => 'delete',
+    'id'     => $this->id,
+));
+?>
+<form action="<?php echo $url; ?>" method="post">
+<div>
+    <input type="hidden" name="id" value="<?php echo (int) $extension->id; ?>" />
+    <input type="submit" name="del" value="Да" />
+    <input type="submit" name="del" value="Нет" />
+</div>
+</form>

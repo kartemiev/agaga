@@ -1,0 +1,66 @@
+<?php
+namespace PbxAgiTest\Controller\DialOut;
+
+use \PbxAgiTest\Bootstrap;
+use PAGI\Client\Impl\MockedClientImpl;
+use PbxAgi\Controller\DialOutControllerFactory;
+use Zend\Mvc\Router\Http\TreeRouteStack as HttpRouter;
+use Zend\Http\Request;
+use Zend\Mvc\MvcEvent;
+use Zend\Mvc\Router\RouteMatch;
+use PbxAgi\Controller\Plugin\MockedRedirector;
+use Zend\Test\PHPUnit\Controller\AbstractControllerTestCase; 
+
+      
+class DialOutControllerTest extends AbstractControllerTestCase
+{
+   private $mockedClientImpl;
+   
+      public function setUp()
+    {
+                        
+        $serviceManager = Bootstrap::getServiceManager();         
+        $serviceManager->setAllowOverride(true);         
+        $this->mockedClientImpl = new MockedClientImpl(array());         
+        $serviceManager->setService('ClientImpl', $this->mockedClientImpl);   
+         
+        $dialOutControllerFactory = new DialOutControllerFactory;
+        $this->controller = $dialOutControllerFactory->createService($serviceManager);
+        
+        $this->request    = new Request();
+        $this->routeMatch = new RouteMatch(array('controller' => 'index'));
+        $this->event      = new MvcEvent();
+        $config = $serviceManager->get('Config');
+        $routerConfig = isset($config['router']) ? $config['router'] : array();
+        $router = HttpRouter::factory($routerConfig);
+
+        $pluginManager = $this -> controller->getPluginManager();
+        
+        $pluginManager->setService('RedirectorControllerPlugin', 
+                new MockedRedirector($router));
+        
+        $this->event->setRouter($router);
+        $this->event->setRouteMatch($this->routeMatch);
+        $this->controller->setEvent($this->event);
+        $this->controller->setServiceLocator($serviceManager);
+    
+    	$this->routeMatch->setParam('action', 'Index');
+        
+           
+     }
+    
+      
+      public function test_can_forward_internal()
+    {
+        $mockedAgi = $this->mockedClientImpl;
+     	$result   = $this->controller->dispatch($this->request);
+    	$response = $this->controller->getResponse();                 
+        $result   = $this->controller->dispatch($this->request);
+    	$response = $this->controller->getResponse();
+    }
+    public function test_getPeer_returns_Peer()
+    {
+        $this->assertEquals(null, $this->controller->getPeer());
+    }
+    
+}

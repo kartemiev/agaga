@@ -1,0 +1,32 @@
+<?php
+// module/Vpbxui/view/internal/internal/index.phtml:
+
+$title = 'Профили абонентов';
+$this->headTitle($title);
+?> 
+ <table class="table table-striped table-bordered table-condensed table-hover">
+<tr class="tblheader">
+ <th>Наименование профиля</th>
+        <th>Комментарий</th>           
+    <th>&nbsp;</th>
+</tr>
+ <?php foreach ($extensionprofiles as $extensionprofile) : 
+ ?>
+ 
+<tr class="tblcontent">    
+    <td class="content"><a href="<?php echo $this->url('vpbxui/settings/profile/internal',
+            array('action'=>'edit', 'id' => $extensionprofile->id));?>"><?php echo $this->escapeHtml($extensionprofile->profilename);?></a></td>
+             
+
+    <td class="content"><a href="<?php echo $this->url('vpbxui/settings/profile/internal',
+            array('action'=>'edit', 'id' => $extensionprofile->id));?>"><?php echo $this->escapeHtml($extensionprofile->profiledesc);?></a></td>
+    
+    <td>
+        
+        <a href="<?php echo $this->url('vpbxui/settings/profile/internal',
+            array('action'=>'delete', 'id' => $extensionprofile->id));?>"><img src="/img/basket.png"></a>
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>
+  

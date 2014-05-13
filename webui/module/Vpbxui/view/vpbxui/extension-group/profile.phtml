@@ -1,0 +1,20 @@
+<?php
+
+$title = 'Выбор профиля для создаваемой группы';
+$this->headTitle($title);
+?>
+
+<?php
+$form = $this->form;
+ 
+$form->prepare();
+$form->setAttribute('action', $this->url(
+    'vpbxui/settings/groups/internal',
+    array(
+        'action' => 'profile',
+        'id'     => $this->id,
+    )
+));
+echo $this->form()->openTag($form);
+echo $this->formCollection($form);
+echo $this->form()->closeTag();

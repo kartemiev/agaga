@@ -1,0 +1,33 @@
+<?php
+// module/Vpbxui/view/internal/internal/index.phtml:
+
+$title = 'Группы абонентов';
+$this->headTitle($title);
+?>
+<h3><?php echo $this->escapeHtml($title); ?></h3>
+
+
+
+ <table class="table table-striped table-bordered table-condensed table-hover">
+<tr class="tblheader">
+     <th>Наименование</th>
+    <th>&nbsp;</th>
+</tr>
+ <?php foreach ($extensiongroups as $extensiongroup) : ?>
+<tr class="tblcontent">
+
+    <td class="content">
+    <a href="<?php echo $this->url('vpbxui/settings/groups/internal',
+            array('action'=>'edit', 'id' => $extensiongroup->id));?>">
+    
+    <?php echo $this->escapeHtml($extensiongroup->name);?></a>
+    
+    </td>   
+    <td>
+         
+        <a href="<?php echo $this->url('vpbxui/settings/groups/internal',
+            array('action'=>'delete', 'id' => $extensiongroup->id));?>"><img src="/img/basket.png"></a>
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>

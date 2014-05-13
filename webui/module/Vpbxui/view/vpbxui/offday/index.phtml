@@ -1,0 +1,58 @@
+<?php
+ 
+$title = 'выходные и праздничные дни';
+$this->headTitle($title);
+?>
+ 
+<div id="offdayscontainter">
+<?php 
+
+$form = $this->searchform;
+$form->setAttribute('action', $this->url(
+    'vpbxui/settings/offdays',
+    array(
+        'action' => 'index',
+    )
+));
+
+$form->prepare();
+
+echo $this->form()->openTag($form);
+echo $this->formCollection($form);
+echo $this->form()->closeTag();
+
+?>
+<table id="offdaystable" class="table table-striped table-bordered table-condensed  table-hover">
+<tr class="tblheader">
+          <th>дата</th>
+          <th>наименование</th>
+          <th>рабочий</th>          
+          <th>короткий</th>
+    <th>&nbsp;</th>
+   </tr>
+ <?php foreach ($paginator as $offday) : ?>
+<tr class="tblcontent">
+    <td class="content"><?php echo $this->escapeHtml(strftime('%a %e %B %Y',strtotime($offday->rdate)));?></td>
+    <td class="content"><?php echo $this->escapeHtml($offday->name);?></td>
+    <td class="content"><?php echo  (1 == $offday->isworking)?'✓':$this->escapeHtml(' ');?></td>
+    <td class="content"><?php echo  (1 == $offday->cute)?'✓':$this->escapeHtml(' ');?></td>         
+    <td class="content">
+    <a href="<?php echo $this->url('vpbxui/settings/offdays',array('action'=>'edit','id'=>$offday->id))?>">изменить</a>
+    &nbsp
+        <a href="<?php echo $this->url('vpbxui/settings/offdays',array('action'=>'delete','id'=>$offday->id))?>">удалить</a>
+    </td>
+ </tr>
+<?php endforeach; ?>
+</table>
+<?php $this->placeholder('paginator')->captureStart() ?>    
+ <?php echo $this->paginationControl(
+            $paginator, 'Sliding', 'paginator-slideOffday', array('order_by' => $order_by, 'order' => $order,'startdate' => $startdate, 'enddate' => $enddate,'itemsperpage'=>$itemsperpage)
+    );
+?>
+    <?php $this->placeholder('paginator')->captureEnd() ?>
+<?php echo $this->placeholder('paginator') ?>
+<div id="abovetable"><?php echo $this->placeholder('paginator') ?></div>
+<br>
+ <a href="#top">наверх</a>
+</div>
+  

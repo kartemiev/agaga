@@ -1,0 +1,132 @@
+<a href="#bottom"><sup>вниз</sup></a>
+<?php
+$formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
+
+$formRenderer->prepare();
+echo $formRenderer->openTag($form);
+?>
+<fieldset class="<?= $formRenderer->_formStyle; ?>">
+  
+    <?php $this->placeholder('general')->captureStart();?>    
+    	<?= $formRenderer->formHidden($form->get('id')); ?>
+    	<?= $formRenderer->formRow($form->get('custname')); ?>
+    	<?= $formRenderer->formRow($form->get('extension')); ?>
+    	<?= $formRenderer->formRow($form->get('number_status')); ?>
+    	<?= $formRenderer->formRow($form->get('busylevel')); ?>    	
+    	<div class="shufflecontainer">
+    	<?= $formRenderer->formRow($form->get('extensiontype')); ?>
+    	<?= $formRenderer->formRow($form->get('routeref')); ?>                                                   	
+    	<?= $formRenderer->formRow($form->get('extensiongroup')); ?>                                               
+   		<?= $formRenderer->formRow($form->get('extensionrecord')); ?>    
+   		<?= $formRenderer->formRow($form->get('memberofcallcentreque')); ?>
+   		</div>
+    	<?= $formRenderer->formRow($form->get('custdesc')); ?>               
+    <?php $this->placeholder('general')->captureEnd();?>
+    
+    <?php $this->placeholder('sipsettings')->captureStart();?>
+    	<?= $formRenderer->formRow($form->get('callerid')); ?>
+    	<?= $formRenderer->formRow($form->get('name')); ?>
+    	<?= $formRenderer->formRow($form->get('secret')); ?>    
+    	<?= $formRenderer->formRow($form->get('copypass')); ?>
+    	<?= $formRenderer->formRow($form->get('clearpass')); ?>
+    	<?= $formRenderer->formRow($form->get('generatepass')); ?>
+    	<?= $formRenderer->formRow($form->get('showpass')); ?>    
+    <?php $this->placeholder('sipsettings')->captureEnd();?>
+
+    
+    <?php $this->placeholder('security')->captureStart();?>
+    	<?= $formRenderer->formRow($form->get('permit')); ?>
+    	<?= $formRenderer->formRow($form->get('deny')); ?> 
+    <?php $this->placeholder('security')->captureEnd();?>
+     
+   
+    <?php $this->placeholder('permissions')->captureStart();?>   
+    	<?= $formRenderer->formRow($form->get('outgoingcallspermission')); ?>
+    	<?= $formRenderer->formRow($form->get('transfer')); ?>
+    	<?= $formRenderer->formRow($form->get('hold')); ?>
+    	<?= $formRenderer->formRow($form->get('statuschange')); ?>
+    	<?= $formRenderer->formRow($form->get('incoming')); ?>
+    	<?= $formRenderer->formRow($form->get('forwarding')); ?>    
+    <?php $this->placeholder('permissions')->captureEnd();?>
+         
+    <?php $this->placeholder('pickup')->captureStart();?>   
+    	<?= $formRenderer->formRow($form->get('namedpickupgroup')); ?>                
+   		<?= $formRenderer->formRow($form->get('namedcallgroup')); ?> 
+    <?php $this->placeholder('pickup')->captureEnd();?>
+    
+    <?php $this->placeholder('voicemail')->captureStart();?>   
+      	<?= $formRenderer->formRow($form->get('email')); ?>    
+    <?php $this->placeholder('voicemail')->captureEnd();?>
+    
+    <?php $this->placeholder('calldivert')->captureStart();?>   
+     	<div class="shufflecontainer boxed">
+    		<?= $formRenderer->formRow($form->get('diversion_unconditional_status')); ?>
+    		<?= $formRenderer->formRow($form->get('diversion_unconditional_landingtype')); ?>    	
+    		<?= $formRenderer->formRow($form->get('diversion_unconditional_number')); ?>
+    	</div>
+    	
+    	<div class="shufflecontainer boxed">    	
+    		<?= $formRenderer->formRow($form->get('diversion_noanswer_status')); ?>
+    		<?= $formRenderer->formRow($form->get('diversion_noanswer_duration')); ?>    		    		
+    		<?= $formRenderer->formRow($form->get('diversion_noanswer_landingtype')); ?>    	
+    		<?= $formRenderer->formRow($form->get('diversion_noanswer_number')); ?>
+     	</div>    	
+    	
+    	<div class="shufflecontainer boxed">    	
+     		<?= $formRenderer->formRow($form->get('diversion_busy_status')); ?>
+    		<?= $formRenderer->formRow($form->get('diversion_busy_landingtype')); ?>    	    	
+    		<?= $formRenderer->formRow($form->get('diversion_busy_number')); ?>
+    	</div>
+    	
+    	
+    	<div class="shufflecontainer boxed">    	
+    		<?= $formRenderer->formRow($form->get('diversion_unavail_status')); ?>
+    		<?= $formRenderer->formRow($form->get('diversion_unavail_landingtype')); ?>    	
+    		<?= $formRenderer->formRow($form->get('diversion_unavail_number')); ?>
+    	</div>
+    	  
+    <?php $this->placeholder('calldivert')->captureEnd();?>
+    
+	<?php $this->placeholder('calldirect')->captureStart();?>  
+	 <?= $formRenderer->formRow($form->get('callsequence'));?>
+		<fieldset id="numbersfieldset">	
+     		<?= $this->formCollection($form->get('numbers')); ?>   
+     		<div id="newnumbersfieldset">
+     		</div>
+     	</fieldset>      
+     	<input type="button" id="addnewcallingrec" class="addcategorybtn" value="новое">             
+    <?php $this->placeholder('calldirect')->captureEnd();?>
+  
+    <?php echo $this->placeholder('general');?>    
+    	<?= $this->partial('bootstrapModal', array('id'=>'calldirect', 'body' => $this->placeholder('calldirect'),'header'=>'направление вызова'));?>        
+    	<?= $this->partial('bootstrapModal', array('id'=>'calldivert', 'body' => $this->placeholder('calldivert'),'header'=>'переадресация'));?>            
+    	<?= $this->partial('bootstrapModal', array('id'=>'sipsettings', 'body' => $this->placeholder('sipsettings'),'header'=>'настройки SIP'));?>
+    	<?= $this->partial('bootstrapModal', array('id'=>'security', 'body' => $this->placeholder('security'),'header'=>'безопасность'));?>
+    	<?= $this->partial('bootstrapModal', array('id'=>'permissions', 'body' => $this->placeholder('permissions'),'header'=>'услуги'));?>
+    	<?= $this->partial('bootstrapModal', array('id'=>'pickup', 'body' => $this->placeholder('pickup'),'header'=>'перехват'));?>     
+    	<?= $this->partial('bootstrapModal', array('id'=>'voicemail', 'body' => $this->placeholder('voicemail'),'header'=>'голосовая почта'));?>
+    <span id="bottom"></span>
+     <a data-toggle="modal" data-keyboard="true"  href="#calldirect" class="btnaslink">направление вызова</a>    
+     <a data-toggle="modal" data-keyboard="true"  href="#calldivert" class="btnaslink">переадресация</a>         
+     <a data-toggle="modal" data-keyboard="true"  href="#sipsettings" class="btnaslink">SIP</a>
+     <a data-toggle="modal" data-keyboard="true" href="#security" class="btnaslink">безопасность</a>
+     <a data-toggle="modal" data-keyboard="true" href="#permissions" class="btnaslink">привилегии</a>
+     <a data-toggle="modal" data-keyboard="true" href="#pickup" class="btnaslink">перехват</a>         
+     <a data-toggle="modal" href="#voicemail" class="btnaslink">голосовая почта</a>
+	<br>
+     <a id="detailsshow" class="btn btnaslink hiddennojs" data-toggle="collapse" data-target="#sipdetails" >показать настройки SIP</a>
+ 	<div id="sipdetails" class="collapse">
+    	<p>SIP ID: <span class="greybackground" id="sipidname"></span> </p>
+    	<p>Пароль: <span class="greybackground" id="sipidpass"></span> </p>
+    	<p id="sipdetailsmessage"></p>
+  	</div>
+   	
+	<?= $formRenderer->formAction($form->get('actions')); ?>
+     
+ </fieldset>
+  
+ <?php 
+echo $formRenderer->closeTag();
+?>
+<a href="#top"><sub>наверх</sub></a>
+<?php

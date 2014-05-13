@@ -1,0 +1,25 @@
+<?php
+$title = 'Настройки расписания приема вызовов в колл-центре';
+$this->headTitle($title);
+ 
+$form = $this->form;
+
+$formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
+
+$formRenderer->prepare();
+echo $formRenderer->openTag($form);
+?><div><?php
+echo $this->partial('dayPartial.phtml',array('form'=>$form, 'name'=>'понедельник','starttime'=>$form->get('s_monday'), 'endtime'=>$form->get('e_monday'), 'active'=>$form->get('active_monday')));
+echo $this->partial('dayPartial.phtml',array('form'=>$form, 'name'=>'вторник','starttime'=>$form->get('s_tuesday'), 'endtime'=>$form->get('e_tuesday'), 'active'=>$form->get('active_tuesday')));
+echo $this->partial('dayPartial.phtml',array('form'=>$form, 'name'=>'среда','starttime'=>$form->get('s_wednesday'), 'endtime'=>$form->get('e_wednesday'), 'active'=>$form->get('active_wednesday')));
+echo $this->partial('dayPartial.phtml',array('form'=>$form, 'name'=>'четверг','starttime'=>$form->get('s_thursday'), 'endtime'=>$form->get('e_thursday'), 'active'=>$form->get('active_thursday')));
+echo $this->partial('dayPartial.phtml',array('form'=>$form, 'name'=>'пятница','starttime'=>$form->get('s_friday'), 'endtime'=>$form->get('e_friday'), 'active'=>$form->get('active_friday')));
+echo $this->partial('dayPartial.phtml',array('form'=>$form, 'name'=>'суббота','starttime'=>$form->get('s_saturday'), 'endtime'=>$form->get('e_saturday'), 'active'=>$form->get('active_saturday')));
+echo $this->partial('dayPartial.phtml',array('form'=>$form, 'name'=>'воскресенье','starttime'=>$form->get('s_sunday'), 'endtime'=>$form->get('e_sunday'), 'active'=>$form->get('active_sunday')));
+echo $this->partial('dayPartial.phtml',array('form'=>$form, 'name'=>'короткие дни','starttime'=>$form->get('s_shortday'), 'endtime'=>$form->get('e_shortday')));
+echo $this->partial('dayPartial.phtml',array('form'=>$form, 'name'=>'стандартный рабочий день','starttime'=>$form->get('s_regularwd'), 'endtime'=>$form->get('e_regularwd')));
+
+?></div><div class="submitdivcard"><?php
+echo $formRenderer->formRow($form->get('submit'));
+?></div><?php
+echo $formRenderer->closeTag();

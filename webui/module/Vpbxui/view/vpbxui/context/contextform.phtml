@@ -1,0 +1,42 @@
+<?php
+$formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
+
+$formRenderer->prepare();
+echo $formRenderer->openTag($form);
+?>
+<fieldset class="<?= $formRenderer->_formStyle; ?>">
+  
+    <?php $this->placeholder('general')->captureStart();?>    
+    	<?= $formRenderer->formHidden($form->get('id')); ?>
+    	<?= $formRenderer->formRow($form->get('custname')); ?>
+    	<div class="shufflecontainer">    	
+    		<?= $formRenderer->formRow($form->get('contexttype')); ?>
+    		<?= $formRenderer->formRow($form->get('internalref')); ?>
+    		<?= $formRenderer->formRow($form->get('ivrref')); ?> 
+    		<?= $formRenderer->formRow($form->get('funcref')); ?>
+    	</div>     	   	
+    	<?= $formRenderer->formRow($form->get('custdesc')); ?>    	
+    <?php $this->placeholder('general')->captureEnd();?>
+        
+	<?php $this->placeholder('trunks')->captureStart();?>  
+	<h4>Входящие транки</h4>
+		<fieldset id="trunksfieldset">	
+     		<?= $this->formCollection($form->get('trunks')); ?>   
+     		<div id="newtrunkfieldset">
+     		</div>
+     	</fieldset>      
+      	<input type="button" id="addnewtrunk" class="addtrunkcatbtn" value="новое">             
+      	<input type="button" id="cleartrunks" class="cleartrunks" value="очистить все">               	
+    <?php $this->placeholder('trunks')->captureEnd();?>
+  
+    	<?php echo $this->placeholder('general');?>    
+    	<?= $this->partial('bootstrapModal', array('id'=>'trunks', 'body' => $this->placeholder('trunks'),'header'=>'входящие транки'));?>        
+    <span id="bottom"></span>
+     
+     <a data-toggle="modal" data-keyboard="true"  href="#trunks" class="btnaslink">входящие транки</a>    
+      
+      <?= $formRenderer->formRow($form->get('submit')); ?>
+ </fieldset>
+  
+ <?php 
+echo $formRenderer->closeTag();

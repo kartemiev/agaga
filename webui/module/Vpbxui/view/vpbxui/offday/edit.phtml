@@ -1,0 +1,16 @@
+<?php
+
+$title = 'редактирование выходного дня/замены';
+$this->headTitle($title);
+?>
+ <h3><?php echo $this->escapeHtml($title); ?></h3>
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url(
+    'vpbxui/settings/offdays',
+    array(
+        'action' => 'edit',
+        'id'     => $this->id,
+    )
+));
+echo $this->partial('offdayFormPartial.phtml',array('form' => $form));

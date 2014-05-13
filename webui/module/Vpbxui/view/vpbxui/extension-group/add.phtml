@@ -1,0 +1,10 @@
+<?php
+
+$title = 'Добавить новую группу абонентов';
+$this->headTitle($title);
+?>
+<h3><?php echo $this->escapeHtml($title); ?></h3>
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('vpbxui/settings/groups/internal', array('action' => 'add')));
+echo $this->partial('extensionGroupFormPartial.phtml',array('form' => $form));

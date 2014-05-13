@@ -1,0 +1,30 @@
+<?php
+
+$title = 'Репозиторий медиа файлов';
+$this->headTitle($title);
+?>
+<h3><?php echo $this->escapeHtml($title); ?></h3>
+ <table class="table table-striped table-bordered table-condensed table-hover">
+<tr class="tblheader">
+     <th>наименование</th>
+     <th>файл</th>
+     <th>категория</th>
+     <th>тип</th>     
+     <th>размер</th>     
+    <th>&nbsp;</th>
+</tr>
+ <?php foreach ($mediarepos as $mediarecord) : ?>
+<tr class="tblcontent">
+    <td class="content"><?php echo $this->escapehtml($mediarecord->custdesc)?></td>
+    <td class="content"><?php echo $this->escapehtml($mediarecord->custname)?></td>
+    <td class="content"><?php echo $this->mediaClassDebrief($mediarecord->mediatype)?></td>    
+    <td class="content"><?php echo $this->escapehtml($mediarecord->contenttype)?></td>
+    <td class="content"><?php echo $this->escapehtml($mediarecord->filesize)?></td>
+    <td class="content">
+    <td>         
+        <a href="<?php echo $this->url('vpbxui/settings/media',
+            array('action'=>'delete', 'id' => $mediarecord->id));?>">удалить</a>
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>

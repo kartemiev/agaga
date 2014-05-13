@@ -1,0 +1,125 @@
+<?php echo $this->doctype(); ?>
+
+<html lang="ru">
+    <head>
+        <meta charset="utf-8">
+        <?php echo $this->headTitle(' - Программная АТС Национального Удостоверяющего Центра'); ?>
+
+        <?php echo $this->headMeta()->appendName('viewport', 'width=device-width, initial-scale=1.0') ?>
+
+        <!-- Le styles -->
+        <?php echo $this->headLink()
+                        ->prependStylesheet($this->basePath() . '/css/select2.css')        
+                        ->prependStylesheet($this->basePath() . '/css/messenger.css')        
+                        ->prependStylesheet($this->basePath() . '/css/messenger-theme-future.css')        
+                        ->prependStylesheet($this->basePath() . '/css/bootstrap-select.min.css')        
+                         ->prependStylesheet($this->basePath() . '/css/bootstrap-responsive.min.css')
+                        ->prependStylesheet($this->basePath() . '/css/style.css')
+                        ->prependStylesheet($this->basePath() . '/css/bootstrap.min.css') ?>
+
+        <!-- Scripts -->
+        <?php echo $this->headScript()
+         ->prependFile($this->basePath() .   '/js/custom.js')
+        ->prependFile($this->basePath() .   '/js/select2.min.js')
+        
+        ->prependFile($this->basePath() .   '/js/messenger-theme-future.js')        
+        ->prependFile($this->basePath() .   '/js/messenger.min.js')        
+        ->prependFile($this->basePath() .   '/js/bootstrap-select.min.js')        
+         ->prependFile($this->basePath() .   '/js/twitter-bootstrap-hover-dropdown.js')        
+        ->prependFile($this->basePath() . '/js/html5.js', 'text/javascript', array('conditional' => 'lt IE 9',))
+                                     ->prependFile($this->basePath().'/js/jquery.pulse.min.js')
+                                      ->prependFile($this->basePath() . '/js/bootstrap.min.js')
+                                      ->prependFile($this->basePath() . '/js/jquery.min.js');
+                                        ?>
+ 
+                                        
+    </head>
+    <body id="top">
+    <div id="thisbody">
+<?php 
+
+if ($this->zfcUserIdentity()): ?>
+<div id="logininfo">
+    <p>пользователь:</p>
+    <p title="<?php echo 'Имя: '.$this->ZfcUserIdentity()->getUsername()."\nE-mail: ".$this->ZfcUserIdentity()->getEmail(); ?>"><u><?php echo $this->zfcUserDisplayName(); ?></u>&nbsp
+    <a href=<?php echo $this->url('zfcuser/logout')?> title="выход"><i class="icon-off"></i></a></p>
+</div>
+
+<?php endif;?>
+        <div class="navbar navbar-inverse">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <a class="brand" href="<?php echo $this->url('home'); ?>">АТС</a>
+                    <div class="dropdown">
+                    
+                             <?php $partial = array('vpbxui/navigation/topnav.phtml', 'default') ?>
+                            <?php $this->navigation('navigation')->menu()->setPartial($partial) ?>
+                            <?php echo $this->navigation('navigation')->menu()->render() ?>                     
+                  
+                            
+                      </div><!--/.nav-collapse -->
+                </div>
+                 
+            </div>
+              
+        </div>  
+         <div class="container">
+                    <div class="nav-collapse collapse">
+        <ul class="breadcrumb">
+        
+        <?php 
+        
+        echo $this->navigation('navigation')
+        ->breadcrumbs()
+        ->setSeparator(' ▶' . PHP_EOL)
+        ->setMinDepth(0)->setLinkLast(false); // <-- Add this!!
+        ?>
+        </ul>                    
+            </div>
+  <div class="navbar">
+            <div class="">
+                <div class="container">            
+     <?php 
+     
+        echo $this->navigation('Navigation')->setAcl($this->acl)->setRole('member')
+            ->menu()->setOnlyActiveBranch(false)
+            ->setMinDepth(0)
+          //  ->setUlClass('navinline-links')
+                        ->setUlClass('nav pull-right nav-tabs')
+            ->renderSubmenu();
+            
+            ?>
+  
+     </div>       
+     </div>
+     </div>
+   <?php echo $this->partial('flashMessengerPartial', 
+      array('viewmodel'=>$this->viewmodel())
+      );?>
+             <div class="container-fluid">
+            <div class="row-fluid">
+ 
+ <div class="span9">
+            <?php echo $this->content; ?>
+ 
+ </div><!--/span-->
+</div><!--/row-->
+            </div>
+            
+            <hr>
+            <footer>
+                 Версия:   
+                    Ревизия:   
+                &nbsp;&nbsp; Copyright (c) 2013 Вектор Телеком - все права защищены.
+            </footer>
+        </div> <!-- /container -->
+                     
+        <?php echo $this->inlineScript() ?>
+        </div>
+    </body>
+</html>

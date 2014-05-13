@@ -1,0 +1,28 @@
+<?php
+// module/Vpbxui/view/vpbxui/user-roles/index.phtml:
+
+$title = 'Роли пользователей';
+$this->headTitle($title);
+?>
+<h3><?php echo $this->escapeHtml($title); ?></h3>
+
+ <table class="table table-striped table-bordered table-condensed table-hover">
+<tr class="tblheader">
+ <th>Пользователь</th>
+  <th>E-Mail</th> 
+    <th>Роль</th>
+    <th>&nbsp;</th>
+</tr>
+ <?php foreach ($userroles as $userrole) : ?>
+<tr class="tblcontent">
+    <td class="content"><?php echo $this->escapeHtml($userrole->username);?></td>
+    <td class="content"><?php echo $this->escapeHtml($userrole->email);?></td>    
+    <td class="content"><?php echo $this->escapeHtml($userrole->description);?></td>
+    <td>        
+     <a href="<?php echo $this->url('vpbxui/users/roles',
+            array('action'=>'edit', 'user_id' => $userrole->user_id));?>">изменить</a>
+    </td>        
+</tr>
+<?php endforeach; ?>
+</table>
+ 

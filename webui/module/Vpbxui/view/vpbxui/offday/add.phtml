@@ -1,0 +1,9 @@
+<?php
+
+$title = 'добавление выходного дня или замены';
+$this->headTitle($title);
+?><h3><?php echo $this->escapeHtml($title); ?></h3><?php
+$form = $this->form;
+$form->setAttribute('action', $this->url('vpbxui/settings/offdays', array('action' => 'add')));
+echo $this->partial('offdayFormPartial.phtml',array('form' => $form));
+

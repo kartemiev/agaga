@@ -1,0 +1,8 @@
+<?php
+
+$title = 'Добавить фильтр номеров';
+$this->headTitle($title);
+$form = $this->form;
+$form->setAttribute('action', $this->url('vpbxui/settings/filter', array('action' => 'add')));
+
+echo $this->partial('filterFormPartial.phtml',array('form' => $form));

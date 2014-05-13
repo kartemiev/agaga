@@ -1,0 +1,33 @@
+<?php $callcentrestatus = $this->callcentrestatus;?>
+<table class="table table-striped table-bordered table-condensed">
+<tr >
+<th>
+колл-центр
+</th>
+<th  class="tblheader">
+по расписанию в данный момент
+</th>
+<th  class="tblheader">
+режим принудительного пропуска
+</th>
+</tr>
+<tr>
+<td class="content"><?php echo date("d/m/Y H:i:s")?></td>
+<td class="content"><?php echo ($callcentrestatus->statutory)?'рабочее':'нерабочее';?> время</td>
+<td class="content"> <?php echo $this->callCentreCallAcceptionStatusDebrief($callcentrestatus->overridestatus);?></td>
+</tr>
+<tr>
+<td colspan="3">
+после приветствия: <?php echo ($callcentrestatus->status)?'колл-центр':'отбой';?> 
+</td>
+</tr>
+</table> 
+
+принудительно:
+<a class="<?php echo $this->callCentreStatusOverrideActiveLink('default')?>" href="<?php echo $this->url('vpbxui/callcentre/monitoring',
+    array('action'=>'triggercallcentre','state'=>'default'));?>">по умолчанию</a>&nbsp
+<a class="<?php echo $this->callCentreStatusOverrideActiveLink('enabled')?>" href="<?php echo $this->url('vpbxui/callcentre/monitoring',
+    array('action'=>'triggercallcentre','state'=>'enable'));?>">включен</a>&nbsp
+<a class="<?php echo $this->callCentreStatusOverrideActiveLink('disabled')?>" href="<?php echo $this->url('vpbxui/callcentre/monitoring',
+    array('action'=>'triggercallcentre','state'=>'disable'));?>">выключен</a>&nbsp
+

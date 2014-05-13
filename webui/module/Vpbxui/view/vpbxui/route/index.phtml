@@ -1,0 +1,31 @@
+<?php
+
+$title = 'Маршрут';
+$this->headTitle($title);
+?> 
+ <table class="table table-striped table-bordered table-condensed table-hover">
+<tr class="tblheader">
+ <th>Название</th>
+ <th>по умолчанию</th>
+ 
+    <th>&nbsp;</th>
+</tr>
+ <?php foreach ($routes as $route) : 
+ ?>
+ 
+<tr class="tblcontent">    
+
+<td class="content"><a href="<?php echo $this->url('vpbxui/settings/route',
+            array('action'=>'edit', 'id' => $route->id));?>"><?php echo $this->escapeHtml($route->custname);?></a></td>
+ <td class="content"><?=($route->isdefault)?'✓':'';?></td>
+    <td  class="content">
+         <a href="<?php echo $this->url('vpbxui/settings/route',
+            array('action'=>'edit', 'id' => $route->id));?>">изменить</a>
+            &nbsp
+        <a href="<?php echo $this->url('vpbxui/settings/route',
+            array('action'=>'delete', 'id' => $route->id));?>">удалить</a>
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>
+  

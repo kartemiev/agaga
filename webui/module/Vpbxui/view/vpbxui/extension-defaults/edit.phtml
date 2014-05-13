@@ -1,0 +1,17 @@
+<?php
+
+$title = 'Суперглобальные настройки абонента';
+$this->headTitle($title);
+?>
+<h3><?php echo $this->escapeHtml($title); ?></h3>
+
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url(
+    'vpbxui/settings/extensiondefaults',
+    array(
+        'action' => 'edit',
+    )
+));
+ 
+echo $this->partial('extensionDefaultsFormPartial.phtml',array('form' => $form));

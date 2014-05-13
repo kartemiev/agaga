@@ -1,0 +1,8 @@
+<?php
+
+$title = 'добавление внутреннего номера';
+$this->headTitle($title);
+$form = $this->form;
+$form->setAttribute('action', $this->url('vpbxui/internal', array('action' => 'add')));
+
+echo $this->partial('extensionFormPartial.phtml',array('form' => $form));

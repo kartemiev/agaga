@@ -1,0 +1,45 @@
+<?php
+ 
+$title = 'Транки';
+$this->headTitle($title);
+ 
+?> 
+ <table id="trunkcontent" class="table table-bordered table-condensed table-hover">
+<tr class="tblheader">
+ <th>Наименование</th>
+ <th>Сервер</th> 
+ <th>Порт</th> 
+ <th>имя регистрации</th>
+ <th>последняя перерегистрация</th>
+    <th>&nbsp;</th>
+</tr>
+  <?php foreach ($trunkregistrations as $trunkregistration) : 
+ $trunk = $trunkregistration['trunk'];
+ $registration = (isset($trunkregistration['registration']))?$trunkregistration['registration']:null;
+ $state = (isset($registration->state))?$registration->state:null;
+ ?>
+ 
+<tr class="tblcontent <?=$this->registrationStateRowClassResolver($state)?>">    
+
+<td class="content"><a href="<?php echo $this->url('vpbxui/settings/trunk',
+            array('action'=>'edit', 'id' => $trunk->id));?>"><?php echo $this->escapeHtml($trunk->custname);?></a></td>
+             
+    <td class="content"><a href="<?php echo $this->url('vpbxui/settings/trunk',
+            array('action'=>'edit', 'id' => $trunk->id));?>"><?php echo $this->escapeHtml($trunk->host);?></a></td>
+    <td class="content"><a href="<?php echo $this->url('vpbxui/settings/trunk',
+            array('action'=>'edit', 'id' => $trunk->id));?>"><?php echo $this->escapeHtml($trunk->port);?></a></td>
+     <td class="content"><a href="<?php echo $this->url('vpbxui/settings/trunk',
+            array('action'=>'edit', 'id' => $trunk->id));?>"><?=$trunk->name?></a></td>       
+     <td class="content"><a href="<?php echo $this->url('vpbxui/settings/trunk',
+            array('action'=>'edit', 'id' => $trunk->id));?>"><?= $this->registrationRegistrationtimeConverter($registration->registrationtime)?></a></td>            
+    <td  class="content">
+         <a href="<?php echo $this->url('vpbxui/settings/trunk',
+            array('action'=>'edit', 'id' => $trunk->id));?>">изменить</a>
+            &nbsp
+        <a href="<?php echo $this->url('vpbxui/settings/trunk',
+            array('action'=>'delete', 'id' => $trunk->id));?>">удалить</a>
+    </td>
+</tr>
+<?php endforeach; ?>
+ </table>
+  

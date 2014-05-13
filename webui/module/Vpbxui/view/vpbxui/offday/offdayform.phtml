@@ -1,0 +1,30 @@
+<?php
+$formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
+
+$formRenderer->prepare();
+echo $formRenderer->openTag($form);
+?>  
+     	<?= $formRenderer->formHidden($form->get('id')); ?>
+    	<?= $formRenderer->formRow($form->get('name')); ?>
+    	<?= $formRenderer->formRow($form->get('rdate')); ?> 
+    	<div class="togglewrapper">   	
+    	<?= $formRenderer->formRow($form->get('isworking')); ?> 
+    	 <div class="togglecontainer">
+    	<div class="mutuallyexclusivecontainer">
+    		<?= $formRenderer->formRow($form->get('cute')); ?>
+    	</div> 
+    	<div class="mutuallyexclusivecontainer">
+        	<div class="togglewrapper"> 
+        	  	    	  	       
+    	<?= $formRenderer->formRow($form->get('apply_specialtime')); ?>
+    		<div class="togglecontainer">    	       
+     			<?= $formRenderer->formRow($form->get('start_time')); ?>    	       
+    			<?= $formRenderer->formRow($form->get('end_time')); ?>    	       
+    		</div>
+    	</div>
+    	</div>
+    	</div>
+    	</div>
+        <?= $formRenderer->formRow($form->get('submit')); ?>  
+<?php 
+echo $formRenderer->closeTag();

@@ -1,0 +1,24 @@
+<?php
+
+/* module/Vpbxui/view/internal/pickup-group/edit.phtml */
+
+$title = 'Редактирование свойств группы перехвата';
+$this->headTitle($title);
+?>
+<h3><?php echo $this->escapeHtml($title); ?></h3>
+
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url(
+    'vpbxui/settings/groups/pickup',
+    array(
+        'action' => 'edit',
+        'name'     => $this->name,
+    )
+));
+ 
+$form->prepare();
+
+echo $this->form()->openTag($form);
+echo $this->formCollection($form);
+echo $this->form()->closeTag();

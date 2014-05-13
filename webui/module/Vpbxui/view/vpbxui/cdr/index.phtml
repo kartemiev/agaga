@@ -1,0 +1,70 @@
+<?php
+// module/Vpbxui/view/cdr/index.phtml
+
+$title = 'просмотр детализации вызовов '.$this->cdrScopeDebrief($scope);
+$this->headTitle($title);
+$this->headLink()->prependStylesheet($this->basePath() . '/skin/jplayer.blue.monday.css');
+?>
+<h3><?php /*echo $this->escapeHtml($title); */?></h3>
+  <div id="jquery_jplayer_1" class="jp-jplayer"></div>
+ 
+<div>  
+<div id="cdrsearch" class="inline">
+</div>  
+
+<div> 
+ <?=(count($filters))?'<sup id="searchresultnotice">показаны результаты поиска</sup><a href="'.$this->url('vpbxui/cdr').'">очистить</a>':' <a class="showhide" data-href="#cdrfind" href="#top" class="btnaslink">расширенный поиск</a>'?>    
+	<div id="cdrfind" class="togglecontaner">
+		<?= $this->partial('cdrSearchFormPartial.phtml',array('form' => $find->form));?>        
+	</div>
+</div>
+</div>
+
+<div id ="cdrview">
+  <table id="cdrtable" class="table table-striped table-bordered table-condensed  table-hover">
+<tr class="tblheader">
+          <th>id вызова</th>
+          <th id="cdrdate">Дата</th>
+          <th>&nbsp</th>          
+           <th>абонент</th>
+                    <th>АОН</th>
+                               <th>направление</th>
+         <th id="billsec">продолж.</th>
+         <th>диспозиция</th>
+          <th>перев.</th>
+          <th>запись</th>
+     <th>&nbsp;</th>
+</tr>
+ <?php foreach ($paginator as $cdr) : ?>
+<tr class="tblcontent">
+    <td class="content <?php echo ($cdr->linkedid==$cdr->uniqueid)?' maincall':'';?>"><?php echo $cdr->linkedid;?></td>
+    <td class="content"><?=$this->cdrCallDateFormat($cdr->calldate);?></td>
+    <td class="content anglebrkt">
+    <?=($this->cdrCallDirection($cdr))?'>':'<'?>
+    </td>
+    <td class="content"><?=$this->cdrDstNumReplacementSpecialCase($cdr)?></td>
+    <td class="content"><?php echo $this->escapeHtml($cdr->clid);?></td>
+    <td class="content"><?php echo ($cdr->dcontext=='vpbx_dialout')? $this->escapeHtml($cdr->dstname):
+        $this->escapeHtml($cdr->calleridname);?></td>    
+    <td class="content"><?php echo gmdate("H:i:s", $cdr->billsec);?></td>
+    <td class="content callfailed"><?php echo $this->dispositionDebrief($cdr->disposition);?></td>
+      <td class="content"><?php echo $this->escapeHtml($cdr->transferred_from);?></td>
+      <td class="content"> <?php echo $this->partial('cdrplayercontainer.phtml',array('cdr'=>$cdr));?></td>
+<td class="content">                  
+&nbsp
+     </td>
+ </tr>
+<?php endforeach; ?>
+</table>
+<?php $this->placeholder('paginator')->captureStart() ?>    
+ <?php echo $this->paginationControl(
+            $paginator, 'Sliding', 'paginator-slideCdr', array('order_by' => $order_by, 'order' => $order, 'scope'=>$scope,'like_by'=>$like_by, 'like'=> $like,'filters' => $filters)
+    );
+?>
+    <?php $this->placeholder('paginator')->captureEnd() ?>
+<?php echo $this->placeholder('paginator') ?>
+<div id="abovetable"><?php echo $this->placeholder('paginator') ?></div>
+<br>
+ <a href="#top">наверх</a>
+</div>
+<?php echo $this->partial('playboxPartial.phtml',array('title'=>'Проигрывание записанного разговора'));?>

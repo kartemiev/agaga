@@ -1,0 +1,62 @@
+<?php
+// module/Vpbxui/view/cdr/index.phtml
+
+$title = 'просмотр пропущенных вызовов';
+$this->headTitle($title);
+?>
+ 
+  <p><a onclick="window.history.back()">назад</a></p>
+<span id="grid"></span>  
+<div id ="cdrview">
+  <table cellpadding="0" cellspacing="0" border="1" id="cdrtable" class="table table-striped pagination-centered table-bordered table-condensed  table-hover">
+<tr class="tblheader">
+          <th id="cdrdate">Дата</th>
+          <th>операторы доступны</th>
+           <?php foreach ($operatorslist as $operator) {
+              ?><th>
+                  <?php
+                  echo $operator;
+                  ?></th><?php
+          }?>
+ </tr>
+ <?php foreach ($paginator as $cdr) : ?>
+<tr class="tblcontent">
+     <td class="content"><?php echo  date('d/m/Y H:i:s',strtotime($cdr->calldate));?></td>
+     <td class="content"><div class="
+  <?php 
+  echo ($cdr->operatoravailany)?'redbox':'greenbox';
+  ?>"></div></td> <?php
+  foreach ($operatorslist as $operator)
+  {
+      ?><td class="content">
+      <div class="<?=$this->operatorAvailSquare($cdr->operatorcallednums, $operator); ?>">
+      </div></td><?php
+  }
+  ?>
+ </tr>
+<?php endforeach; ?>
+</table>
+<?php $this->placeholder('paginator')->captureStart() ?>    
+ <?php echo $this->paginationControl(
+            $paginator, 'Sliding', 'paginator-slideCdrMissed', array('order_by' => $order_by, 'order' => $order)
+    );
+?>
+    <?php $this->placeholder('paginator')->captureEnd() ?>
+<?php echo $this->placeholder('paginator') ?>
+<div id="abovetable"><?php echo $this->placeholder('paginator') ?></div>
+
+</div>
+<br>
+  <p><a href="#top">наверх</a>&nbsp<a onclick="window.history.back()">назад</a></p>
+ <br>
+ В столбцах, относящихся к операторам:
+ <ul>
+<li>Красный цвет – оператор был свободен</li>
+<li>Зеленый цвет – оператор был занят или в офлайн</li>
+</ul>
+В столбце «Операторы доступны»
+<ul>
+<li>Красный цвет – был хотя бы один свободный оператор</li>
+<li>Зеленый цвет – все операторы были заняты</li> 
+</ul>
+<br>

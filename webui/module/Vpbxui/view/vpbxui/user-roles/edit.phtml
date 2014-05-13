@@ -1,0 +1,23 @@
+<?php
+// module/Vpbxui/view/vpbxui/user-roles/edit.phtml:
+
+$title = 'Редактирование роли пользователя ';
+$this->headTitle($title);
+?>
+<h3><?php echo $this->escapeHtml($title); ?></h3>
+
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url(
+    'vpbxui/users/roles',
+    array(
+        'action' => 'edit',
+        'user_id'     => $this->user_id,
+    )
+));
+ 
+$form->prepare();
+
+echo $this->form()->openTag($form);
+echo $this->formCollection($form);
+echo $this->form()->closeTag();

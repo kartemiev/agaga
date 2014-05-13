@@ -1,0 +1,34 @@
+<?php
+
+$title = 'Пользователи услуги Email2Fax';
+$this->headTitle($title);
+?> 
+ <table class="table table-striped table-bordered table-condensed table-hover">
+<tr class="tblheader">
+ <th>имя</th>
+ <th>email</th>
+ 
+    <th>&nbsp;</th>
+</tr>
+ <?php foreach ($faxusers as $faxuser) : 
+ ?>
+ 
+<tr class="tblcontent">    
+
+<td class="content"><a href="<?php echo $this->url('vpbxui/settings/faxuser',
+            array('action'=>'edit', 'id' => $faxuser->id));?>"><?php echo $this->escapeHtml($faxuser->custname);?></a></td>
+
+<td class="content"><a href="<?php echo $this->url('vpbxui/settings/faxuser',
+            array('action'=>'edit', 'id' => $faxuser->id));?>"><?php echo $this->escapeHtml($faxuser->email);?></a></td>
+
+    <td  class="content">
+         <a href="<?php echo $this->url('vpbxui/settings/faxuser',
+            array('action'=>'edit', 'id' => $faxuser->id));?>">изменить</a>
+            &nbsp
+        <a href="<?php echo $this->url('vpbxui/settings/faxuser',
+            array('action'=>'delete', 'id' => $faxuser->id));?>">удалить</a>
+    </td>
+</tr>
+<?php endforeach; ?>
+</table>
+  

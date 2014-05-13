@@ -1,0 +1,11 @@
+<?php
+
+$title = 'Добавить новый алиас Skype';
+$this->headTitle($title);
+$form = $this->form;
+$form->setAttribute('action', $this->url('vpbxui/settings/skypealias', array('action' => 'add')));
+$form->prepare();
+echo $this->form()->openTag($form);
+echo $this->formCollection($form);
+echo $this->form()->closeTag();
+  

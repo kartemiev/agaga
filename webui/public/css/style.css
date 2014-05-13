@@ -1,0 +1,364 @@
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+
+.zf-green {
+    color: #68b604;
+}
+
+.btn-success {
+  background-color: #57a900;
+  background-image: -moz-linear-gradient(top, #70d900, #57a900);
+  background-image: -ms-linear-gradient(top, #70d900, #57a900);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#70d900), to(#57a900));
+  background-image: -webkit-linear-gradient(top, #70d900, #57a900);
+  background-image: -o-linear-gradient(top, #70d900, #57a900);
+  background-image: linear-gradient(top, #70d900, #57a900);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#70d900', endColorstr='#57a900', GradientType=0);
+}
+
+.btn-success:hover,
+.btn-success:active,
+.btn-success.active,
+.btn-success.disabled,
+.btn-success[disabled] {
+  background-color: #57a900;
+}
+
+.btn-success:active, .btn-success.active {
+  background-color: #57a900;
+}
+
+div.container a.brand {
+   /* background: url("../img/zf2-logo.png") no-repeat scroll 0 10px transparent; */
+    margin-left: 0;
+    padding: 8px 20px 12px 40px;
+}
+
+.sidebar-nav-fixed {
+     position:float-left;
+     top:120px;
+     width:28em;
+ }
+
+ @media (max-width: 767px) {
+     .sidebar-nav-fixed {
+         width:auto;
+     }
+ }
+
+ @media (max-width: 979px) {
+     .sidebar-nav-fixed {
+         position:static;
+        width: auto;
+     }
+ }
+
+.table tr:hover td.content, /* recent */
+.table.tcontent tr:hover th {
+  background-color: grey;
+}
+.outercontainer
+{
+    width: 100%;
+}
+ 
+.filtercontainer 
+{
+     float: right;
+     right: 0;
+     bottom: 0;
+    width: 20em;
+    margin-left: 5%;
+    margin-right: 0; /* <-- this to 0 */
+    padding: 0.3125em 0 0.3125em 0.3125em; /* now you can also add your padding */
+    background: rgba(0, 0, 0, 0.5);
+    color: #fff;
+    border-color: black;
+    border-style:dotted;
+    border-width: thin;
+     position: absolute;
+    margin-right: 0px;-->
+ 
+}
+#cdrview .table
+{
+    font-size: 15px;
+}
+#cdrview .table tr
+{
+     
+    font-size:80%;  
+    border-style:dashed;
+}
+#cdrview .table td
+{
+    border-style:none;
+}
+
+#cdrview .table tr #cdrdate {
+    width: 10em;
+    }
+#cdrview .table tr #callsec {
+    width: 5em;
+}
+#cdrview .table tr #billsec {
+    width: 5em;
+}
+#cdrview .table  
+{
+    width:60em; 
+}
+#abovetable { 
+    display : none;
+}
+
+.nav .active
+{
+  background: "";   
+}
+
+#cdrtable th
+{
+    text-decoration: underline;
+    background-color: darkgray;
+    border-style:solid;
+}
+ 
+.callsuccess 
+{
+    color: green;
+}
+.callfailed 
+{
+    color: red;
+}
+#updatednotification
+{
+    height: 2em;
+}
+.activecall
+{
+    background-color: red;
+}
+.anglebrkt
+{
+<!--   color:#0081c2; -->
+}
+
+.paginator-cdr
+{
+    font-size: 10px;
+}
+ul.flashmessenger
+{
+	color: red;
+}
+ 
+@font-face {
+font-family: Digital;
+src: url("/otf/digital.otf") format("opentype");
+}
+
+@font-face {
+font-family: Digital;
+font-weight: bold;
+src: url("/otf/digital.otf") format("opentype");
+}
+
+.extensionnumber
+{	
+	font-family: Digital;	
+}
+ 
+#logininfo
+{
+	display:none;
+	position: absolute;
+	 top: 20px;
+    right: 30px;
+
+    /* must have dimension */
+    width: 20em;
+    height: 5em;
+	padding: 1em;
+	background-color: white;
+	z-index: 1000;
+	border:2px solid;
+border-radius:25px;
+}
+.timeframeheader
+{
+	text-decoration:underline;
+}
+.maincall
+{
+	text-decoration: underline;
+}
+
+.greenbox
+{
+height: 1em; /*Specify Height*/
+width:  1em; /*Specify Width*/
+border: 1px solid black; /*Add 1px solid border, use any color you want*/
+background-color: green; /*Add a background color to the box*/
+}
+.redbox
+{
+height: 1em; /*Specify Height*/
+width:  1em; /*Specify Width*/
+border: 1px solid black; /*Add 1px solid border, use any color you want*/
+background-color: red; /*Add a background color to the box*/
+}
+
+.whitebox
+{
+height: 1em; /*Specify Height*/
+width:  1em; /*Specify Width*/
+border: 1px solid black; /*Add 1px solid border, use any color you want*/
+background-color: white; /*Add a background color to the box*/
+}
+
+.greencircle:before {
+    content: ' \25CF';
+    font-size: 20px;
+	color:green;
+}
+.redcircle:before {
+    content: ' \25CF';
+    font-size:20px;
+	color:red;
+}
+
+
+*, *:before, *:after {
+    .box-sizing(border-box);
+}
+
+input {
+    .box-sizing(content-box);
+}
+
+th, td {
+    width: 40px;
+    padding-left: 5px;
+    padding-right: 5px;
+	  margin-left: 5px;
+    margin-right: 5px;
+}
+
+ul.navinline-links
+{
+list-style-type:none;
+margin:0;
+padding:0;
+}
+
+ul.navinline-links > li
+{
+display:inline;
+float:left;
+}
+
+ul.navinline-links > li a
+{
+display:block;
+width:10em;
+}
+
+.cell-bold
+{
+font-weight: bold;
+}
+.cell-underlined
+{
+text-decoration: underline;
+}
+
+.btnaslink {
+    background:none!important;
+     border:none; 
+     padding:0!important;
+    /*border is optional*/
+     border-bottom:1px solid #444; 
+	margin:5px 10px 5px 10px;
+}
+.hidden
+{
+	display: none;
+}
+a.active
+{
+	text-decoration: underline;
+}
+
+
+form#offdayrangefilter *
+{
+	display: inline;
+}
+.modal-backdrop, .modal-backdrop.fade.in { background-color: rgba(0,0,0,0); }
+
+.hiddendiv
+{
+	display:hidden;
+}
+.greybackground
+{
+	background-color:grey;
+}
+
+.hiddennojs
+{
+	display:none;	
+}
+.errormessages
+{
+	background-color:red;
+	opacity:0.5;
+	z-index:1000;
+}
+.boxed
+{
+     border: 1px dashed #888;
+    border-radius:3px;
+    margin: 4px 4px 4px 4px;
+    padding: 4px 4px 4px 4px;
+    
+}
+.trunkregisteredrow
+{
+	background-color:lightgreen;
+}
+.trunkunregisteredrow
+{
+	background-color:#FFBDBD;
+}
+
+div.inline { float:left; }
+.togglecontaner { display:none;}
+#cdrfind {
+	position:relative;
+	top:-3em;
+	     border: 1px solid #888;
+    border-radius:3px;    
+    z-index:1000;
+    background-color:white;
+}
+#searchresultnotice
+{
+	text-decoration:bold;
+	margin-left: 1em;
+	margin-right: 1em;
+}
+div.inline {
+    display:inline;
+}
+div.frameddiv {
+	border: solid 1px;
+	margin: 3px 3px 3px 3px;
+	padding: 3px 3px 3px 3px; 
+}
+ 
+ 

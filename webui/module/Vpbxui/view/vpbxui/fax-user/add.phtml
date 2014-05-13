@@ -1,0 +1,8 @@
+<?php
+
+$title = 'Добавить пользователя email2fax';
+$this->headTitle($title);
+$form = $this->form;
+$form->setAttribute('action', $this->url('vpbxui/settings/faxuser', array('action' => 'add')));
+
+echo $this->partial('faxUserFormPartial.phtml',array('form' => $form));

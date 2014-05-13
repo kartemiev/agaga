@@ -1,0 +1,17 @@
+<?php
+
+$title = 'редактирование внутреннего номера '.$extension->extension;
+$this->headTitle($title);
+?>
+ <h3><?php echo $this->escapeHtml($title); ?></h3>
+<?php
+$form = $this->form;
+$form->setAttribute('action', $this->url(
+    'vpbxui/internal',
+    array(
+        'action' => 'edit',
+        'id'     => $this->id,
+    )
+));
+ 
+echo $this->partial('extensionFormPartial.phtml',array('form' => $form));

@@ -1,0 +1,23 @@
+<?php
+
+$title = 'Удалить профиль группы абонентов';
+$this->headTitle($title);
+?>
+<h3><?php echo $this->escapeHtml($title); ?></h3>
+
+<p>Подтвердите удаление профиля группы абонентов
+   <b><?php echo $this->escapeHtml($extensiongroupprofile->profilename); ?></b>
+ </p>
+<?php
+$url = $this->url('vpbxui/settings/profile/group', array(
+    'action' => 'delete',
+    'id'     => $this->id,
+));
+?>
+<form action="<?php echo $url; ?>" method="post">
+<div>
+    <input type="hidden" name="id" value="<?php echo (int) $extensiongroupprofile->id; ?>" />
+    <input type="submit" name="del" value="Да" />
+    <input type="submit" name="del" value="Нет" />
+</div>
+</form>

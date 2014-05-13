@@ -1,0 +1,20 @@
+<?php
+
+$title = 'Выбор профиля для создаваемого абонента';
+$this->headTitle($title);
+?>
+
+<?php
+$form = $this->form;
+ 
+$form->prepare();
+$form->setAttribute('action', $this->url(
+    'vpbxui/internal',
+    array(
+        'action' => 'profile',
+        'id'     => $this->id,
+    )
+));
+echo $this->form()->openTag($form);
+echo $this->formCollection($form);
+echo $this->form()->closeTag();

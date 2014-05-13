@@ -1,0 +1,19 @@
+<?php
+$formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
+
+ ?><div class="container-fluid inline frameddiv">
+    <div class="row-fluid">
+        <div class="span4"><u><?php
+        echo $name;?></u><?php        
+?><div><div class="inline"><?php        
+echo $formRenderer->formRow($starttime);
+?></div><div class="inline"><?php
+echo $formRenderer->formRow($endtime);
+?></div></div><?php
+
+echo isset($active)?$formRenderer->formRow($active):'';
+
+?></div>
+</div>
+</div>
+<?php

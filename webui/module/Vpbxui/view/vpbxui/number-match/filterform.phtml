@@ -1,0 +1,36 @@
+<?php
+$formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
+
+$formRenderer->prepare();
+echo $formRenderer->openTag($form);
+?>
+<fieldset class="<?= $formRenderer->_formStyle; ?>">
+  
+    <?php $this->placeholder('general')->captureStart();?>    
+    	<?= $formRenderer->formHidden($form->get('id')); ?>
+    	<?= $formRenderer->formRow($form->get('custname')); ?>
+    	<?= $formRenderer->formRow($form->get('custdesc')); ?>    	
+    <?php $this->placeholder('general')->captureEnd();?>
+        
+	<?php $this->placeholder('regentries')->captureStart();?>  
+	<h4>Выражения</h4>
+		<fieldset id="regentriesfieldset">	
+     		<?= $this->formCollection($form->get('regentries')); ?>   
+     		<div id="newregentriesfieldset">
+     		</div>
+     	</fieldset>      
+      	<input type="button" id="addnewregentry" class="addnewregentrycatbtn" value="новое">             
+      	<input type="button" id="clearregentries" class="clearregentries" value="очистить все">               	
+    <?php $this->placeholder('regentries')->captureEnd();?>
+  
+    	<?php echo $this->placeholder('general');?>    
+    	<?= $this->partial('bootstrapModal', array('id'=>'regentries', 'body' => $this->placeholder('regentries'),'header'=>'выражения'));?>        
+    <span id="bottom"></span>
+     
+     <a data-toggle="modal" data-keyboard="true"  href="#regentries" class="btnaslink">выражения</a>    
+      
+      <?= $formRenderer->formRow($form->get('submit')); ?>
+ </fieldset>
+  
+ <?php 
+echo $formRenderer->closeTag();

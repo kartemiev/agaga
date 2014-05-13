@@ -1,0 +1,37 @@
+<?php
+$formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
+
+$formRenderer->prepare();
+echo $formRenderer->openTag($form);
+?>
+<fieldset class="<?= $formRenderer->_formStyle; ?>">
+  
+    <?php $this->placeholder('general')->captureStart();?>    
+    	<?= $formRenderer->formHidden($form->get('id')); ?>
+    	<?= $formRenderer->formRow($form->get('custname')); ?>
+    	<?= $formRenderer->formRow($form->get('email')); ?>    	
+    	<?= $formRenderer->formRow($form->get('custdesc')); ?>    	
+    <?php $this->placeholder('general')->captureEnd();?>
+        
+	<?php $this->placeholder('emails')->captureStart();?>  
+	<h4>Дополнительные адреса</h4>
+		<fieldset id="emailsfieldset">	
+     		<?= $this->formCollection($form->get('emails')); ?>   
+     		<div id="newemailsfieldset">
+     		</div>
+     	</fieldset>      
+      	<input type="button" id="addnewemail" class="addnewemailcatbtn" value="новое">             
+      	<input type="button" id="clearemails" class="clearemails" value="очистить все">               	
+    <?php $this->placeholder('emails')->captureEnd();?>
+  
+    	<?php echo $this->placeholder('general');?>    
+    	<?= $this->partial('bootstrapModal', array('id'=>'emails', 'body' => $this->placeholder('emails'),'header'=>'дополнительные адреса email'));?>        
+    <span id="bottom"></span>
+     <p>
+     <a data-toggle="modal" data-keyboard="true"  href="#emails" class="btnaslink">дополнительные адреса</a>    
+     </p> 
+      <?= $formRenderer->formRow($form->get('submit')); ?>
+ </fieldset>
+  
+ <?php 
+echo $formRenderer->closeTag();
