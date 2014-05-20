@@ -24,7 +24,7 @@ class RecordCallController extends AbstractActionController
     {
              if ('ANSWER' == $this->agi->getVariable('DIALSTATUS'))
             {             
-                $this->agi->exec('Set',array('CDR(userfield)='.$this->mediaFileName)); 
+                $this->agi->exec('Set',array('CDR(recordedname)='.$this->mediaFileName)); 
             }
             return true;
     }
@@ -48,9 +48,9 @@ class RecordCallController extends AbstractActionController
                 $postRecordCommand = sprintf($postRecordCommand, $tmpName, $mediaFilename);
             }
             $cdrfacade = $this->agi->getCDR();
-            $this->agi->exec('Set',array('CDR(userfield)='.$mediaFilename)); 
+            $this->agi->exec('Set',array('CDR(recordedname)='.$mediaFilename)); 
 
-            $cdrfacade->setCustom('userfield', $mediaFilename);
+            $cdrfacade->setCustom('recordedname', $mediaFilename);
             $this->agi->exec('MixMonitor', array(
                 $tmpName,'',
                 $postRecordCommand . " && rm {$tmpName}"

@@ -21,7 +21,7 @@ class RecordCallControllerPlugin extends AbstractPlugin implements PluginInterfa
     if ($this->agi->getVariable('HANGUPCAUSE')=='16')
        {             
         $mediaFilename = $this->agi->getVariable('RECORD_FILENAME');
-        $this->agi->exec('Set',array('CDR(userfield)='.$mediaFilename)); 
+        $this->agi->exec('Set',array('CDR(recordedname)='.$mediaFilename)); 
        }
     }    
 }

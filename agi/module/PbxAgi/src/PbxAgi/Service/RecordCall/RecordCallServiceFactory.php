@@ -9,7 +9,12 @@ class RecordCallServiceFactory implements FactoryInterface
 {
 
     public function createService(ServiceLocatorInterface $serviceLocator)
-    {
-        return new RecordCallService($serviceLocator->get('ClientImpl'), $serviceLocator->get('AppConfig'), $serviceLocator->get('RecordCallService'));
+    {    	
+        return new RecordCallService(        		
+        		$serviceLocator->get('ClientImpl'), 
+        		$serviceLocator->get('AppConfig'), 
+        		$serviceLocator->get('RecordCallService'),
+        		$serviceLocator->get('PbxAgi\Cdr\Model\CdrTable')
+			);
     }
 }

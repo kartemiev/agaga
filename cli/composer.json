@@ -1,0 +1,19 @@
+{
+	"name" : "agaga/cli",
+	"description" : "Модуль командной строки для IP-АТС AGAGA",
+	"keywords" : [
+		"asterisk",
+		"pbx"
+	],
+	"homepage" : "http://agagafree.ru/",
+	"license" : [
+		"GNU"
+	],
+	"require" : {
+		"php" : ">=5.3.3",
+		"zendframework/zendframework" : ">2.2.0rc1"
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "*"
+	}
+}

@@ -7,4 +7,6 @@ interface RecordCallServiceInterface
     function setMonitorOnChannel();
 
     function saveMonitored();
+    
+    function getTotalRecordedSize();
 }

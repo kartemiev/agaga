@@ -311,7 +311,8 @@ class Module
             'PbxAgi\Service\FaxParse\FaxSenderValidator'=> 'PbxAgi\Service\FaxParse\FaxSenderValidatorFactory',
             'PbxAgi\Service\FaxParse\FaxAttachmentPresentValidator'=> 'PbxAgi\Service\FaxParse\FaxAttachmentPresentValidatorFactory',
             'PbxAgi\Service\DialString\SimpleTimeParser' => 'PbxAgi\Service\DialString\SimpleTimeParserFactory',
-             
+            'PbxAgi\Cdr\Model\CdrTable' => 'PbxAgi\Cdr\Model\CdrTableFactory',
+            'PbxAgi\Cdr\Model\CdrTableGateway' => 'PbxAgi\Cdr\Model\CdrTableGateway'             
          	),
          'shared' => array(
             'CallOwner' => 'false',

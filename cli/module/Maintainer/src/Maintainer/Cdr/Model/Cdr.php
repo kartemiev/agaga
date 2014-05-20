@@ -1,5 +1,5 @@
 <?php
-namespace Vpbxui\Cdr\Model;
+namespace Maintainer\Cdr\Model;
  
 class Cdr
 {             
@@ -17,7 +17,7 @@ class Cdr
     public $billsec;
     public $disposition;
     public $accountcode;
-    public $recordedname;
+    public $uniqueid;
     public $userfield;
     public $peeraccount;
     public $linkedid;
@@ -48,7 +48,7 @@ class Cdr
         $this->disposition     = (isset($data['disposition'])) ? $data['disposition'] : null;
         $this->accountcode     = (isset($data['accountcode'])) ? $data['accountcode'] : null;
         $this->uniqueid     = (isset($data['uniqueid'])) ? $data['uniqueid'] : null;
-        $this->recordedname     = (isset($data['recordedname'])) ? $data['recordedname'] : null;
+        $this->userfield     = (isset($data['userfield'])) ? $data['userfield'] : null;
         $this->peeraccount     = (isset($data['peeraccount'])) ? $data['peeraccount'] : null;
         $this->linkedid     = (isset($data['linkedid'])) ? $data['linkedid'] : null;
         $this->sequence     = (isset($data['sequence'])) ? $data['sequence'] : null;

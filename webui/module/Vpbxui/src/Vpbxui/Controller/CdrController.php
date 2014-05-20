@@ -249,7 +249,7 @@ class CdrController extends AbstractActionController {
      {
          $id = $this->params('id');        
          $cdr =  $this->getCdrTable()->getCdr($id);
-         $filename = '/var/spool/asterisk/mediarepos/'.$cdr->userfield.'.mp3';
+         $filename = '/var/spool/asterisk/mediarepos/'.$cdr->recordedname.'.mp3';
          $fh = fopen($filename, 'rb'); 
          header('Content-type: audio/mpeg'); 
          header("Content-Length: " . filesize($filename));
@@ -325,7 +325,7 @@ class CdrController extends AbstractActionController {
             	    	if ('1'==$fil)
             	    	{
             	    		$filter->and->equalTo('disposition','ANSWERED');
-            	    		$filter->and->notEqualTo('userfield','');
+            	    		$filter->and->notEqualTo('recordedname','');
             	    	} elseif ('2'==$fil)
             	    	{
             	    		$sql = new Sql($this->getServiceLocator()->get('Zend\Db\Adapter\Adapter'));

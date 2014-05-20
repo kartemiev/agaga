@@ -7,22 +7,26 @@ use PbxAgi\Media\Model\Media;
 use PbxAgi\Service\ClientImpl\ClientImplInterface as CInterface;
 use PbxAgi\AppConfig\Service\AppConfigInterface;
 use PbxAgi\Service\RecordCall\RecordCallServiceInterface;
+use PbxAgi\Cdr\Model\CdrTableInterface;
 
 class RecordCallService implements RecordCallServiceInterface
 {
-
     protected $clientImpl;
-
     protected $fileName;
-
     protected $appConfig;
-
     protected $recordCallService;
+    protected $cdrTable;
 
-    public function __construct(IClient $client, AppConfigInterface $appConfig, RecordCallServiceInterface $recordCallService)
+    public function __construct(
+    		IClient $client, 
+    		AppConfigInterface $appConfig, 
+    		RecordCallServiceInterface $recordCallService, 
+    		CdrTableInterface $cdrTable
+			)
     {
         $this->appConfig = $appConfig;
         $this->clientImpl = $client;
+        $this->cdrTable = $cdrTable;
     }
 
     public function setMonitorOnChannel()
@@ -112,5 +116,9 @@ class RecordCallService implements RecordCallServiceInterface
     {
         $this->appConfig = $appConfig;
         return $this;
+    }
+    public function getTotalRecordedSize()
+    {
+    		
     }
 }
