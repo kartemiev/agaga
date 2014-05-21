@@ -23,14 +23,12 @@ class AppConfigService extends AbstractOptions implements AppConfigInterface
     protected $fileMoveCmd;
     protected $tmpDir;
     protected $peerTechnology;
-    protected $greetingFile;
     protected $pauseAfterGreeting;
     protected $digitsAbortGreeting;
     protected $silenceFile;
     protected $extensionLength;
     protected $greetingWaitBetweenDigits;
     protected $callRecordFileExtension;
-    protected $outgoingTrunkPeers;
     protected $postRecordCommand;
     protected $recordCallMacroName;
     protected $dialSipExtensionContextName;
@@ -265,15 +263,6 @@ class AppConfigService extends AbstractOptions implements AppConfigInterface
         return $this;
     }
 
-    public function getGreetingFile() {
-        return $this->greetingFile;
-    }
-
-    public function setGreetingFile($greetingFile) {
-        $this->greetingFile = $greetingFile;
-        return $this;
-    }
-
     public function getPauseAfterGreeting() {
         return $this->pauseAfterGreeting;
     }
@@ -325,15 +314,6 @@ class AppConfigService extends AbstractOptions implements AppConfigInterface
 
     public function setCallRecordFileExtension($callRecordFileExtension) {
         $this->callRecordFileExtension = $callRecordFileExtension;
-        return $this;
-    }
-
-    public function getOutgoingTrunkPeers() {
-        return $this->outgoingTrunkPeers;
-    }
-
-    public function setOutgoingTrunkPeers($outgoingTrunkPeers) {
-        $this->outgoingTrunkPeers = $outgoingTrunkPeers;
         return $this;
     }
 

@@ -2,6 +2,7 @@
 return array(
     'modules' => array(
         'Maintainer',
+    	'AgiHelper'
     ),
     'module_listener_options' => array(
         'module_paths' => array(

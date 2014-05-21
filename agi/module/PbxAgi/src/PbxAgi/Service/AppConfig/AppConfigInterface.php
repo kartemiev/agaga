@@ -100,10 +100,6 @@ interface AppConfigInterface
 
     function setPeerTechnology($peerTechnology);
 
-    function getGreetingFile();
-    
-    function setGreetingFile($greetingFile);
-
     function getPauseAfterGreeting();
    
     function setPauseAfterGreeting($pauseAfterGreeting);
@@ -127,10 +123,6 @@ interface AppConfigInterface
     function getCallRecordFileExtension();
 
     function setCallRecordFileExtension($callRecordFileExtension);
-
-    function getOutgoingTrunkPeers();
-
-    function setOutgoingTrunkPeers($outgoingTrunkPeers);
 
     function getPostRecordCommand();
 

@@ -6,19 +6,11 @@ return array(
         'file_move_cmd' => 'mv',
         'tmp_dir' => '/tmp',
         'peer_technology' => 'SIP',
-        'greeting_file' => 'nucrf/greetings/nucrfgreeting1',
         'pause_after_greeting' => 3,
         'digits_abort_greeting' => '01234567890',
         'silence_file' => 'silence',
         'extension_length' => 3,
-        'greeting_wait_between_digits' => 3,
-       'outgoing_trunk_peers' => array(
-            'vector-tel' => array(
-                'tech' => 'SIP',
-                'peer' => 'vectortel',
-                'dura' => 60
-            )
-        ),
+        'greeting_wait_between_digits' => 3,  
         'post_record_command' => '/usr/bin/lame -b16 "%s" "/var/spool/asterisk/mediarepos/%s.mp3"',
         'call_centre_context_name' => 'callcentre',
         'recordcall_macro_name' => 'recordcall',

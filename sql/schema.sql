@@ -1706,6 +1706,20 @@ COMMENT ON COLUMN cdr.pstn_num_incoming IS 'номер ТФОП на котор�
 
 
 --
+-- Name: COLUMN cdr.operatorstatus; Type: COMMENT; Schema: public; Owner: nucrf
+--
+
+COMMENT ON COLUMN cdr.operatorstatus IS 'статус оператора';
+
+
+--
+-- Name: COLUMN cdr.backupdate; Type: COMMENT; Schema: public; Owner: nucrf
+--
+
+COMMENT ON COLUMN cdr.backupdate IS 'дата резервного копирования записи переговоров';
+
+
+--
 -- Name: COLUMN cdr.recordedname; Type: COMMENT; Schema: public; Owner: nucrf
 --
 
@@ -3485,6 +3499,51 @@ CREATE TABLE pickupgroup (
 ALTER TABLE public.pickupgroup OWNER TO nucrf;
 
 --
+-- Name: recordedcalls; Type: TABLE; Schema: public; Owner: nucrf; Tablespace: 
+--
+
+CREATE TABLE recordedcalls (
+    id integer NOT NULL,
+    cdrref bigint,
+    filesize bigint DEFAULT 0 NOT NULL
+);
+
+
+ALTER TABLE public.recordedcalls OWNER TO nucrf;
+
+--
+-- Name: recorded_calls_size; Type: VIEW; Schema: public; Owner: nucrf
+--
+
+CREATE VIEW recorded_calls_size AS
+ SELECT COALESCE((0)::numeric, ( SELECT sum(recordedcalls.filesize) AS sum
+           FROM recordedcalls)) AS total;
+
+
+ALTER TABLE public.recorded_calls_size OWNER TO nucrf;
+
+--
+-- Name: recordedcalls_id_seq; Type: SEQUENCE; Schema: public; Owner: nucrf
+--
+
+CREATE SEQUENCE recordedcalls_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.recordedcalls_id_seq OWNER TO nucrf;
+
+--
+-- Name: recordedcalls_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: nucrf
+--
+
+ALTER SEQUENCE recordedcalls_id_seq OWNED BY recordedcalls.id;
+
+
+--
 -- Name: regentries; Type: TABLE; Schema: public; Owner: nucrf; Tablespace: 
 --
 
@@ -4038,6 +4097,13 @@ ALTER TABLE ONLY number_match ALTER COLUMN id SET DEFAULT nextval('number_match_
 --
 
 ALTER TABLE ONLY operator_status_log ALTER COLUMN id SET DEFAULT nextval('operator_status_log_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: nucrf
+--
+
+ALTER TABLE ONLY recordedcalls ALTER COLUMN id SET DEFAULT nextval('recordedcalls_id_seq'::regclass);
 
 
 --
@@ -35470,6 +35536,21 @@ SELECT pg_catalog.setval('pickupgroup_name_serial', 13, true);
 
 
 --
+-- Data for Name: recordedcalls; Type: TABLE DATA; Schema: public; Owner: nucrf
+--
+
+COPY recordedcalls (id, cdrref, filesize) FROM stdin;
+\.
+
+
+--
+-- Name: recordedcalls_id_seq; Type: SEQUENCE SET; Schema: public; Owner: nucrf
+--
+
+SELECT pg_catalog.setval('recordedcalls_id_seq', 1, false);
+
+
+--
 -- Data for Name: regentries; Type: TABLE DATA; Schema: public; Owner: nucrf
 --
 
@@ -36234,6 +36315,14 @@ ALTER TABLE ONLY pickupgroup
 
 
 --
+-- Name: recordedcalls_pkey; Type: CONSTRAINT; Schema: public; Owner: nucrf; Tablespace: 
+--
+
+ALTER TABLE ONLY recordedcalls
+    ADD CONSTRAINT recordedcalls_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: regentries_pkey; Type: CONSTRAINT; Schema: public; Owner: nucrf; Tablespace: 
 --
 
@@ -36577,6 +36666,14 @@ ALTER TABLE ONLY pbx_settings
 
 ALTER TABLE ONLY pbx_settings
     ADD CONSTRAINT mediarepos_ringingtone_fk FOREIGN KEY (ringingtone) REFERENCES mediarepos(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: recordedcalls_cdrref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: nucrf
+--
+
+ALTER TABLE ONLY recordedcalls
+    ADD CONSTRAINT recordedcalls_cdrref_fkey FOREIGN KEY (cdrref) REFERENCES cdr(id) ON DELETE CASCADE;
 
 
 --
