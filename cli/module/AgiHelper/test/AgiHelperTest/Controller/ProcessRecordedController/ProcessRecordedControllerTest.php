@@ -72,7 +72,7 @@ class ProcessRecordedControllerTest extends AbstractControllerTestCase
          										->with('1234567890')
                                                 ->will($this->returnValue(null));
          $mockedRecordedCallCommands->expects($this->once())->method('cleanUp')
-         									    ->will($this->returnValue(null));
+         									    ->will($this->returnValue(true));
 
          $mockedRecordedCallCommands->expects($this->once())->method('getDstFileSize')
          										->will($this->returnValue(10241024));

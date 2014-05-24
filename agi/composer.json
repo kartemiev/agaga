@@ -20,7 +20,8 @@
                 "zendframework/zendframework" : "2.*"
  	},
 	"require-dev" : {
-		"phpunit/phpunit" : "*"
+		"phpunit/phpunit" : "*",
+		"mockery/mockery": "dev-master"
 	},
     "repositories": [
     {

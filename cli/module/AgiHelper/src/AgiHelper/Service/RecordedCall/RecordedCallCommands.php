@@ -19,6 +19,7 @@ class RecordedCallCommands implements RecordedCallCommandsInterface
 		$dstFileName = $appConfig->getMediareposDir().'/'.$filename.'.mp3';
 		$returnCode = exec(sprintf($appConfig->getMediaConverterPath().' -b16 "%s" "%s"', $this->srcMedia, $dstFileName));				 
 		$this->dstFileSize = filesize($dstFileName);
+		return true;
 	}
 	public function cleanUp()
 	{
