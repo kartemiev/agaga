@@ -1,4 +1,3 @@
-
 #!/bin/sh
 
 AGAGA_INSTALL_DIR="/usr/local/agaga"

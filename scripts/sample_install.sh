@@ -4,29 +4,11 @@
 MY_DIR=$(dirname $(readlink -f $0))
 $MY_DIR/include/path_variables.sh
 
-# создаем схему БД AGAGA
-postgres -U agaga -W agaga <${MY_DIR}/../sql/schema.sql
 
-# копируем AGAGA в директорию инсталляции
-mkdir ${AGAGA_INSTALL_DIR}
-cp -r ../* ${AGAGA_INSTALL_DIR}
-chown -R asterisk:asterisk ${AGAGA_INSTALL_DIR}/agi
-chown www-data:www-data ${AGAGA_INSTALL_DIR}/webui
+${MY_DIR}/include/agaga/move_targetdir.sh
+${MY_DIR}/include/agaga/install_php_dependecies.sh
+${MY_DIR}/include/db/create_schema.sh
+${MY_DIR}/include/asterisk/symlink_asterconfig.sh
+${MY_DIR/}include/asterisk/create_permissions.sh
+${MY_DIR}/include/apache/create_permissions.sh
 
-
-# создаем директории необходимые для функционирования Asterisk
-sh ../agi/install/asterisk_create_directories_permissions.sh
-
-
-# устанавливаем модули-зависимости для основного ПО через композитор
-# модуль AGI
-cd ${AGAGA_INSTALL_DIR}/agi
-php composer.phar install
-# модуль веб-интерфейса
-cd ${AGAGA_INSTALL_DIR}/webui
-php composer.phar install
-# модуль cli/cron
-cd ${AGAGA_INSTALL_DIR}/cli
-php composer.phar install
-
-$MY_DIR/include/symlink_asterconfig.sh
