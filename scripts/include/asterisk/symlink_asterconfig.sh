@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 $MY_DIR/include/path_variables.sh
 

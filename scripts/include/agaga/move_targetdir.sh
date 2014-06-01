@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # копируем AGAGA в директорию инсталляции
 mkdir ${AGAGA_INSTALL_DIR}

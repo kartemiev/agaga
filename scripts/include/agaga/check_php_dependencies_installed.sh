@@ -1,0 +1,36 @@
+#!/bin/bash
+
+. $MY_DIR/include/path_variables.sh
+
+AGAGA_AGI_VENDOR_DIR="${AGAGA_INSTALL_DIR}/agi/vendor"
+AGAGA_WEBUI_VENDOR_DIR="${AGAGA_INSTALL_DIR}/webui/vendor"
+AGAGA_CLI_VENDOR_DIR="${AGAGA_INSTALL_DIR}/cli/vendor"
+
+if [ -d "${AGAGA_AGI_VENDOR_DIR}" ]; then
+AGAGA_AGI_DEPENDECIES_INSTALLED="yes"
+else
+AGAGA_AGI_DEPENDECIES_INSTALLED="no"
+fi
+
+if [ -d "${AGAGA_WEBUI_VENDOR_DIR}" ]; then
+AGAGA_WEBUI_DEPENDECIES_INSTALLED="yes"
+else
+AGAGA_WEBUI_DEPENDECIES_INSTALLED="no"
+fi
+
+if [ -d "${AGAGA_CLI_VENDOR_DIR}" ]; then
+AGAGA_CLI_DEPENDECIES_INSTALLED="yes"
+else
+AGAGA_CLI_DEPENDECIES_INSTALLED="no"
+fi
+
+echo "зависимости модуля AGI установлены - ${AGAGA_AGI_DEPENDECIES_INSTALLED}"
+echo "зависимости модуля веб-интерфейса установлены - ${AGAGA_WEBUI_DEPENDECIES_INSTALLED}"
+echo "зависимости модуля cli установлены - ${AGAGA_CLI_DEPENDECIES_INSTALLED}"
+
+ 
+if [[("$AGAGA_AGI_DEPENDECIES_INSTALLED" = "yes" && "$AGAGA_WEBUI_DEPENDECIES_INSTALLED" = "yes" &&  "$AGAGA_CLI_DEPENDECIES_INSTALLED" = "yes")]]; then
+    AGAGA_PHP_DEPENDENCIES_SATISFIED="yes"
+else
+    AGAGA_PHP_DEPENDENCIES_SATISFIED="no"
+fi
