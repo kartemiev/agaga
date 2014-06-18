@@ -49,6 +49,15 @@ then
     ${MY_DIR/}include/asterisk/create_permissions.sh
 fi
 
+read -p "Скопировать конфигурацию Apache [yY/N]? " -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+${MY_DIR/}include/apache/bootstrap_conf.sh
+${MY_DIR/}include/apache/restart_apache.sh
+fi
+
+
 
 echo Инсталляция завершена
 
