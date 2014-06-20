@@ -2,7 +2,7 @@
 
 $MY_DIR/include/path_variables.sh
 
-rm -rf ${ASTERISK_CONFIG_DIR}/*                                    # удаляем файлы примеров конфигурации Астериска, оставшиеся после начальной инсталляции Астериск
+#rm -rf ${ASTERISK_CONFIG_DIR}/*                                    # удаляем файлы примеров конфигурации Астериска, оставшиеся после начальной инсталляции Астериск
 
 ln -s ${AGAGA_INSTALL_DIR}/asterisk/acl.conf ${ASTERISK_CONFIG_DIR}/acl.conf
 ln -s ${AGAGA_INSTALL_DIR}/asterisk/asterisk.conf ${ASTERISK_CONFIG_DIR}/asterisk.conf

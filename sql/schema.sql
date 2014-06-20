@@ -36773,12 +36773,12 @@ ALTER TABLE ONLY cdr
 
 
 --
--- Name: public; Type: ACL; Schema: -; Owner: kartemiev
+-- Name: public; Type: ACL; Schema: -; Owner: agaga
 --
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM kartemiev;
-GRANT ALL ON SCHEMA public TO kartemiev;
+REVOKE ALL ON SCHEMA public FROM agaga;
+GRANT ALL ON SCHEMA public TO agaga;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
