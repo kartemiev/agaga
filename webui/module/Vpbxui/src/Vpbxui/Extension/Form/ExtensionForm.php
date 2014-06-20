@@ -73,7 +73,7 @@ class ExtensionForm extends Form {
     	    'attributes' =>  array(
     	        'id' => 'extension',
       	        'options' => $freeExts,
-    	        'title'=>'номер АТС в системе нумерации Национального Удостоверяющего Центра',
+    	        'title'=>'номер АТС во внутренней системе нумерации',
     	    ),
     	    'options' => array(
     	        'label' => 'внутренний номер',

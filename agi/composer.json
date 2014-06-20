@@ -1,6 +1,6 @@
 {
-	"name" : "Virtual PBX for NUCRF pbx agi",
-	"description" : "Проект виртульной АТС для Национального Удостоверяющего Центра - ядро управления софтсвитчом Астериск",
+	"name" : "IP PBX AGAGA agi",
+	"description" : "Проект IP-АТС AGAGA - ядро управления софтсвитчом Астериск",
 	"authors" : [{
 			"name" : "Konstantin Artemiev",
 			"email" : "kartemiev@gmail.com",

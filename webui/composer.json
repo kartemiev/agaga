@@ -1,6 +1,6 @@
 {
        "name" : "Virtual PBX for NUCRF - webui",
-       "description" : "Проект виртульной АТС для Национального Удостоверяющего центра",
+       "description" : "Проект IP-АТС AGAGA - веб-интерфейс",
        "version" : "1.0.0-dev",
        "keywords" : [
                "framework",
