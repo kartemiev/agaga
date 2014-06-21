@@ -12,11 +12,10 @@ class FreeExtensionTable {
     	$this->tableGateway = $tableGateway;
     }
     
-    public function fetchAll($filter=null,$limit=null)
+    public function fetchAll()
     {
-    	$resultSet = $this->tableGateway->select(function (Select $select,$limit) {
+    	$resultSet = $this->tableGateway->select(function (Select $select) {
      $select->order('ext ASC');
-   //  $select->limit($limit);
     });
             $resultSet->buffer();
 

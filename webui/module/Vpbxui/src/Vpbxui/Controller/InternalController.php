@@ -341,7 +341,7 @@ class InternalController extends AbstractActionController  {
     {
         $name = $form->get('name');
         $freeExtensionTable = $this->getFreeExtensionTable();
-        $nextFreeExtensions = $freeExtensionTable->fetchAll(null,1);
+        $nextFreeExtensions = $freeExtensionTable->fetchAll();
         $nextFreeExtension = $nextFreeExtensions->current()->ext;
         $name->setValue($nextFreeExtension);
         
