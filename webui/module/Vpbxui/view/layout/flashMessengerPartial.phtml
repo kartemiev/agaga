@@ -3,6 +3,8 @@ $children = $viewmodel
 ->getCurrent()
 ->getChildren();
 
+
+if (isset($children[0])):
 $ourView  = $children[0];
 
 if (isset($ourView->flashMessages) && count($ourView->flashMessages)) : ?>
@@ -18,5 +20,5 @@ $(function(){
     <?php endforeach; ?>
 });
 </script>
-    
+<?php endif; ?>    
 <?php endif; ?>
