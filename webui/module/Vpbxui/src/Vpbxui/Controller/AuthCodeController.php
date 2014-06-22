@@ -5,6 +5,7 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Vpbxui\AuthCode\Model\AuthCodeTableInterface;
 use Vpbxui\AuthCode\Form\AuthCodeForm;
 use Vpbxui\AuthCode\Model\AuthCode;
+use Zend\Db\Sql\Where;
  
  
 class AuthCodeController extends AbstractActionController
@@ -16,6 +17,9 @@ class AuthCodeController extends AbstractActionController
 	}
  	public function indexAction()
 	{
+		$filter = new Where();
+		$filter->equalTo('', $right);
+		
 		$authcodes =  $this->authCodeTable->fetchAll();
 							 
 		return new ViewModel(array(

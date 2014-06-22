@@ -23,12 +23,9 @@ class Module
 {
     protected $whitelist = array('zfcuser/login','home','createconference');
     public function onBootstrap(MvcEvent $e)
-    {    
-        setlocale(LC_ALL, 'ru_RU.UTF-8');
-                
+    {                    
         $sm = $e->getApplication()->getServiceManager();
  
-        // Add ACL information to the Navigation view helper
         $authorize = $sm->get('BjyAuthorize\Service\Authorize');
         $acl = $authorize->getAcl();
         $role = $authorize->getIdentity();
@@ -42,20 +39,7 @@ class Module
         $events = $eventManager->getSharedManager();
         
         
-        $events->attach('Zend\Mvc\Application','dispatch', function($e) {         
-         $baseUrl = $e->getRouter()->getBaseUrl();
-        $renderer = $e->getApplication()->getServiceManager()->get('Zend\View\Renderer\PhpRenderer');
-
-        $action = $e->getRouteMatch()->getParam('action');
-        $controller = $e->getRouteMatch()->getParam('controller');
-        
-        if (strlen($controller) > 0 and 'Vpbxui\Controller\Internal' == $controller)
-        {
-            $renderer->headScript()->appendFile($baseUrl . '/js/jquery.zclip.min.js');
-            $renderer->headScript()->appendFile($baseUrl . '/js/internal.js');            
-        }
-        });
-        
+         
            $events->attach('ZfcUser\Form\Login','init', function($e) {
         	$form = $e->getTarget();
         	$form->get('identity')->setLabel('адрес электронной почты');
@@ -138,7 +122,7 @@ class Module
             	return $response;
             }, -100);
     }
-    
+  
      public function setVariableToLayout($event)
 {
     $viewModel = $event->getViewModel();
@@ -168,6 +152,7 @@ class Module
                $flashMessenger->setNamespace('zfcuser-login-form')->addMessage('для доступа необходима авторизация');
                });
     }
+    
     public function getAutoloaderConfig()
     {
         return array(
@@ -184,6 +169,7 @@ class Module
             'invokables'=> array(
                 'Vpbxui\Service\PasswordGen\PasswordGen' => 'Vpbxui\Service\PasswordGen\PasswordGen',
             	'Vpbxui\DateTime'=>'\DateTime',
+            	'Vpbxui\Service\VpbxContainer'=>'Vpbxui\Service\VpbxContainer'
             ),
         'factories' => array(
             'translator' => 'Zend\I18n\Translator\TranslatorServiceFactory',

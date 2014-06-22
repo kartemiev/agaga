@@ -184,13 +184,13 @@ function deleteFieldSetElement(element)
 	selects = $('input:regex(name,numbers\\['+matches[1]+'\\]\\[\\w+\\])');
 	selects.next('div').remove();
 	selects.remove();
-	console.log($('#numbersfieldset'));
 }
 
     function add_category() {     
         var currentCount = $('.numbersetmarkup').length;
-        var template = $('#numbersfieldset>span').data('template');
-         template = template.replace(/\[numbers\]/g, '['+currentCount+']');
+         var template = $('#numbersfieldset fieldset span').data('template');
+
+        template = template.replace(/\[numbers\]/g, '['+currentCount+']');
        var templateElement = $('#newnumbersfieldset').append(template);
 		$(templateElement.find('.deletebutton').click(
 				function(){
@@ -204,7 +204,6 @@ function deleteFieldSetElement(element)
     }
 function add_trunk() {     
 	var currentCount = $('.trunksetmarkup').length;
-	console.log(currentCount);
 	var template = $('#trunksfieldset>span').data('template');
 	template = template.replace(/\[markupplaceholder\]/g, '['+currentCount+']');
 	var templateElement = $('#newtrunkfieldset').append(template);
@@ -217,7 +216,6 @@ function add_trunk() {
 }
 function add_regentry() {     
 var currentCount = $('.regentrysetmarkup').length;
-console.log(currentCount);
 var template = $('#regentriesfieldset>span').data('template');
 template = template.replace(/\[markupplaceholder\]/g, '['+currentCount+']');
 var templateElement = $('#newregentriesfieldset').append(template);
@@ -231,7 +229,6 @@ var templateElement = $('#newregentriesfieldset').append(template);
 
 function add_destination() {     
 var currentCount = $('.destinationsetmarkup').length;
-console.log(currentCount);
 var template = $('#destinationsfieldset>span').data('template');
 template = template.replace(/\[markupplaceholder\]/g, '['+currentCount+']');
 var templateElement = $('#newdestinationsfieldset').append(template);
@@ -306,10 +303,8 @@ $('.subfieldsetshuffle-control').change(
  			}
 		);
 $('#cleartrunks').click(function(){
-		console.log($('#newtrunkfieldset'));
 		$('#newtrunkfieldset').empty();
 		selects = $('input:regex(name,trunks\\w+)');
-		console.log(selects.prev().remove());
 		selects.remove();
 	}	
   );
@@ -350,7 +345,6 @@ $('.togglecontainer-exclusive').change(function(event)
 	{
 		var target = event.target; 		
  		var elemExclId = $(target).data('togglecontainer-mutuallyexclusive');
- 		console.log($('#'+elemExclId).parent().closest('.mutuallyexclusivecontainer').toggle());
   		$(elemExclId).closest('.mutuallyexclusivecontainer').toggle();
  
  	});

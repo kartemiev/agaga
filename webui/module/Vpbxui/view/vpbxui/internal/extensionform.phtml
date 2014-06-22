@@ -1,5 +1,11 @@
 <a href="#bottom"><sup>вниз</sup></a>
 <?php
+
+$this->headScript()->appendFile('/js/jquery.zclip.min.js');
+$this->headScript()->appendFile('/js/internal.js');
+$this->headScript()->appendFile('/js/bootstrap-slider.js');
+$this->headStyle()->appendStyle('/css/slider.css');
+
 $formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
 
 $formRenderer->prepare();

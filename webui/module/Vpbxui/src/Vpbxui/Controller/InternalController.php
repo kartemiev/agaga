@@ -12,6 +12,7 @@ use Vpbxui\OperatorStatusLog\Model\OperatorStatusLogTableInterface;
 use Vpbxui\Extension\Model\ExtensionTableInterface;
 use Zend\View\Model\JsonModel;
 use Vpbxui\CallDestination\Model\CallDestination;
+use Zend\Mvc\MvcEvent;
 
 /**
  * InternalController
@@ -32,7 +33,7 @@ class InternalController extends AbstractActionController  {
     const SIP_NEWEXTEN_DEFAULT_DENY = '0.0.0.0/0.0.0.0';
     const SIP_NEWEXTEN_DEFAULT_PERMIT = '192.168.6.0/255.255.255.0';
     const SIP_DEFAULT_NUM_LINES = 30;
-        public function indexAction()
+         public function indexAction()
     {
         $select = new Select();
         $select->order('extension ASC');
@@ -99,6 +100,8 @@ class InternalController extends AbstractActionController  {
             	 ->setValue('5');      
            $this->extensionAddSetDefaultFormValues($form);      
         }        
+
+         
         
          return array('form' => $form,
             'flashMessages' => $this->flashMessenger()->getMessages(),     
@@ -145,26 +148,9 @@ class InternalController extends AbstractActionController  {
         $navigation = $this->getServiceLocator()->get('Navigation');
         $page = $navigation->findBy('id', 'internal'.($extension->id));
         $page->setActive();
-/*        $page->addPage(array(
-            'uri' => $this->getRequest()->getRequestUri(),//current page URI
-            'label' => (string)$extension->extension,//<<<<< product name
-            'active' => true,
-            'pages'=>array()
-        ));*/
-        
         
         $sm = $this->getServiceLocator();
         $form = $this->getExtensionForm();
-        
- 
-          $this
-        ->getServiceLocator()
-        ->get('viewhelpermanager')
-        ->get('HeadScript')
-        ->appendFile('/js/bootstrap-slider.js')
-        ;
-        $headLink = $this->getServiceLocator()->get('viewhelpermanager')->get('headLink');
-        $headLink->appendStylesheet('/css/slider.css');      
         
         $form->bind($extension);
          $form->get('actions')
@@ -176,18 +162,13 @@ class InternalController extends AbstractActionController  {
         
         $extensionElement = $form->get('extension');
         $extensionElement->setAttribute('disabled', 'disabled');
-   //     $extensionTypeElement = $form->get('extensiontype');
-   //     $extensionTypeElement->setAttribute('disabled', 'disabled');
                 
         $options = $extensionElement->getValueOptions();
         $options[$extension->extension] = $extension->extension;
         ksort($options, SORT_NUMERIC);
-//        $options[$extension->extension]=$extension->extension;
-//        $options  = array_merge($options, $extensionElement->getAttribute('options'));
         
         $extensionElement->setAttribute('options', $options);
 
-        //$extensionElement->setAttribute('disabled', 'disabled');
         $request = $this->getRequest();
         if ($request->isPost()) {
             $form->setInputFilter($extension->getInputFilter());
@@ -195,14 +176,10 @@ class InternalController extends AbstractActionController  {
 
             if ($form->isValid()) {
                 $this->getExtensionTable()->saveExtension($form->getData());
-
                 $this->saveCallDestinations($id, $form);
-                
                 $peerName = $form->getData()->name;
                  $this->prunePeer($peerName);
-                // Redirect to list of albums
                  $this->flashMessenger()->addMessage('Настройки для '.$form->getData()->extension.' сохранены');
-                                   
                  $this->redirect()->toRoute('vpbxui/internal',$this->getQuery());
             }
         }
@@ -211,6 +188,7 @@ class InternalController extends AbstractActionController  {
         	$this->populateCallDestinationFieldset($id);        	 
         }
 
+         
         return array(
             'id' => $id,
             'form' => $form,
@@ -242,7 +220,6 @@ class InternalController extends AbstractActionController  {
                         $this->prunePeer($peerName);
     		}
     
-    		// Redirect to list of albums
     		return $this->redirect()->toRoute('vpbxui/internal',$this->getQuery());
     	}
     

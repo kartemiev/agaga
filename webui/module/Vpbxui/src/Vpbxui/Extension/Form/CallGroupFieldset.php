@@ -13,8 +13,6 @@ class CallGroupFieldset extends Fieldset
         $this->setHydrator(new ClassMethodsHydrator(false))
              ->setObject(new CallDestination());
 
-//        $this->setLabel('Номера');
-
          
         $this->add(array(
             'name' => 'number',
@@ -22,7 +20,6 @@ class CallGroupFieldset extends Fieldset
              		
              ),
             'attributes' => array(
-             //   'required' => 'required'
             )
         ));
         

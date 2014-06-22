@@ -7,6 +7,6 @@ interface AuthCodeTableInterface
 {
    function getAuthCodeById($id);
    function saveAuthCode(AuthCode $authCode);
-   function fetchAll($select, $filter,$orderseq);
+   function fetchAll($filter = null,$orderseq = null);
    function deleteAuthCode($id);
 }
