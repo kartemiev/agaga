@@ -6,23 +6,30 @@ use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 use Zend\Db\Sql\Expression;
 use Vpbxui\Extension\Model\ExtensionTableInterface;
-
+use Zend\Db\Sql\Update;
+use Zend\Db\Sql\Where;
+use Vpbxui\Service\VpbxidProvider\VpbxidProviderInterface;
+ 
 class ExtensionTable implements ExtensionTableInterface {
 
     protected $tableGateway;
-    public function __construct(TableGateway $tableGateway)
+    protected $vpbxidProvider;
+    protected $vpbxid;
+    public function __construct(TableGateway $tableGateway, VpbxidProviderInterface $vpbxidProvider)
     {
     	$this->tableGateway = $tableGateway;
+    	$this->vpbxidProvider = $vpbxidProvider;
     }
-    
     public function fetchAll($filter=null)
     {
     	$resultSet = $this->tableGateway->select(function (Select $select) {
-     		$select->order('extension ASC');
-     		$select->where(array('peertype'=>'EXTENSION'));
-    		});
-        $resultSet->buffer();
-
+    		$select->where(array('peertype'=>'EXTENSION'));
+    		$this->vpbxidProvider->vpbxFilter($select);    		
+    		$select->order('extension ASC');    		
+     		});
+    		 
+         $resultSet->buffer();
+ 		
     	return $resultSet;
     }
     
@@ -35,6 +42,10 @@ class ExtensionTable implements ExtensionTableInterface {
                 $select->limit($limit);
             }
             $select->columns(array(new Expression('DISTINCT(extension) as extension')));
+
+            $this->vpbxidProvider->vpbxFilter($select);    
+            $sql = $this->tableGateway->getSql();
+            
         });
             $resultSet->buffer();
             
@@ -46,6 +57,7 @@ class ExtensionTable implements ExtensionTableInterface {
         $resultSet = $this->tableGateway->select(function (Select $select) {
             $select->order('extension ASC')->limit(1);
             $select->columns(array(new Expression('DISTINCT(extension) as extension')));
+            $this->vpbxidProvider->vpbxFilter($select);            
         });
         $resultSet->buffer();
     
@@ -55,7 +67,17 @@ class ExtensionTable implements ExtensionTableInterface {
     public function getExtension($id)
     {
     	$id  = (int) $id;
-    	$rowset = $this->tableGateway->select(array('id' => $id));
+    	
+    	$sql = $this->tableGateway->getSql();
+    	$select = $sql->select();
+    	$this->vpbxidProvider->vpbxFilter($select);    	 
+     	 
+    	$select->where->equalTo('id', $id)->AND->equalTo('peertype','EXTENSION');
+    	  
+    	$select->limit(1);
+     	$rowset = $this->tableGateway->selectWith($select);
+     	
+//		var_dump($sql->getSqlstringForSqlObject($select));     	 
     	$row = $rowset->current();
     	if (!$row) {
     		throw new \Exception("Could not find row $id");
@@ -111,13 +133,22 @@ class ExtensionTable implements ExtensionTableInterface {
      
     	$data['routeref']=($extension->routeref)?$extension->routeref:null;
      
+    	$vpbxid = $this->vpbxidProvider->getVpbxId();
+    	$data['vpbxid'] = ($this->vpbxidProvider->isSuperuser())?$extension->vpbxid:$vpbxid;
+    	
      	$id = (int)$extension->id;
     	if ($id == 0) {
+    		$data['vpbxid']=$vpbxid;
     		$this->tableGateway->insert($data);
     		$return = $this->tableGateway->getLastInsertValue();
     	} else {
     		if ($this->getExtension($id)) {
-    			$this->tableGateway->update($data, array('id' => $id));
+    			$sql = $this->tableGateway->getSql();
+    			$update = $sql->select();
+    			$update->where->equalTo('id', $id)->AND->equalTo('peertype', 'EXTENSION');
+    			$this->vpbxidProvider->vpbxFilter($update);
+     			$this->tableGateway->update($data, array('id'=>$id));
+     			
     		} else {
     			throw new \Exception('Form id does not exist');
     		}
@@ -127,17 +158,21 @@ class ExtensionTable implements ExtensionTableInterface {
     
     public function deleteExtension($id)
     {
+    	$sql = $this->tableGateway->getSql();
+    	$select = $sql->select();
+    	$select->where->equalTo('id',$id)
+    			->AND->equalTo('peertype', 'EXTENSION');
+    	$this->vpbxidProvider->vpbxFilter($select);
     	$this->tableGateway->delete(array('id' => $id));
     }
     public function getOperatorList()
     {
-        $orderseq = 'extension ASC';
-        $filter = array("extensiontype='operator'");
-       	$resultSet = $this->tableGateway->select(function (Select $select) use ($filter,$orderseq) {
-     $select->where($filter);
-       $select->order($orderseq);
+       	$resultSet = $this->tableGateway->select(function (Select $select)  {
+     		$select->where->equalTo('extensiontype','operator');
+     		$this->vpbxidProvider->vpbxFilter($select);
+       		$select->order('extension ASC');
      });
  
     	return $resultSet;
-    }
-}
+    }    
+ }

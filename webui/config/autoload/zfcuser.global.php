@@ -20,8 +20,8 @@ $settings = array(
      * Name of Entity class to use. Useful for using your own entity class
      * instead of the default one provided. Default is ZfcUser\Entity\User.
      */
-    //'user_entity_class' => 'ZfcUser\Entity\User',
-
+    'user_entity_class' => 'Vpbxui\Entity\User',
+		
     /**
      * Enable registration
      *

@@ -103,8 +103,7 @@ class Module
             
             	// User is authenticated
             	if ($auth->hasIdentity()) {
-            	    
-            		return;
+             		return;
             	}
             
             	// Redirect to the user login page, as an example
@@ -280,7 +279,10 @@ class Module
         	'Vpbxui\CallCentreSchedule\Model\TimeSpotTable' => 'Vpbxui\CallCentreSchedule\Model\TimeSpotTableFactory',
         	'Vpbxui\CallCentreSchedule\Model\TimeSpotTableGateway' => 'Vpbxui\CallCentreSchedule\Model\TimeSpotTableGatewayFactory',
         	'Vpbxui\AuthCode\Model\AuthCodeTable'=> 'Vpbxui\AuthCode\Model\AuthCodeTableFactory',
-        	'Vpbxui\AuthCode\Model\AuthCodeTableGateway' => 'Vpbxui\AuthCode\Model\AuthCodeTableGatewayFactory' 				
+        	'Vpbxui\AuthCode\Model\AuthCodeTableGateway' => 'Vpbxui\AuthCode\Model\AuthCodeTableGatewayFactory', 
+        	'Vpbxui\UserVpbxLinker\Model\UserVpbxLinkerTable'=> 'Vpbxui\UserVpbxLinker\Model\UserVpbxLinkerTableFactory',
+        	'Vpbxui\UserVpbxLinker\Model\UserVpbxLinkerTableGateway'=> 'Vpbxui\UserVpbxLinker\Model\UserVpbxLinkerTableGatewayFactory',
+        	'Vpbxui\Service\VpbxidProvider\VpbxidProvider' => 'Vpbxui\Service\VpbxidProvider\VpbxidProviderFactory'       		
            ),
         'shared'=>array(
         		'navigation'=>'false',

@@ -57,6 +57,8 @@ class Extension implements InputFilterAwareInterface
     public $routeref;
     public $extensionrecord;
     
+    public $vpbxid;
+    
     protected  $dbAdapter;    
     protected $inputFilter;                       // <-- Add this variable
     
@@ -116,7 +118,9 @@ class Extension implements InputFilterAwareInterface
         $this->diversion_noanswer_landingtype     = (isset($data['diversion_noanswer_landingtype'])) ? $data['diversion_noanswer_landingtype'] : null;
         $this->diversion_noanswer_duration     = (isset($data['diversion_noanswer_duration'])) ? $data['diversion_noanswer_duration'] : null;       
         $this->extensionrecord = (isset($data['extensionrecord'])) ? $data['extensionrecord'] : null;
-		$this->busylevel = (isset($data['busylevel'])) ? $data['busylevel'] : null;				
+		$this->busylevel = (isset($data['busylevel'])) ? $data['busylevel'] : null;	
+		$this->vpbxid = (isset($data['vpbxid'])) ? $data['vpbxid'] : null;
+		
      }
      
      public function getArrayCopy()
