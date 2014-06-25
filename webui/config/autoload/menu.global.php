@@ -4,7 +4,7 @@
 return array(
     'navigation' => array(
         'default'=>array(
-            
+            /*
             array(
                 'label' => 'телеконференция',
                 'title'=>'создание комнат телеконференций',
@@ -13,6 +13,7 @@ return array(
                 'resource'   => 'mvc:conferencecreate.vpbxui', // resource
                 'controller' => 'Vpbxui\Controller\ConferenceBooking',
              ),
+             */
             'login'=> array(
             		'label'=>'вход',
                 'title'=>'вход в защищенную область',
@@ -24,7 +25,18 @@ return array(
                     'resource'   => 'mvc:login.vpbxui', // resource
             		'visible'    => true, // not visible                        
             ),
-            
+
+        		'registerpbx'=> array(
+        				'label'=>'регистрация',
+        				'title'=>'регистрация IP АТС',
+        		
+        				'route'=>'vpbxui/registerpbx',
+        				'module'     => 'vpbxui',
+        				'controller' => 'Vpbxui\Controller\RegisterPbx',
+        				'action'     => 'index',
+        				'resource'   => 'mvc:registerpbx.vpbxui',
+        				'visible'    => true,
+        		),
              
          'internal' => array(
              'id'=>'internal',

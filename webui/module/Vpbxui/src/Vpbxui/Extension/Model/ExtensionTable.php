@@ -23,7 +23,7 @@ class ExtensionTable implements ExtensionTableInterface {
     public function fetchAll($filter=null)
     {
     	$resultSet = $this->tableGateway->select(function (Select $select) {
-    		$select->where(array('peertype'=>'EXTENSION'));
+    		$select->where->equalTo('peertype','EXTENSION');
     		$this->vpbxidProvider->vpbxFilter($select);    		
     		$select->order('extension ASC');    		
      		});
@@ -143,11 +143,8 @@ class ExtensionTable implements ExtensionTableInterface {
     		$return = $this->tableGateway->getLastInsertValue();
     	} else {
     		if ($this->getExtension($id)) {
-    			$sql = $this->tableGateway->getSql();
-    			$update = $sql->select();
-    			$update->where->equalTo('id', $id)->AND->equalTo('peertype', 'EXTENSION');
-    			$this->vpbxidProvider->vpbxFilter($update);
-     			$this->tableGateway->update($data, array('id'=>$id));
+    			$filter = array('id'=>$id,'peertype'=>'EXTENSION','vpbxid'=>$vpbxid);   		
+     			$this->tableGateway->update($data,$filter);
      			
     		} else {
     			throw new \Exception('Form id does not exist');

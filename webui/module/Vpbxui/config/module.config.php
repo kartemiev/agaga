@@ -43,6 +43,7 @@ return array(
                             ),
                         ),
                     ),
+                	
                     'authenticate' => array(
                         'type' => 'Literal',
                         'options' => array(
@@ -123,6 +124,17 @@ return array(
                 ),
                 'may_terminate' => true,
                 'child_routes' => array(
+                		'registerpbx' => array(
+                				'type' => 'Literal',
+                				'options' => array(
+                						'route' => '/registerpbx',
+                						'defaults' => array(
+                								'controller' => 'Vpbxui\Controller\RegisterPbx',
+                								'action'     => 'index',
+                						),
+                				),
+                				'may_terminate'=>true
+                		),
                 'internal' => array(
                 		'type'    => 'segment',
                 		'options' => array(

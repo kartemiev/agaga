@@ -41,7 +41,9 @@ return array(
                     'mvc:callcentrestatsgeneral.vpbxui',
                     'mvc:callcentrestatsoperators.vpbxui',
                     'mvc:callcentreinternaloperators.vpbxui',
-                    'mvc:callcentresettings.vpbxui',                               
+                    'mvc:callcentresettings.vpbxui',        
+                    		'mvc:registerpbx.vpbxui'
+                    		
                   ),  
                   'mvc:trunks.vpbxui'  => array(), 
                  'mvc:stats.vpbxui'  => array(),                
@@ -67,7 +69,7 @@ return array(
                 'mvc:conferencecreate.vpbxui',
             	'mvc:settingscallcentre.vpbxui',
             	'mvc:callcentreschedule.vpbxui',		  
-            	'mvc:asterreboot.vpbxui'              
+            	'mvc:asterreboot.vpbxui',     
             ),
         ),
 
@@ -82,7 +84,9 @@ return array(
                     array(array('guest'), 'mvc:conferencecreate.vpbxui',
                     
                     ),
-                     
+                		array(array('guest'), 'mvc:registerpbx.vpbxui',
+                		
+                		),
                     array(array('admin'), 
                         'mvc:internalnumber.vpbxui',                   
                      ),                
@@ -213,7 +217,9 @@ return array(
             'BjyAuthorize\Guard\Controller' => array(
                  array(
                     'controller' => array('zfcuser','Vpbxui\Controller\Index',
-                    'Vpbxui\Controller\ConferenceBooking'
+                    'Vpbxui\Controller\ConferenceBooking',
+                    'Vpbxui\Controller\RegisterPbx'
+                    		
                     ),
                      'roles' => array('guest')
                 ), 
@@ -252,7 +258,7 @@ return array(
                     	'Vpbxui\Controller\CallCentreSchedule',
                     	'Vpbxui\Controller\AuthCode',
                         'zfcuseradmin',
-                        'zfcuser'
+                        'zfcuser'                    		
                         ),
                      'roles' => array('admin')
                 ),                
@@ -272,7 +278,7 @@ return array(
                         'Vpbxui\Controller\PickupGroup',                        
                     	'Vpbxui\Controller\FaxUser',      
                     	'Vpbxui\Controller\CallCentreSettings',
-                    	'Vpbxui\Controller\CallCentreSchedule',                    		
+                    	'Vpbxui\Controller\CallCentreSchedule',                      		
                         'zfcuser'
                         ),
                     'action' => array('index','search','logout','groups'),
@@ -314,6 +320,8 @@ return array(
                 array(
                     'controller' => array(
                         'Vpbxui\Controller\Index',
+                    		'Vpbxui\Controller\RegisterPbx'
+                    		
                     ),
                      'roles' => array('guest')
                 ),
@@ -322,6 +330,8 @@ return array(
             
             'BjyAuthorize\Guard\Route' => array(
                 array('route' => 'zfcuser/login', 'roles' => array('guest')),
+            	array('route' => 'vpbxui/registerpbx', 'roles' => array('guest')),
+            		
                 array('route' => 'createconference', 'roles' => array('guest')),                
                 array('route' => 'home', 'roles' => array('admin','supervisor','guest')),
                 array('route' => 'vpbxui/default', 'roles' => array('admin','supervisor')),

@@ -21,7 +21,7 @@ use Zend\View\Helper\Navigation;
 
 class Module
 {
-    protected $whitelist = array('zfcuser/login','home','createconference');
+    protected $whitelist = array('zfcuser/login','home','vpbxui/registerpbx','createconference');
     public function onBootstrap(MvcEvent $e)
     {                    
         $sm = $e->getApplication()->getServiceManager();
@@ -334,7 +334,8 @@ class Module
             'Vpbxui\Controller\MediaRepos' => 'Vpbxui\Controller\MediaReposControllerFactory',          
             'Vpbxui\Controller\ConferenceBooking' => 'Vpbxui\Controller\ConferenceBookingControllerFactory',
         	'Vpbxui\Controller\CallCentreSchedule' => 'Vpbxui\Controller\CallCentreScheduleControllerFactory',
-        	'Vpbxui\Controller\AuthCode' =>	 'Vpbxui\Controller\AuthCodeControllerFactory'
+        	'Vpbxui\Controller\AuthCode' =>	 'Vpbxui\Controller\AuthCodeControllerFactory',
+        	'Vpbxui\Controller\RegisterPbx' => 'Vpbxui\Controller\RegisterPbxControllerFactory'
             ),
      );
     }
