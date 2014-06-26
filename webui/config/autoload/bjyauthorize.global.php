@@ -41,8 +41,7 @@ return array(
                     'mvc:callcentrestatsgeneral.vpbxui',
                     'mvc:callcentrestatsoperators.vpbxui',
                     'mvc:callcentreinternaloperators.vpbxui',
-                    'mvc:callcentresettings.vpbxui',        
-                    		'mvc:registerpbx.vpbxui'
+                    'mvc:callcentresettings.vpbxui'       
                     		
                   ),  
                   'mvc:trunks.vpbxui'  => array(), 
@@ -70,6 +69,8 @@ return array(
             	'mvc:settingscallcentre.vpbxui',
             	'mvc:callcentreschedule.vpbxui',		  
             	'mvc:asterreboot.vpbxui',     
+            	'mvc:registerpbx.vpbxui'
+            		
             ),
         ),
 

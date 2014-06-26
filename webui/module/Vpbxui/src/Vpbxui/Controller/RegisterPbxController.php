@@ -92,6 +92,7 @@ class RegisterPbxController extends AbstractActionController
 		
 		$lastId = $this->pbxSettingsTable->savePbxSettings($pbxSettings);		
 		$user->setVpbxid($lastId);
+		
 		$userFinal = $this->userService->getUserMapper()->findByEmail($user->getEmail());
 		$user->setId($userFinal->getId());
 		$this->userService->getUserMapper()->update($user);
