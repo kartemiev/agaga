@@ -1,0 +1,22 @@
+<?php
+// module/Vpbxui/view/cdr/index.phtml
+
+$title = 'выбор номера ';
+$this->headTitle($title);
+?>
+ 
+ <?php 
+ $form = $this->form;
+ 
+  
+ echo $this->form()->openTag($form);
+?> <div class="container">
+  <div id="rowcont" class="row">
+ 
+ </div>
+  </div>
+ <?php
+ echo $this->formRow($form->get('reload'));
+ echo $this->form()->closeTag($form);
+  
+ 

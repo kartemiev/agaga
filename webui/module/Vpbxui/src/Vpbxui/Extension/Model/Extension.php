@@ -22,7 +22,7 @@ class Extension implements InputFilterAwareInterface
     public $extensiontype;
     public $callerid;
     public $operatorstatus;
-     public $extensiongroup;
+    public $extensiongroup;
     public $namedpickupgroup;
     public $namedcallgroup;
     public $outgoingcallspermission;

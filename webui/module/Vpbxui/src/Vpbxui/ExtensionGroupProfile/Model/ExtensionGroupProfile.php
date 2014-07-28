@@ -20,6 +20,7 @@ class ExtensionGroupProfile implements InputFilterAwareInterface
     public $hold;
     public $forwarding;
     public $custdesc;
+    public $vpbxid;
     
     protected $inputFilter;                       // <-- Add this variable
     
@@ -35,6 +36,7 @@ class ExtensionGroupProfile implements InputFilterAwareInterface
         $this->hold     = (isset($data['hold'])) ? $data['hold'] : null;
         $this->forwarding     = (isset($data['forwarding'])) ? $data['forwarding'] : null; 
         $this->custdesc     = (isset($data['custdesc'])) ? $data['custdesc'] : null;        
+        $this->vpbxid      = (isset($data['vpbxid'])) ? $data['vpbxid'] : null;      
      }
      
      public function getArrayCopy()

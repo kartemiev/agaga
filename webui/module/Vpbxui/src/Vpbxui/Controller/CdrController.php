@@ -81,7 +81,7 @@ class CdrController extends AbstractActionController {
              'cdrs' => $cdrs,
                     'page' => $page,
                     'paginator' => $paginator,
-                'order_by' => $order_by,
+                	'order_by' => $order_by,
                     'order' => $order,
                     'scope'=> $scope,
                     'like_by'=>$like_by,

@@ -4,19 +4,23 @@ namespace Vpbxui\ExtensionGroup\Model;
 use Vpbxui\ExtensionGroup\Model\ExtensionGroup;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
+use Vpbxui\Service\VpbxidProvider\VpbxidProviderInterface;
 
 class ExtensionGroupTable {
 
     protected $tableGateway;
-    public function __construct(TableGateway $tableGateway)
+    protected $vpbxidProvider;
+    public function __construct(TableGateway $tableGateway, VpbxidProviderInterface $vpbxidProvider)
     {
     	$this->tableGateway = $tableGateway;
+    	$this->vpbxidProvider = $vpbxidProvider;
     }
     
     public function fetchAll($filter=null)
     {
-    	$resultSet = $this->tableGateway->select($filter,function (Select $select) {
-     $select->order('name ASC');
+    	$resultSet = $this->tableGateway->select(function (Select $select) {
+    	$this->vpbxidProvider->vpbxFilter($select);
+     	$select->order('name ASC');	
     });
             $resultSet->buffer();
 
@@ -25,8 +29,17 @@ class ExtensionGroupTable {
     
     public function getExtensionGroup($id)
     {
-    	$id  = (int) $id;
-    	$rowset = $this->tableGateway->select(array('id' => $id));
+		$id  = (int) $id;
+    	
+    	$sql = $this->tableGateway->getSql();
+    	$select = $sql->select();
+    	$this->vpbxidProvider->vpbxFilter($select);    	 
+     	 
+    	$select->where->equalTo('id', $id);
+    	  
+    	$select->limit(1);
+     	$rowset = $this->tableGateway->selectWith($select);
+     	
     	$row = $rowset->current();
     	if (!$row) {
     		throw new \Exception("Could not find row $id");
@@ -65,11 +78,16 @@ class ExtensionGroupTable {
     		'extensionrecord' => $extensionGroup->extensionrecord
     	);
     	$id = (int)$extensionGroup->id;
+    	$vpbxid = $this->vpbxidProvider->getVpbxId();
+    	$data['vpbxid'] = ($this->vpbxidProvider->isSuperuser())?$extensionGroup->vpbxid:$vpbxid;
+    	 
     	if ($id == 0) {
+    		$data['vpbxid']=$vpbxid;    		
     		$this->tableGateway->insert($data);
     	} else {
+    		
     		if ($this->getExtensionGroup($id)) {
-    			$this->tableGateway->update($data, array('id' => $id));
+    			$this->tableGateway->update($data, array('id' => $id,'vpbxid'=>$vpbxid));
     		} else {
     			throw new \Exception('Form id does not exist');
     		}
@@ -78,7 +96,10 @@ class ExtensionGroupTable {
     
     public function deleteExtensionGroup($id)
     {
-    	$this->tableGateway->delete(array('id' => $id));
-    }
-   
+		$sql = $this->tableGateway->getSql();
+    	$select = $sql->select();
+    	$select->where->equalTo('id',$id);
+    	$this->vpbxidProvider->vpbxFilter($select);
+    	$this->tableGateway->delete(array('id' => $id));    
+    }   
 }

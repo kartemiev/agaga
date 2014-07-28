@@ -3,7 +3,7 @@
             $('.selectpicker').selectpicker({
                 'selectedText': 'cat'
             });
-            $('.slider').slider();
+      //      $('.slider').slider(); ??
             // $('.selectpicker').selectpicker('hide');
         });
 
@@ -374,5 +374,39 @@ $('.togglecontainer-exclusive').change(function(event)
  	);
 }
 );
+
+function reloadPickableDid(){
+ 	 $('#rowcont').append('<div>Ждите, идет загрузка...</div>');
+	 var result = $.ajax({ url: "/pickdid/model", success:
+			function(){
+    		 $('#rowcont').empty();
+				 var responseJson = $.parseJSON(result.responseText);
+				 $.each(responseJson.dids,function(key, did){
+					 var digits;
+					  did.digits.replace(/([\d]{3})([\d]{3})([\d]{4})/g, function($0,$1,$2,$3){
+						 digits = "+7("+$1+")"+$2+"-"+$3;
+					 });
+					 $('#rowcont').append("<span class='pickableradio nopadding span3 offset1'><input name='did' type='radio' value='"+did.id+"'/>"+digits+'</span>'); 
+					 $('.pickableradio').css('cursor','pointer');
+					 $('.pickableradio').click(function(event){
+							$(event.currentTarget).children('input').first().prop( "checked", true );
+
+						});
+				 });
+			 }	 
+			 });
+}
+$(function(){
+ 
+$('.pickableradio').css('cursor','pointer');
+if ($('#pickdid'))
+	{	
+	  reloadPickableDid();
+	  $('#refreshdidsbtn').click(function(){
+		  reloadPickableDid();
+	  });
+	}
+});
+
 
  

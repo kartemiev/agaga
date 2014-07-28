@@ -37,6 +37,7 @@ class ExtensionGroup implements InputFilterAwareInterface
     public $diversion_noanswer_landingtype;
     public $diversion_noanswer_duration;
     public $extensionrecord;
+    public $vpbxid;
     
     
     protected $inputFilter;                       // <-- Add this variable
@@ -69,6 +70,8 @@ class ExtensionGroup implements InputFilterAwareInterface
         $this->diversion_noanswer_duration     = (isset($data['diversion_noanswer_duration'])) ? $data['diversion_noanswer_duration'] : null;
         
         $this->extensionrecord = (isset($data['extensionrecord'])) ? $data['extensionrecord'] : null;
+        $this->vpbxid = (isset($data['vpbxid'])) ? $data['vpbxid'] : null;
+        
         
      }
      

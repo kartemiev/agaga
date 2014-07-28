@@ -10,7 +10,12 @@ class ExtensionGroupTableFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $tableGateway = $serviceLocator->get('Vpbxui\ExtensionGroup\Model\ExtensionGroupTableGateway');
-        $table = new ExtensionGroupTable($tableGateway);
+        $vpbxidProvider = $serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidProvider');
+        
+        $table = new ExtensionGroupTable(
+        		$tableGateway,
+        		$vpbxidProvider
+			);
         return $table;
     }
 }

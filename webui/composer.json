@@ -9,6 +9,13 @@
        "license" : [
                "proprietary license"
        ],
+        "repositories": [{
+    "type": "git",
+    "url":  "ssh://kartemiev@serv-01.vector-tel.ru/home/kartemiev/projects/agagaresapivspcommon.git"
+  },{
+      "type": "pear",
+      "url": "http://pear.apache.org/log4php/"
+    }],
        "require" : {
                "marcelog/pami" : "master-dev",
                "php" : ">=5.4",
@@ -18,15 +25,12 @@
                "zf-commons/zfc-admin" : "*",
                "bjyoungblood/bjy-authorize":"*",
                "silvester/reverse-form": "dev-master",         
-               "php-ffmpeg/php-ffmpeg":"*"
+               "php-ffmpeg/php-ffmpeg":"*",
+               "guzzlehttp/guzzle": "~4.0",
+               	"vectortel/agagavspapicommon":"dev-master"                             
        },
        "require-dev" : {
                "phpunit/phpunit" : "3.7.*",
                "phpunit/php-invoker" : "*"
-       },
-"repositories": [
-    {
-      "type": "pear",
-      "url": "http://pear.apache.org/log4php/"
-    }]
+       }
 }
