@@ -365,3 +365,12 @@ div.frameddiv {
    margin: 0 !important;
 }
   
+.nextform
+{
+	margin: 2em 2em 2em 2em;
+	padding: 2em 2em 2em 2em;
+	width:960px;
+    margin: 0 auto;
+    text-align:left;
+}
+ 

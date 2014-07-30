@@ -1,12 +1,12 @@
 <?php
-namespace Did\FreeDid\Model;
+namespace Did\Vpbx\Model;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;  
 use Did\Gizzle\ApiGateway;
 use Zend\Stdlib\Hydrator\ClassMethods;
 
-class FreeDidTableGatewayFactory implements FactoryInterface
+class VpbxTableGatewayFactory implements FactoryInterface
 {
 	public function createService(ServiceLocatorInterface $serviceLocator)
 	{	 

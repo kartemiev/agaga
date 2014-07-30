@@ -5,6 +5,7 @@ namespace Did\Gizzle;
 use Zend\Stdlib\Hydrator\HydratorInterface;
 use Zend\Http\Response;
 use GuzzleHttp\Client;
+use Zend\Db\ResultSet\ResultSet;
  
 class ApiGateway implements ApiGatewayInterface
 {
@@ -24,17 +25,17 @@ class ApiGateway implements ApiGatewayInterface
   		$this->auth = ($options['auth'])?($options['auth']):array();
 	}
 
-	public function get($id)
+	public function get($id, $options = array())
 	{
 		$client = $this->client;
-		$res = $client->get($this->getUrl().'/'.$id);
+		$res = $client->get($this->getUrl().'/'.$id,array('auth'=>$this->auth,'query'=>$options));
 		$this->result = $res;
 		$this->checkContentType($res);
 		$response = $res->json();
 		$this->checkHttpResultCodes($res, array(Response::STATUS_CODE_200));		
 		$data = $response['data'];		
 		$object = clone $this->arrayObjectPrototype;
-		$this->defaultHydrator->hydrate($data, $object);
+		$object->exchangeArray($data);
 		return $object;
 	}
 	public function getList($options = array())
@@ -48,12 +49,12 @@ class ApiGateway implements ApiGatewayInterface
 		$this->checkContentType($res);
 		$response = $res->json();
 		$this->checkHttpResultCodes($res, array(Response::STATUS_CODE_200));
-		$total = $response['total'];
-		
+		$total = $response['total'];		
 		$data = $response['data'];
-	 
-		
-		return $data;
+		$resultSet = new ResultSet(); 
+		$resultSet->setArrayObjectPrototype($this->arrayObjectPrototype);
+		$resultSet->initialize($data);
+		return $resultSet;
 	}
 	
 	public function create($data)

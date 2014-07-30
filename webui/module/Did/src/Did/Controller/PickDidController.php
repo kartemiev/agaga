@@ -8,6 +8,8 @@ use Zend\Paginator\Paginator;
 use Did\Gizzle\ApiSelect;
 use Did\PickDid\Form\PickDidForm;
 use Zend\View\Model\JsonModel;
+use Did\PickDid\Model\PickDid;
+use Agaga\Entity\Did;
 
 class PickDidController extends AbstractActionController
 {
@@ -18,12 +20,34 @@ class PickDidController extends AbstractActionController
 	}
 	public function indexAction()
 	{
-		$form = new PickDidForm();
- 		
+		$form = new PickDidForm();		
+		$request = $this->getRequest();
+		$pickDid = new PickDid();
+		
+		if ($request->isPost()) {
+			$inputFilter = $pickDid->getInputFilter();
+			$form->setInputFilter($inputFilter);
+			$form->bind($pickDid);
+			$form->setData($request->getPost());
+			if ($form->isValid()) {
+				
+				$did = $this->freeDidTable->getDid($pickDid->id);				
+				
+				if (!$did)
+				{
+					$this->flashMessenger()->addMessage('Извините, выбранный номер был уже занят - показаны другие номера');						
+					return $this->redirect()->toRoute('pickdid');						
+				}
+				
+				
+			}
+		}
+		 		
 		return new ViewModel(
-				array('dids'=>$dids,
+				array(
 						'page'=>$page,
-						'form'=>$form
+						'form'=>$form,
+						'flashMessages'=>$this->flashMessenger()->getMessages()
  				)
 		);
 		return new ViewModel();
@@ -31,14 +55,17 @@ class PickDidController extends AbstractActionController
 	public function modelAction()
 	{
 		$page = $this->params()->fromRoute('page') ? (int) $this->params()->fromRoute('page') : 99999999;
-		$itemsPerPage = 20;
+		$itemsPerPage = $this->params()->fromQuery('limit') ? (int) $this->params()->fromQuery('limit') : 10;
 		
 		$apiGateway = $this->freeDidTable->getApiGateway();
 		
 		$one = microtime();
-		$dids  = $this->freeDidTable->fetchAll(array('offset'=>1,'limit'=>$itemsPerPage));
-		shuffle($dids);
-		
+		$resultSet  = $this->freeDidTable->fetchAll(array('offset'=>1,'limit'=>$itemsPerPage));
+		$dids = array();
+		foreach ($resultSet as $did)
+		{
+			$dids[]=$did->getArrayCopy();
+		}
 		
 		return new JsonModel(
 				array('dids'=>$dids

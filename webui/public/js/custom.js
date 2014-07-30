@@ -376,8 +376,17 @@ $('.togglecontainer-exclusive').change(function(event)
 );
 
 function reloadPickableDid(){
- 	 $('#rowcont').append('<div>Ждите, идет загрузка...</div>');
-	 var result = $.ajax({ url: "/pickdid/model", success:
+ 	 $('#rowcont').append('<div><div class="progress progress-striped active"><div class="bar" style="width: 0%;"></div></div></div>');
+ 	
+ 	 var valeur = 10;
+ 	 $('.progress').show();
+	  $('.bar').css('width', valeur+'%').attr('aria-valuenow', valeur);    
+ 	 var interval = setInterval(function(){
+ 		valeur  = valeur +30;
+ 		 
+ 	 	  $('.bar').css('width', valeur+'%').attr('aria-valuenow', valeur);    
+ 	}, 500);
+ 	 var result = $.ajax({ url: "/pickdid/model", success:
 			function(){
     		 $('#rowcont').empty();
 				 var responseJson = $.parseJSON(result.responseText);
@@ -393,14 +402,36 @@ function reloadPickableDid(){
 
 						});
 				 });
-			 }	 
-			 });
+				 $('#rowcont').append("<span class='nopadding span3 offset1'><input name='refresh' id='refreshdidsbtn' class='btnaslink' type='button' value='еще'/></span>"); 
+				 $('#refreshdidsbtn').click(function(){
+					  reloadPickableDid();
+				  });
+				 var random = Math.round(Math.random()*10);
+ 				 $("input[name='did']").eq(random).prop("checked",true);
+				 var valeur = 100;
+		 	 	  $('.bar').css('width', valeur+'%').attr('aria-valuenow', valeur);    
+
+			 },
+			 error:function(){
+	    		 $('#rowcont').empty();
+				 alert('Ошибка загрузки, попробуйте еще раз!');
+			 },
+			 complete:function()
+		 	 {
+		 		 $('.progress').hide();
+ 		 		clearInterval(interval);
+		 			$('#refreshdidsbtn').show();
+
+		 	 }
+			 }
+ 	  
+ 	 );
 }
 $(function(){
  
 $('.pickableradio').css('cursor','pointer');
 if ($('#pickdid'))
-	{	
+	{	$('#refreshdidsbtn').hide();
 	  reloadPickableDid();
 	  $('#refreshdidsbtn').click(function(){
 		  reloadPickableDid();

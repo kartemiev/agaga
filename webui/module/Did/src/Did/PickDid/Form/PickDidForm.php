@@ -27,11 +27,12 @@ class PickDidForm extends Form
  									'class'=>'offset4'				 
  								)
  		));
+ 		/*
  		$this->add(array(
  				'type' => 'Zend\Form\Element\Button',
   				'name' => 'reload',
  				'options' => array(
- 						'label' => 'другие',
+ 						'label' => 'обновить',
  				),
  				'attributes'=>
  				array(
@@ -39,7 +40,7 @@ class PickDidForm extends Form
  						'class'=>'btnaslink'
  				)
  		));
-		 
+		 */
 		$this->add(array(
 				'name' => 'submit',
  				'attributes' => array('type' => 'submit', 'value' => 'далее', 'class' => 'primaryAction'),

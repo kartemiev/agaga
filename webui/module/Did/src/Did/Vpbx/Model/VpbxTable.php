@@ -1,9 +1,9 @@
 <?php
-namespace Did\FreeDid\Model;
+namespace Did\Vpbx\Model;
 
 use Did\Gizzle\ApiGatewayInterface;
  
-class FreeDidTable implements FreeDidTableInterface
+class VpbxTable implements VpbxTableInterface
 {
 	protected $apiGateway;
 	public function __construct(ApiGatewayInterface $apiGateway)
@@ -17,14 +17,14 @@ class FreeDidTable implements FreeDidTableInterface
 		return $resultSet;
 	}
 	
-	public function getDid($id)
+	public function getVpbx($id)
 	{
 		$id  = (int) $id;
 		$row = $this->apiGateway->get($id);
 		return $row;
 	}
 	 
-	public function saveDid(FreeDid $did)
+	public function saveVpbx(Vpbx $did)
 	{
 		$data = array(
 				'didissuancepool' => $did->didissuancepool,
@@ -56,7 +56,7 @@ class FreeDidTable implements FreeDidTableInterface
 		return (isset($return))?$return:null;
 	}
 	
-	public function deleteDid($id)
+	public function deleteVpbx($id)
 	{
 		$this->apiGateway->delete($id);
 	}

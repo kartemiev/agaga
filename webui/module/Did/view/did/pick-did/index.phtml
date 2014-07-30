@@ -1,22 +1,23 @@
 <?php
-// module/Vpbxui/view/cdr/index.phtml
 
 $title = 'выбор номера ';
 $this->headTitle($title);
-?>
- 
- <?php 
- $form = $this->form;
- 
+
+$form = $this->form;
   
  echo $this->form()->openTag($form);
-?> <div class="container">
+?> 
+<fieldset>
+    <legend>выбор номера телефона для тестирования</legend>
+<div class="container">
   <div id="rowcont" class="row">
- 
  </div>
-  </div>
- <?php
- echo $this->formRow($form->get('reload'));
- echo $this->form()->closeTag($form);
-  
- 
+   </div>
+   <div>
+ </div><div class="nextform"><?php
+echo $this->formRow($form->get('submit'));
+?>
+</div>
+</fieldset>
+<?php
+echo $this->form()->closeTag($form);
