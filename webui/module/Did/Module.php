@@ -47,7 +47,9 @@ class Module
         		'Did\Did\Model\DidTable'=>'Did\Did\Model\DidTableFactory',
         		'Did\Did\Model\DidTableGateway' => 'Did\Did\Model\DidTableGatewayFactory',
         		'Did\FreeDid\Model\FreeDidTable'=>'Did\FreeDid\Model\FreeDidTableFactory',
-        		'Did\FreeDid\Model\FreeDidTableGateway' => 'Did\FreeDid\Model\FreeDidTableGatewayFactory'
+        		'Did\FreeDid\Model\FreeDidTableGateway' => 'Did\FreeDid\Model\FreeDidTableGatewayFactory',
+        		'Did\VpbxEnv\Model\VpbxEnvTable'=>'Did\VpbxEnv\Model\VpbxEnvTable',
+        		'Did\VpbxEnv\Model\VpbxEnvTableGateway'=> 'Did\VpbxEnv\Model\VpbxEnvTableGatewayFactory'
            ),
 	    );
     }
