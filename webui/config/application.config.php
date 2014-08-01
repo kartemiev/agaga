@@ -6,9 +6,9 @@ return array(
 		'ZfcAdmin',
 		'ZfcUserAdmin',
         'BjyAuthorize',
-    		'Did',    		
-         'Vpbxui',
-         'ReverseForm'
+    	'Saas',    		
+        'Vpbxui',
+        'ReverseForm'
     ),
 
     'module_listener_options' => array(
