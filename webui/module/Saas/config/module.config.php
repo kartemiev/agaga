@@ -50,6 +50,7 @@ return array(
         ),
    		'template_map' => array(
    				'vpbx-wizard.phtml'         =>  __DIR__ . '/../view/layout/wizardPartial.phtml',
+   				'file-upload.phtml'         =>  __DIR__ . '/../view/layout/fileUploadPartial.phtml',   					
    				),
     ),
     'view_helpers' => array(

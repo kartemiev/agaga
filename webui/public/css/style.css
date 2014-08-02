@@ -383,3 +383,26 @@ div.frameddiv {
     width: 1060px;   
     /* must be half of the width, minus scrollbar on the left (30px) */
 }
+.wizardcontainer
+{
+ 	
+}
+.wizardtitle
+{
+  margin: 0 auto;
+   		      		    padding:5em;  		    
+  	
+}
+.wizardcontent
+{
+	  margin: 0 auto;
+  		    width: 655px;
+  	
+}
+.wizardbuttom
+{
+	  margin: 1em auto;
+  		    width: 200px;
+  		    padding:2em;
+  	
+}

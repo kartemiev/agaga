@@ -1,2 +1,21 @@
 <?php
-echo $this->partial('vpbx-wizard.phtml',array('content'=>'Проигрывание записанного разговора'));?>
+
+$title = 'Визард создания виртуальной АТС';
+$this->headTitle($title);
+?>
+<div class="wizardcontainer">
+<div class="wizardtitle">
+<h4>Для регистрации live-демо IP-АТС необходимо выполнить несколько простых шагов:</h4>
+</div>
+<div class="wizardcontent">
+<ol>
+<li>Выбрать Московский Городской Телефонный Номер в коде <i>+7-(499)</i> - предоставляется бесплатно на время тестирования</li>
+<li>Загрузить звуковой файл привествия (опционально)</li>
+<li>Создать внтуренние номера (опционально)</li>
+<li>Указать предпочтительный логин и пароль для администратора</li>
+</ol>
+</div>
+<div class="wizardbuttom">
+<button class="btn btn-primary" onclick="location.href='<?php echo $this->url('wizard',array('action'=>'step1'))?>'">приступим!</button>
+</div>
+</div>

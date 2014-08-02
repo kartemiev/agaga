@@ -59,7 +59,10 @@ class Module
          return array(
         'factories'=> array(
         		'Saas\Controller\PickDid' => 'Saas\Controller\PickDidControllerFactory',
-        		'Saas\Controller\VpbxWizard' => 'Saas\Controller\VpbxWizardControllerFactory'
+        		'Saas\Controller\VpbxWizard' => 'Saas\Controller\VpbxWizardControllerFactory',
+        		'Saas\Controller\UploadMedia' => 'Saas\Controller\UploadMediaControllerFactory',
+        		'Saas\Controller\CreateInternal' => 'Saas\Controller\CreateInternalControllerFactory'
+        		
             ),
      );
     }

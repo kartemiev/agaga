@@ -43,6 +43,15 @@ class FreeDidTable implements FreeDidTableInterface
 				'reservationdate' => $did->reservationdate,
 				'reserveduntil' => $did->reserveduntil			 
  		);
+		$patch = false;
+		foreach ($did as $key => $property)
+		{
+			if (!isset($property))
+			{
+				$patch = true;
+				break;
+			}
+		}
 		
 		$id = (int)$did->id;
 		if ($id == 0) {
@@ -50,7 +59,7 @@ class FreeDidTable implements FreeDidTableInterface
 			$return = $entity->getId();
 		} else {
 			if ($this->getDid($id)) {
-				$this->apiGateway->update($data, $id);
+				$this->apiGateway->update($data, $id, $patch);
 			} else {
 				throw new \Exception('id does not exist');
 			}

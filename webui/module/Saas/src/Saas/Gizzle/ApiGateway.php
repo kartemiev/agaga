@@ -78,8 +78,7 @@ class ApiGateway implements ApiGatewayInterface
 	{
 		$client = $this->client;					
 		$methodname = ($patch)?'patch':'put';
-		$json = \Zend\Json\Json::encode($data, true);
-		$res = $client->$methodname($this->getUrl().'/'.$id, array('json'=>$json,'auth'=>$this->auth));				
+ 		$res = $client->$methodname($this->getUrl().'/'.$id, array('json'=>$data,'auth'=>$this->auth));				
 		$this->result = $res;
 		$this->checkContentType($res);
 		$this->checkHttpResultCodes($res,array(Response::STATUS_CODE_200));

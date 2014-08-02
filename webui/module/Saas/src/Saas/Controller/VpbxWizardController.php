@@ -5,6 +5,8 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Zend\Http\Response;
 use Zend\Session\Container as SessionContainer;
+use Saas\TempMedia\Form\TempMediaForm;
+use Zend\View\Model\JsonModel;
 
 class VpbxWizardController extends AbstractActionController
 {
@@ -24,21 +26,31 @@ class VpbxWizardController extends AbstractActionController
 		if ($pickdid instanceof Response)
 		{
 			return $pickdid;
-		}
-		else 
-		{
-			$viewModel->addChild($pickdid, 'window');				
-		}
+		}	 
+		$viewModel->addChild($pickdid, 'window');						 
 		return $viewModel;
 	}
 	public function step2Action()
-	{
- 	 
-		return new ViewModel(array('flashMessages'=>$this->flashMessenger()->getMessages()));
+	{ 	 
+		$uploadMedia = $this->forward()->dispatch('Saas\Controller\UploadMedia', array('action' => 'index'));
+		$viewModel = new ViewModel();
+		if ($uploadMedia instanceof Response)
+		{
+			return $uploadMedia;
+		}
+		$viewModel->addChild($uploadMedia, 'window');
+		return $viewModel;
 	}
 	public function step3Action()
 	{
-	
+		$createinternal = $this->forward()->dispatch('Saas\Controller\CreateInternal', array('action' => 'index'));
+		$viewModel = new ViewModel();
+		if ($createinternal instanceof Response)
+		{
+			return $createinternal;
+		}
+		$viewModel->addChild($createinternal, 'window');
+		return $viewModel;
 	}
 	
 }
