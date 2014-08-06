@@ -38,18 +38,37 @@ class VpbxWizardController extends AbstractActionController
 		{
 			return $uploadMedia;
 		}
+		if ($uploadMedia instanceof JsonModel)
+		{
+			return $uploadMedia;
+		}
 		$viewModel->addChild($uploadMedia, 'window');
 		return $viewModel;
 	}
 	public function step3Action()
 	{
 		$createinternal = $this->forward()->dispatch('Saas\Controller\CreateInternal', array('action' => 'index'));
+		if ($createinternal instanceof JsonModel)
+		{
+			return $createinternal;
+		}
 		$viewModel = new ViewModel();
 		if ($createinternal instanceof Response)
 		{
 			return $createinternal;
 		}
 		$viewModel->addChild($createinternal, 'window');
+		return $viewModel;
+	}
+	public function overviewAction()
+	{
+		$overview = $this->forward()->dispatch('Saas\Controller\Overview', array('action' => 'index'));
+		$viewModel = new ViewModel();
+		if ($overview instanceof Response)
+		{
+			return $overview;
+		}
+		$viewModel->addChild($overview, 'window');
 		return $viewModel;
 	}
 	

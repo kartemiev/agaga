@@ -392,10 +392,10 @@ function reloadPickableDid(){
 				 var responseJson = $.parseJSON(result.responseText);
 				 $.each(responseJson.dids,function(key, did){
 					 var digits;
-					  did.digits.replace(/([\d]{3})([\d]{3})([\d]{4})/g, function($0,$1,$2,$3){
-						 digits = "+7("+$1+")"+$2+"-"+$3;
+					  did.digits.replace(/([\d]{3})([\d]{3})([\d]{2})([\d]{2})/g, function($0,$1,$2,$3,$4){
+						 digits = " + 7 ("+$1+") "+$2+" - "+$3+" "+$4;
 					 });
-					 $('#rowcont').append("<span class='pickableradio nopadding span3 offset1'><input name='did' type='radio' value='"+did.id+"'/>"+digits+'</span>'); 
+					 $('#rowcont').append("<span class='pickableradio nopadding span3 offset1'><input name='did' type='radio' value='"+did.id+"' data-digits='"+digits+"'>"+digits+'</span>'); 
 					 $('.pickableradio').css('cursor','pointer');
 					 $('.pickableradio').click(function(event){
 							$(event.currentTarget).children('input').first().prop( "checked", true );
@@ -407,10 +407,18 @@ function reloadPickableDid(){
 					  reloadPickableDid();
 				  });
 				 var random = Math.round(Math.random()*10);
- 				 $("input[name='did']").eq(random).prop("checked",true);
+				 var randbtn = $("input[name='did']").eq(random);
+				 $("#largedid").text(randbtn.data('digits'));
+ 				randbtn.prop("checked",true);
 				 var valeur = 100;
 		 	 	  $('.bar').css('width', valeur+'%').attr('aria-valuenow', valeur);    
-
+		 	 	  
+		 	 	  $('.pickableradio').click(function(e){
+		 	 		 $("#largedid").text($(e.currentTarget).children('input').first().data('digits'));
+		 	 		  var json = $(e.target).parents('form').serializeArray();
+		 	 		  $.ajax('',{method:"POST",data:json},function(){})
+		 	 	  });
+ 
 			 },
 			 error:function(){
 	    		 $('#rowcont').empty();
@@ -427,6 +435,17 @@ function reloadPickableDid(){
  	  
  	 );
 }
+function submitWizInternal(options)
+{
+ 	options.success();
+ 	var data = [];
+ 	$.each($('form.internallist'),function(i,v){
+ 		data.push($(v).serializeArray());	  		
+ 	});
+ 	 
+ 	$.ajax('',{type:'POST',  contentType: "application/json; charset=utf-8", dataType:'json',data:JSON.stringify(data)});
+	console.log(data);
+ }
 $(function(){
  
 $('.pickableradio').css('cursor','pointer');
@@ -437,7 +456,84 @@ if ($('#pickdid'))
 		  reloadPickableDid();
 	  });
 	}
+
+ 
+
+$(".addinternalbtn").click(function(){ 	
+ 
+	var element = $($(".templatelist").children().first()).clone().appendTo("#internallist");
+  	select2dynamicBootStrap($(element).find("input").first());
+
+	$(".removecurrent").click(function(e){ 	
+  		submitWizInternal({success:function(){
+ 	 		$(e.target).parent().remove();
+ 		}});
+	});
+	
+ 
+ });
+ 
 });
 
+ 
 
+
+$(function(){
+	  $('.intlist').select2({
+	      multiple: true,
+	      width: '20em',
+	      placeholder: 'номера',
+	      query: function (query){
+	          var data = {results: []};
+
+	          
+	          var preload_data = [];
+
+	          var numallowed = [];
+	          $.each($("form#numbersallowed").serializeArray(),function(i,v){
+	        	  numallowed.push(parseInt(v.value));
+	          });
+	          
+	        for (counter=100;counter<=999;counter++)
+	      	{	        	
+ 	        	if	($.inArray(Math.floor(counter/100)*100,numallowed)>=0)
+	        		{
+	        			preload_data.push({ id: counter, text: counter+''});
+	        		}
+	      	}
+
+	          
+	          
+	          $.each(preload_data, function(){
+	              if(query.term.length == 0 || this.text.toUpperCase().indexOf(query.term.toUpperCase()) >= 0 ){
+	                  data.results.push({id: this.id, text: this.text });
+	              }
+	          });
+ 
+	  
+	          query.callback(data);
+	      }
+	  });
+	//  $('#ccoperatorlist').select2('data', [{id:1,text:'внутренние номера: ',locked:true}] )
+	   $('.intlist').on("select2-selecting",(function(e,choice){
+//		   $("h4#myModalLabel").text(e.object.text);
+ 
+		 //  $("#myModal").modal('show');
+		   var person = prompt("Имя сотрудника");
+		   if (null===person)
+		   {
+			   e.preventDefault();
+		   }
+		   else
+		   {
+			   e.object.text='['+e.object.text+'] '+person;
+		   }
+		//   $("#numpropname").focus();
+
+		 //  e.object.text='666';
+//		   console.log(e);
+		   //e.preventDefault();
+	   }));
+}
+);
  

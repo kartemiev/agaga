@@ -6,3 +6,7 @@ $this->headTitle($title);
 <h4>Шаг 1. Выбор номера.</h4>
 <?php
 echo $this->partial('vpbx-wizard.phtml',array('content'=>$window));
+?>
+<div class="wizardbuttom">
+<button class="btn btn-primary" onclick="location.href='<?php echo $this->url('wizard',array('action'=>'step2'))?>'">далее</button>
+</div>

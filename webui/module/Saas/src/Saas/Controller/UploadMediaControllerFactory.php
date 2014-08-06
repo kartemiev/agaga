@@ -8,6 +8,10 @@ class UploadMediaControllerFactory implements FactoryInterface
 {
 	public function createService(ServiceLocatorInterface $serviceLocator)
 	{
-		return new UploadMediaController();
+		$sl = (method_exists($serviceLocator,'getServiceLocator'))?$serviceLocator->getServiceLocator():$serviceLocator;
+		
+		return new UploadMediaController(
+				$sl->get('Saas\WizardSessionContainer\WizardSessionContainer')
+			);
 	}
 }

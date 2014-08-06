@@ -61,8 +61,8 @@ class Module
         		'Saas\Controller\PickDid' => 'Saas\Controller\PickDidControllerFactory',
         		'Saas\Controller\VpbxWizard' => 'Saas\Controller\VpbxWizardControllerFactory',
         		'Saas\Controller\UploadMedia' => 'Saas\Controller\UploadMediaControllerFactory',
-        		'Saas\Controller\CreateInternal' => 'Saas\Controller\CreateInternalControllerFactory'
-        		
+        		'Saas\Controller\CreateInternal' => 'Saas\Controller\CreateInternalControllerFactory',
+        		'Saas\Controller\Overview'=> 'Saas\Controller\OverviewControllerFactory'
             ),
      );
     }

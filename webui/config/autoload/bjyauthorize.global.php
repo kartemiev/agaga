@@ -41,7 +41,8 @@ return array(
                     'mvc:callcentrestatsgeneral.vpbxui',
                     'mvc:callcentrestatsoperators.vpbxui',
                     'mvc:callcentreinternaloperators.vpbxui',
-                    'mvc:callcentresettings.vpbxui'       
+                    'mvc:callcentresettings.vpbxui',     
+                    'mvc:vpbxwizard.saas'  
                     		
                   ),  
                   'mvc:trunks.vpbxui'  => array(), 
@@ -190,8 +191,11 @@ return array(
                     array(array('supervisor'),  
                         'mvc:callcentre.vpbxui'                                               
                     ),
-                    
-                     array(array('supervisor'),        
+                		array(array('guest'),
+                				'mvc:vpbxwizard.saas'
+                		),
+                		
+                      array(array('supervisor'),        
                         'mvc:cdr.vpbxui',
                         array('list')                        
                     ),
@@ -322,7 +326,8 @@ return array(
                     'controller' => array(
                         'Vpbxui\Controller\Index',
                     	'Vpbxui\Controller\RegisterPbx',
-                    	'Saas\Controller\VpbxWizard'	
+                    	'Saas\Controller\VpbxWizard',	
+                    	'Saas\Controller\CreateInternal'	
                     ),
                      'roles' => array('guest')
                 ),
@@ -336,6 +341,7 @@ return array(
                 array('route' => 'createconference', 'roles' => array('guest')),    
             		array('route' => 'pickdid', 'roles' => array('guest')),
             		array('route' => 'wizard', 'roles' => array('guest')),
+            		array('route' => 'createinternal', 'roles' => array('guest')),
             		
                 array('route' => 'home', 'roles' => array('admin','supervisor','guest')),
                 array('route' => 'vpbxui/default', 'roles' => array('admin','supervisor')),
