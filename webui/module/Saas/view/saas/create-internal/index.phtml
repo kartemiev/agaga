@@ -3,27 +3,20 @@ echo $this->headScript()
  		  ->appendFile($this->basePath() .   '/js/select2.custom.js')
 ;
 ?>
+
+<div>
+<ol>
+<li>Выбрать допустимый диапазон внутренней нумерации</li>
+<li>Добавить внутренние номера для обычных сотрудников</li>
+<li>Добавить внутренние номера для операторов колл-центра - на данных сотрудников будут распределятся вызовы в рабочее время (в случае если абонент позвонивший на внешнюю линию не донабрал внутреннего абонента в течение паузы-задержки, предназначенной для донабора внутреннего номера)</li>
+</ol>
+</div>
+<div class="wizdataintnum" data-url="<?php echo $this->url('createinternal',array('action'=>'submit'))?>">
+
+ <?php echo $this->form($this->numbersallowedform);?>
  
-<form id="numbersallowed">
-  <input type="checkbox" name="chk_group[]" value="100" />100-199 
-<input type="checkbox" name="chk_group[]" value="200" />200-299 
-<input type="checkbox" name="chk_group[]" value="300" checked />300-399 
-<input type="checkbox" name="chk_group[]" value="400" />400-499 
-<input type="checkbox" name="chk_group[]" value="500" />500-399 
-<input type="checkbox" name="chk_group[]" value="600" />600-699 
-<input type="checkbox" name="chk_group[]" value="700" />700-799 
-<input type="checkbox" name="chk_group[]" value="900" />900-999 
- </form>
- 
- 
-<form id="regularinternallist" class="intlist">
- <select id="regularinternallistselect">
-    </select>
-</form>
- 
- <form id="ccoperatorlist" class="intlist">
- <select id="ccoperatorselect">
-    </select>
-</form>
- 
- 
+ <p>Внутренние номера обычных сотрудников: </p>
+<?php echo $this->form($this->regularinternallistform);?>
+<p>Внутренние номера операторов колл-центра:</p> 
+<?php echo $this->form($this->ccoperatorlistform);?>
+ </div>

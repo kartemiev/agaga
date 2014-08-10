@@ -1,4 +1,8 @@
-     $(window).on('load', function () {
+$.fn.exists = function () {
+    return this.length !== 0;
+}  
+
+$(window).on('load', function () {
 
             $('.selectpicker').selectpicker({
                 'selectedText': 'cat'
@@ -72,25 +76,23 @@ $(function(){
 $(".selectspecial#confnumber").select2({
     placeholder: "ожидайте загрузки",
     minimumInputLength: 0,
-    ajax: { // instead of writing the function to execute the request we use Select2's convenient helper
+    ajax: {  
         url: "/createconference/fetch",
         dataType: 'jsonp',
         data: function (term, page) {
 
             return {
-                q: term, // search term
+                q: term, 
                 page_limit: 10
              };
         },
-        results: function (data, page) { // parse the results into the format expected by Select2
-             // since we are using custom formatting functions we do not need to alter remote JSON data
+        results: function (data, page) {  
+              
              return {results: data.results};
         }
     },
     initSelection: function(element, callback) {
-        // the input tag has a value attribute preloaded that points to a preselected movie's id
-        // this function resolves that id attribute to an object that select2 can render
-        // using its formatResult renderer - that way the movie name is shown preselected
+        
         
             $.ajax("/createconference/fetch", {
                 data: {
@@ -161,7 +163,8 @@ $(function(){
 
 	 //$(".selectspecial#confnumber").select2("data",{id: "5976", text: "5976"});
  $("#cdrsearch").eq(0).ready(function(){
-	$.ajax('/cabinet/cdr',{data:{},dataType:"jsonp",
+	if ($("#cdrsearch").exists()){
+	 $.ajax('/cabinet/cdr',{data:{},dataType:"jsonp",
 		success: function(data){
 	 		$(".selectspecial#confnumber").select2("data",{id: data.results[0].id, text: '<b>'+data.results[0].text+'<b>'});
 			
@@ -169,6 +172,7 @@ $(function(){
 	}
 
 	);
+	};
 	 		}
 	);
  $("#cdrsearch").on('change',function (event){
@@ -444,12 +448,11 @@ function submitWizInternal(options)
  	});
  	 
  	$.ajax('',{type:'POST',  contentType: "application/json; charset=utf-8", dataType:'json',data:JSON.stringify(data)});
-	console.log(data);
  }
 $(function(){
  
 $('.pickableradio').css('cursor','pointer');
-if ($('#pickdid'))
+if ($('#pickdid').exists())
 	{	$('#refreshdidsbtn').hide();
 	  reloadPickableDid();
 	  $('#refreshdidsbtn').click(function(){
@@ -475,9 +478,6 @@ $(".addinternalbtn").click(function(){
  
 });
 
- 
-
-
 $(function(){
 	  $('.intlist').select2({
 	      multiple: true,
@@ -485,41 +485,45 @@ $(function(){
 	      placeholder: 'номера',
 	      query: function (query){
 	          var data = {results: []};
-
-	          
-	          var preload_data = [];
-
-	          var numallowed = [];
+  	          var preload_data = [];
+ 	          var numallowed = [];
+ 	          
+ 	         var context=this;
+  	        var excludeNumbers =[];
+  	        $('form.intlist').each(function(k,v){
+  	        	var t = [];
+  	          t = $(v).select2("data");
+  	        	if (v!==context.element[0])
+  	        		{
+  	        			$(t).each(function(numkey,numrec){
+  	    	        		excludeNumbers.push(numrec.id);
+ 	        			});
+ 	        			
+  	        		};
+   	        });
+  	        
+ 	          
 	          $.each($("form#numbersallowed").serializeArray(),function(i,v){
 	        	  numallowed.push(parseInt(v.value));
 	          });
-	          
-	        for (counter=100;counter<=999;counter++)
+ 	        for (counter=100;counter<=999;counter++)
 	      	{	        	
- 	        	if	($.inArray(Math.floor(counter/100)*100,numallowed)>=0)
+ 	        	if	(($.inArray(Math.floor(counter/100)*100,numallowed)>=0)&&($.inArray(counter,excludeNumbers)<0))
 	        		{
 	        			preload_data.push({ id: counter, text: counter+''});
 	        		}
 	      	}
-
-	          
-	          
-	          $.each(preload_data, function(){
+ 	      
+ 	          $.each(preload_data, function(){
 	              if(query.term.length == 0 || this.text.toUpperCase().indexOf(query.term.toUpperCase()) >= 0 ){
 	                  data.results.push({id: this.id, text: this.text });
 	              }
 	          });
- 
-	  
-	          query.callback(data);
+ 	          query.callback(data);
 	      }
 	  });
-	//  $('#ccoperatorlist').select2('data', [{id:1,text:'внутренние номера: ',locked:true}] )
-	   $('.intlist').on("select2-selecting",(function(e,choice){
-//		   $("h4#myModalLabel").text(e.object.text);
- 
-		 //  $("#myModal").modal('show');
-		   var person = prompt("Имя сотрудника");
+ 	   $('.intlist').on("select2-selecting",(function(e,choice){
+  		   var person = prompt("Имя сотрудника");
 		   if (null===person)
 		   {
 			   e.preventDefault();
@@ -528,12 +532,21 @@ $(function(){
 		   {
 			   e.object.text='['+e.object.text+'] '+person;
 		   }
-		//   $("#numpropname").focus();
-
-		 //  e.object.text='666';
-//		   console.log(e);
-		   //e.preventDefault();
+ 
 	   }));
+ 	   $('.intlist').on("change",(function(e){
+  		  var url = $(".wizdataintnum").first().data('url');
+  	    var numbers = {};
+	        $('form.intlist').each(function(k,v){
+	        	var t = [];
+	          t = $(v).select2("data");
+	          numbers[$(v)[0].id]=t;
+//	        numbers[v.id]
+	        });
+	        console.log(numbers);
+	     	$.ajax(url,{type:'POST',  contentType: "application/json; charset=utf-8", dataType:'json',data:JSON.stringify(numbers)});
+
+ 	   }));
 }
 );
  

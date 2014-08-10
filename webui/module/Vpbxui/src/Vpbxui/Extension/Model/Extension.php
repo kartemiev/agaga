@@ -62,7 +62,7 @@ class Extension implements InputFilterAwareInterface
     protected  $dbAdapter;    
     protected $inputFilter;                       // <-- Add this variable
     
-    public function __construct(AdapterInterface $dbAdapter)
+    public function __construct(AdapterInterface $dbAdapter = null)
     {
         $this->dbAdapter = $dbAdapter;
     }
@@ -130,7 +130,7 @@ class Extension implements InputFilterAwareInterface
 
       public function setInputFilter(InputFilterInterface $inputFilter)
      {
-     	throw new \Exception("Not used");
+     	$this->inputFilter = $inputFilter;
      }
      
      public function getInputFilter()

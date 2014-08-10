@@ -7,6 +7,12 @@ class CreateInternalControllerFactory implements FactoryInterface
 {
 	public function createService(ServiceLocatorInterface $serviceLocator)
 	{
-		return new CreateInternalController();
+		$sl = (method_exists($serviceLocator,'getServiceLocator'))?$serviceLocator->getServiceLocator():$serviceLocator;
+		
+		return new CreateInternalController(
+				$sl->get('Saas\WizardSessionContainer\WizardSessionContainer'),
+				$sl->get('Vpbxui\Extension\Model\Extension'),	
+				$sl->get('Vpbxui\Extension\Form\ExtensionForm')			
+		);
 	}
 }
