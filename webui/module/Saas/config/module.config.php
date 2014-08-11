@@ -48,6 +48,21 @@ return array(
         				),
         				'may_terminate'=>true
         		),
+        		'internalapi' => array(
+        				'type'    => 'segment',
+        				'options' => array(
+        						'route'    => '/internalapi[/:id]',
+        						'constraints' => array(
+        								'id' => '[0-9]*',
+        						),
+        						'defaults' => array(
+        								'controller' => 'Saas\Controller\InternalApi',
+        						),
+        		
+        				),
+        					
+        				'may_terminate' => true,
+        		),
             ),
         ),
   

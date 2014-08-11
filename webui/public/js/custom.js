@@ -480,9 +480,9 @@ $(".addinternalbtn").click(function(){
 
 $(function(){
 	  $('.intlist').select2({
-	      multiple: true,
+	      multiple: true,	     
 	      width: '20em',
-	      placeholder: 'номера',
+	      placeholder: 'номера',	  
 	      query: function (query){
 	          var data = {results: []};
   	          var preload_data = [];
@@ -520,7 +520,7 @@ $(function(){
 	              }
 	          });
  	          query.callback(data);
-	      }
+	      },	    
 	  });
  	   $('.intlist').on("select2-selecting",(function(e,choice){
   		   var person = prompt("Имя сотрудника");
@@ -534,6 +534,15 @@ $(function(){
 		   }
  
 	   }));
+ 	   if ($('.wizdataintnum').exists()){
+	  		  var url = $(".wizdataintnum").first().data('url');
+	  		  $.ajax(url,{type:'GET',  contentType: "application/json; charset=utf-8", dataType:'json',success:function(data){
+	  		  		 $('#regularinternallist').select2("data", data.regularinternallist);
+	  		  		 $('#ccoperatorlist').select2("data", data.ccoperatorlist);
+
+		     	}});
+  		};
+ 	   
  	   $('.intlist').on("change",(function(e){
   		  var url = $(".wizdataintnum").first().data('url');
   	    var numbers = {};
@@ -541,10 +550,9 @@ $(function(){
 	        	var t = [];
 	          t = $(v).select2("data");
 	          numbers[$(v)[0].id]=t;
-//	        numbers[v.id]
 	        });
 	        console.log(numbers);
-	     	$.ajax(url,{type:'POST',  contentType: "application/json; charset=utf-8", dataType:'json',data:JSON.stringify(numbers)});
+	     	$.ajax(url,{type:'PATCH',  contentType: "application/json; charset=utf-8", dataType:'json',data:JSON.stringify(numbers)});
 
  	   }));
 }

@@ -224,7 +224,8 @@ return array(
                     'controller' => array('zfcuser','Vpbxui\Controller\Index',
                     'Vpbxui\Controller\ConferenceBooking',
                     'Saas\Controller\PickDid',                    		
-                    'Vpbxui\Controller\RegisterPbx'                    		
+                    'Vpbxui\Controller\RegisterPbx',
+                   'Saas\Controller\InternalApi'                    		
                     ),
                      'roles' => array('guest')
                 ), 
@@ -327,7 +328,9 @@ return array(
                         'Vpbxui\Controller\Index',
                     	'Vpbxui\Controller\RegisterPbx',
                     	'Saas\Controller\VpbxWizard',	
-                    	'Saas\Controller\CreateInternal'	
+                    	'Saas\Controller\CreateInternal',	
+                        'Saas\Controller\InternalApi'                    		
+                    		
                     ),
                      'roles' => array('guest')
                 ),
@@ -342,6 +345,7 @@ return array(
             		array('route' => 'pickdid', 'roles' => array('guest')),
             		array('route' => 'wizard', 'roles' => array('guest')),
             		array('route' => 'createinternal', 'roles' => array('guest')),
+            		array('route' => 'internalapi', 'roles' => array('guest')),
             		
                 array('route' => 'home', 'roles' => array('admin','supervisor','guest')),
                 array('route' => 'vpbxui/default', 'roles' => array('admin','supervisor')),

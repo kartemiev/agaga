@@ -11,7 +11,7 @@ echo $this->headScript()
 <li>Добавить внутренние номера для операторов колл-центра - на данных сотрудников будут распределятся вызовы в рабочее время (в случае если абонент позвонивший на внешнюю линию не донабрал внутреннего абонента в течение паузы-задержки, предназначенной для донабора внутреннего номера)</li>
 </ol>
 </div>
-<div class="wizdataintnum" data-url="<?php echo $this->url('createinternal',array('action'=>'submit'))?>">
+<div class="wizdataintnum" data-url="<?php echo $this->url('internalapi')?>">
 
  <?php echo $this->form($this->numbersallowedform);?>
  

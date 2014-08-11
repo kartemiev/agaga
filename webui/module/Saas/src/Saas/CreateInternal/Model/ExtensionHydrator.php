@@ -17,9 +17,9 @@ class ExtensionHydrator extends AbstractHydrator
 	public function extract($object)
 	{
 		$data = array(
-			'id'=>$object->extension,
-			'custname'=>'['.$object->extension.'] '.$object->custname
+			'id'=>(string)$object->extension,
+			'text'=>'['.$object->extension.'] '.$object->custname
 		);
-		return array($data);
+		return $data;
 	}
 }

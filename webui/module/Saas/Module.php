@@ -62,7 +62,8 @@ class Module
         		'Saas\Controller\VpbxWizard' => 'Saas\Controller\VpbxWizardControllerFactory',
         		'Saas\Controller\UploadMedia' => 'Saas\Controller\UploadMediaControllerFactory',
         		'Saas\Controller\CreateInternal' => 'Saas\Controller\CreateInternalControllerFactory',
-        		'Saas\Controller\Overview'=> 'Saas\Controller\OverviewControllerFactory'
+        		'Saas\Controller\Overview'=> 'Saas\Controller\OverviewControllerFactory',
+        		'Saas\Controller\InternalApi' => 'Saas\Controller\InternalApiControllerFactory'
             ),
      );
     }
