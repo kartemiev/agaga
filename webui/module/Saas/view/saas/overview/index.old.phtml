@@ -1,0 +1,60 @@
+<div class="previewcontainer">
+<ul>
+<li>
+<h5>Номер ТФОП:</h5>
+<table class="table table-striped table-bordered table-condensed  table-hover">
+<tr class="tblheader"><th>&nbsp;</th><th>&nbsp;</th></tr>
+<tr class="tblcontent">
+	 <td class="content">
+		&nbsp;
+	</td>
+	<td class="content">
+		<b><?php echo $this->DidNumberFormat($did); ?></b>
+	</td>
+</tr>
+</table>
+</li>
+<li>
+<h5>Медиа файлы:</h5>
+<table class="table table-striped table-bordered table-condensed  table-hover">
+	<tr class="tblheader">
+		<th>
+			&nbsp;
+		</th>
+		<th>
+			файл
+		</th>
+	</tr>
+	<tr class="tblcontent">
+ 		<td class="content">приветствие рабочего дня</td><td>&nbsp;</td>
+ 	</tr>
+ 	<tr class="tblcontent">
+ 	<td class="content">приветствие нерабочего дня</td><td>&nbsp;</td>
+ 	</tr>
+ 	<tr class="tblcontent">
+  	<td class="content">мелодия вызова</td><td>&nbsp;</td>
+ 	</tr>
+  	<tr class="tblcontent">
+  	<td class="content">мелодия на удержание</td><td>&nbsp;</td>
+ 	</tr>
+ 
+  
+</table>
+
+</li>
+<li>
+<h5>Внутренние номера:</h5>
+<table class="table table-striped table-bordered table-condensed  table-hover">
+<tr class="tblheader"><th>номер</th><th>имя сотрудника</th><th>тип</th></tr>
+ 
+ <?php foreach ($internalnumbers as $internalnumber):?>
+	<tr class="tblcontent">
+		<td class="content"><?php echo $internalnumber->extension?></td>
+		<td class="content"><?php echo $internalnumber->custname?></td>
+		<td class="content"><?php echo $this->ExtensionTypeDebrief($internalnumber->extensiontype)?></td>
+	</tr>
+<?php endforeach;?>
+</table>
+</li>
+</ul>
+</div>

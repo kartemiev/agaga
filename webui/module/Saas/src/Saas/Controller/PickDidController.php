@@ -56,7 +56,7 @@ class PickDidController extends AbstractActionController
 				$reservationDate->add(new \DateInterval("PT1H"));
 				$didPatch->reserveduntil = $reservationDate->format('Y-m-d H:i:s');;			 
 				$this->freeDidTable->saveDid($didPatch);
-				
+				$this->wizardSessionContainer->did = $did;
 				
 				$this->flashMessenger()->addMessage('Успешно выделен номер '.$did->digits);
 				return $this->redirect()->toRoute('wizard',array('action'=>'step2'));

@@ -85,6 +85,8 @@ return array(
     ),
     'view_helpers' => array(
         'invokables' => array(
+        		'ExtensionTypeDebrief'=>'Saas\View\Helper\ExtensionTypeDebrief',
+        		'DidNumberFormat'=>'Saas\View\Helper\DidNumberFormat'
          )
     ),
 );

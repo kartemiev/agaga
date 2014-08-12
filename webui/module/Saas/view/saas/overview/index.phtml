@@ -1,0 +1,37 @@
+ 
+<div class="previewcontainer">
+<table class="table table-striped table-bordered table-condensed  table-hover">
+ 
+	<tr class="tblcontent">
+		<td class="content">&nbsp;</td><td class="content"><?php echo $this->DidNumberFormat($did); ?></td> 		
+	</tr>
+	 
+	
+	<tr class="tblcontent">
+ 		<td class="content">приветствие рабочего дня</td><td class="content"><?php echo $media['wtgreeting']['name'];?></td> 
+ 	</tr>
+ 	<tr class="tblcontent">
+ 		<td class="content">приветствие нерабочего дня</td><td class="content">&nbsp;</td> 
+ 	</tr>
+ 	<tr class="tblcontent">
+  		<td class="content">мелодия вызова</td><td class="content">&nbsp;</td> 
+ 	</tr>
+  	<tr class="tblcontent">
+  		<td class="content">мелодия на удержание</td><td class="content">&nbsp;</td> 
+ 	</tr>
+ 	<tr class="tblcontent">
+		<td class="content">&nbsp;</td>
+ 	<td class="content">
+ 	<ul class="nobullets">
+  <?php foreach ($internalnumbers as $key=>$internalnumber):?>
+  <li>
+		[<?php echo $internalnumber->extension?>] <?php echo $internalnumber->custname?> (<?php echo $this->ExtensionTypeDebrief($internalnumber->extensiontype)?>)
+  </li>
+<?php endforeach;?>
+		</ul>
+		</td>
+	</tr>
+
+</table>
+</div>
+

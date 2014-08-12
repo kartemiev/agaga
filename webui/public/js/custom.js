@@ -539,7 +539,6 @@ $(function(){
 	  		  $.ajax(url,{type:'GET',  contentType: "application/json; charset=utf-8", dataType:'json',success:function(data){
 	  		  		 $('#regularinternallist').select2("data", data.regularinternallist);
 	  		  		 $('#ccoperatorlist').select2("data", data.ccoperatorlist);
-
 		     	}});
   		};
  	   
@@ -555,6 +554,7 @@ $(function(){
 	     	$.ajax(url,{type:'PATCH',  contentType: "application/json; charset=utf-8", dataType:'json',data:JSON.stringify(numbers)});
 
  	   }));
+ 	   
 }
 );
  

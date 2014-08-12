@@ -23,11 +23,8 @@ class InternalApiController extends AbstractRestfulController
 	}
 	public function getList()
 	{
-		$internalnumbers = (isset($this->wizardSessionContainer->internalnumbers))?$this->wizardSessionContainer->internalnumbers:null;
-		if (!$internalnumbers)
-		{
-			return new JsonModel(array());
-		}
+		$internalnumbers = (isset($this->wizardSessionContainer->internalnumbers))?$this->wizardSessionContainer->internalnumbers:array();
+
 		$regularinternallist = array();
 		$ccoperatorlist = array();
 		$hydrator = new ExtensionHydrator();

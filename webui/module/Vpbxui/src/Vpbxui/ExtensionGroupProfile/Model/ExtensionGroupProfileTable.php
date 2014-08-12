@@ -11,7 +11,7 @@ class ExtensionGroupProfileTable implements ExtensionGroupProfileTableInterface 
 
     protected $tableGateway;
     protected $vpbxidProvider;
-    public function __construct(TableGateway $tableGateway, VpbxidProviderInterface $vpbxid)
+    public function __construct(TableGateway $tableGateway, VpbxidProviderInterface $vpbxidProvider)
     {
     	$this->tableGateway = $tableGateway;
     	$this->vpbxidProvider = $vpbxidProvider;

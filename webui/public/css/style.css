@@ -413,4 +413,11 @@ border-radius: 10px; /* future proofing */
   		    padding:2em;
   	
 }
- 
+.previewcontainer
+{
+	  margin: 2em auto;
+ }
+ul.nobullets
+{
+    list-style-type: none;
+}
