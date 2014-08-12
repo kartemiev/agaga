@@ -413,7 +413,6 @@ function reloadPickableDid(){
 				 var random = Math.round(Math.random()*10);
 				 var randbtn = $("input[name='did']").eq(random);
 				 $("#largedid").text(randbtn.data('digits'));
- 				randbtn.prop("checked",true);
 				 var valeur = 100;
 		 	 	  $('.bar').css('width', valeur+'%').attr('aria-valuenow', valeur);    
 		 	 	  
@@ -422,6 +421,8 @@ function reloadPickableDid(){
 		 	 		  var json = $(e.target).parents('form').serializeArray();
 		 	 		  $.ajax('',{method:"POST",data:json},function(){})
 		 	 	  });
+	 				randbtn.click();
+
  
 			 },
 			 error:function(){

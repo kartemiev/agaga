@@ -6,19 +6,26 @@ use Saas\TempMedia\Form\TempMediaForm;
 use Zend\View\Model\JsonModel;
 use Zend\View\Model\ViewModel;
 use Zend\Session\Container as SessionContainer;
+use Saas\TempMedia\Model\TempMediaTableInterface;
+use Saas\TempMedia\Model\TempMedia;
+use PAGI\CallSpool\Impl\rename;
 
 class UploadMediaController extends AbstractActionController
 {
 	protected $wizardSessionContainer;
-	public function __construct(SessionContainer $wizardSessionContainer)
+	protected $tempMediaTable;
+	protected $tmpMediaPath = '/tmp';
+	public function __construct(SessionContainer $wizardSessionContainer, TempMediaTableInterface $tempMediaTable)
 	{
 		$this->wizardSessionContainer = $wizardSessionContainer;
+		$this->tempMediaTable = $tempMediaTable;
 	}
 	public function indexAction()
 	{
 		$form = new TempMediaForm();
 		
 		$wizardSessionContainer = $this->wizardSessionContainer;
+		$tempMediaTable = $this->tempMediaTable;
 		
 		if (!isset($wizardSessionContainer->media))
 		{
@@ -33,8 +40,17 @@ class UploadMediaController extends AbstractActionController
 			$file =  array_slice($request->getFiles()->toArray(),0,1);
 			$filedata = array_shift(array_values($file));
 			$name = key($file);
-			$wizardSessionContainer->media[$name] = $filedata;
-			$data = array('file'=>array('name'=>$filedata['name']));
+ 			$data = array('file'=>array('name'=>$filedata['name']));
+			$tempMedia = new TempMedia();
+			$tempMedia->custname = $filedata['name'];
+			$tempMedia->filesize = $filedata['size'];
+			$tempMedia->contenttype = $filedata['type'];
+						
+			$id = $tempMediaTable->saveTempMedia($tempMedia);
+			rename($filedata['tmp_name'],$this->tmpMediaPath.'/'.$id);	
+			$tempMedia->id = $id;			
+			$wizardSessionContainer->media[$name] = $tempMedia;
+			 
 			return new JsonModel($data);
 		}
 		

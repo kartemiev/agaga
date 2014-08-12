@@ -11,7 +11,8 @@ class UploadMediaControllerFactory implements FactoryInterface
 		$sl = (method_exists($serviceLocator,'getServiceLocator'))?$serviceLocator->getServiceLocator():$serviceLocator;
 		
 		return new UploadMediaController(
-				$sl->get('Saas\WizardSessionContainer\WizardSessionContainer')
+				$sl->get('Saas\WizardSessionContainer\WizardSessionContainer'),
+				$sl->get('Saas\TempMedia\Model\TempMediaTable')
 			);
 	}
 }

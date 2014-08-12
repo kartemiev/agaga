@@ -8,26 +8,20 @@ use Zend\InputFilter\InputFilterInterface;
 
 class TempMedia implements InputFilterAwareInterface
 {
-    public  $id;
-    public  $vpbxid;
-    public  $media;
-    public  $custdesc;
-    public  $contenttype;
-    public  $filesize;
-    public  $mediatype;
-    public $duration;
-    public $extension;
+    public $id;
+    public $custname = '';
+    public $custdesc = '';
+    public $contenttype = '';
+    public $filesize;
+    public $mediatype = '';
     public function exchangeArray($data)
     {
         $this->id     = (isset($data['id'])) ? $data['id'] : null;
-        $this->vpbxid     = (isset($data['vpbxid'])) ? $data['vpbxid'] : null;
-        $this->media     = (isset($data['media'])) ? $data['media'] : null;
+        $this->custname     = (isset($data['custname'])) ? $data['custname'] : null;        
         $this->custdesc     = (isset($data['custdesc'])) ? $data['custdesc'] : null;
         $this->contenttype     = (isset($data['contenttype'])) ? $data['contenttype'] : null;
         $this->filesize     = (isset($data['filesize'])) ? $data['filesize'] : null;
         $this->mediatype     = (isset($data['mediatype'])) ? $data['mediatype'] : null;        
-        $this->duration   = (isset($data['duration'])) ? $data['duration'] : null;    
-        $this->extension   = (isset($data['extension'])) ? $data['extension'] : null;
         
     }
     public function getArrayCopy()
