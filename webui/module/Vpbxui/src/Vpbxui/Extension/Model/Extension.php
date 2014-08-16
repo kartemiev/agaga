@@ -59,7 +59,6 @@ class Extension implements InputFilterAwareInterface
     
     public $vpbxid;
     
-    protected  $dbAdapter;    
     protected $inputFilter;                       // <-- Add this variable
     
     public function __construct(AdapterInterface $dbAdapter = null)
@@ -906,4 +905,5 @@ class Extension implements InputFilterAwareInterface
      	
      	return $this->inputFilter;
      }
+      
  }

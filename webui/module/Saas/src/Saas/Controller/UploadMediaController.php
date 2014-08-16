@@ -14,7 +14,7 @@ class UploadMediaController extends AbstractActionController
 {
 	protected $wizardSessionContainer;
 	protected $tempMediaTable;
-	protected $tmpMediaPath = '/tmp';
+	const  TMP_MEDIA_PATH = '/tmp';
 	public function __construct(SessionContainer $wizardSessionContainer, TempMediaTableInterface $tempMediaTable)
 	{
 		$this->wizardSessionContainer = $wizardSessionContainer;
@@ -47,13 +47,12 @@ class UploadMediaController extends AbstractActionController
 			$tempMedia->contenttype = $filedata['type'];
 						
 			$id = $tempMediaTable->saveTempMedia($tempMedia);
-			rename($filedata['tmp_name'],$this->tmpMediaPath.'/'.$id);	
+			rename($filedata['tmp_name'],self::TMP_MEDIA_PATH.'/'.$id);	
 			$tempMedia->id = $id;			
 			$wizardSessionContainer->media[$name] = $tempMedia;
 			 
 			return new JsonModel($data);
 		}
-		
 		return new ViewModel(array(
 				'flashMessages'=>$this->flashMessenger()->getMessages(),
 				'form'=>$form,

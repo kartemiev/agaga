@@ -14,7 +14,7 @@ class TempMediaForm extends Form
       
         
         $this->add(array(
-             'name' => 'media',
+             'name' => 'wtgreeting',
              'attributes' => array(            		
                 'id' => 'wtgreeting',
                 'type'  => 'file',
@@ -23,12 +23,57 @@ class TempMediaForm extends Form
             ),
             'options' => array(
                  'label_attributes' => array(
-                       'class'  => 'bold-label'
+                       'class'  => 'fileupload'
                 ),
             ),
         ));
         
- 
+        
+        $this->add(array(
+        		'name' => 'wegreeting',
+        		'attributes' => array(
+        				'id' => 'wegreeting',
+        				'type'  => 'file',
+        				'accept' => 'audio/mpeg, audio/wav'
+        
+        		),
+        		'options' => array(
+        				'label_attributes' => array(
+        						'class'  => 'fileupload'
+        				),
+        		),
+        ));
+        
+        $this->add(array(
+        		'name' => 'ringingbacktone',
+        		'attributes' => array(
+        				'id' => 'ringingbacktone',
+        				'type'  => 'file',
+        				'accept' => 'audio/mpeg, audio/wav'
+        
+        		),
+        		'options' => array(
+        				'label_attributes' => array(
+        						'class'  => 'fileupload'
+        				),
+        		),
+        ));
+        
+        $this->add(array(
+        		'name' => 'musiconhold',
+        		'attributes' => array(
+        				'id' => 'musiconhold',
+        				'type'  => 'file',
+        				'accept' => 'audio/mpeg, audio/wav'
+        
+        		),
+        		'options' => array(
+        				'label_attributes' => array(
+        						'class'  => 'fileupload'
+        				),
+        		),
+        ));
+        
         $this->add(array(
         		'name' => 'type',
         		'attributes' => array(
