@@ -48,7 +48,7 @@ class Module
         		'Saas\Did\Model\DidTableGateway' => 'Saas\Did\Model\DidTableGatewayFactory',
         		'Saas\FreeDid\Model\FreeDidTable'=>'Saas\FreeDid\Model\FreeDidTableFactory',
         		'Saas\FreeDid\Model\FreeDidTableGateway' => 'Saas\FreeDid\Model\FreeDidTableGatewayFactory',
-        		'Saas\VpbxEnv\Model\VpbxEnvTable'=>'Saas\VpbxEnv\Model\VpbxEnvTable',
+        		'Saas\VpbxEnv\Model\VpbxEnvTable'=>'Saas\VpbxEnv\Model\VpbxEnvTableFactory',
         		'Saas\VpbxEnv\Model\VpbxEnvTableGateway'=> 'Saas\VpbxEnv\Model\VpbxEnvTableGatewayFactory',
         		'Saas\WizardSessionContainer\WizardSessionContainer' =>'Saas\WizardSessionContainer\WizardSessionContainerFactory',
         		'Saas\TempMedia\Model\TempMediaTable'=>'Saas\TempMedia\Model\TempMediaTableFactory',

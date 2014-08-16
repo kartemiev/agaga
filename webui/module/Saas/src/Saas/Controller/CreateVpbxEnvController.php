@@ -2,14 +2,12 @@
 namespace Saas\Controller;
 
 use Zend\Mvc\Controller\AbstractActionController;
-use Zend\Session\Container as SessionContainer;
 use Vpbxui\Extension\Model\ExtensionTableInterface;
 use Saas\VpbxEnv\Model\VpbxEnvTableInterface;
 use Vpbxui\MediaRepos\Model\MediaReposTableInterface;
 use Vpbxui\GeneralSettings\Model\GeneralSettingsTable;
 use Vpbxui\MediaRepos\Model\MediaRepos;
 use Zend\Stdlib\Hydrator\ObjectProperty;
-use PAGI\CallSpool\Impl\rename;
 use Vpbxui\Controller\MediaReposController;
 use Vpbxui\Service\VpbxidProvider\VpbxidProviderInterface;
 use Vpbxui\Trunk\Model\Trunk;
@@ -33,7 +31,9 @@ use Vpbxui\TrunkDestination\Model\TrunkDestinationTableInterface;
 use Vpbxui\TrunkDestination\Model\TrunkDestination;
 use Vpbxui\CallCentreSchedule\Model\CallCentreScheduleTableInterface;
 use Vpbxui\CallCentreSchedule\Model\CallCentreSchedule;
- 
+use Vpbxui\Extension\Model\Extension; 
+use Saas\WizardSessionContainer\WizardSessionContainerInterface;
+
 class CreateVpbxEnvController extends AbstractActionController
 {	
 	private $wizardSessionContainer;	
@@ -60,7 +60,7 @@ class CreateVpbxEnvController extends AbstractActionController
 	protected $callCentreScheduleTable;
 	
 	public function __construct(
-			SessionContainer $wizardSessionContainer, 
+			WizardSessionContainerInterface $wizardSessionContainer, 
 			ExtensionTableInterface $extensionTable, 
 			VpbxEnvTableInterface $vpbxEnvTable,
 			MediaReposTableInterface $mediaReposTable,
@@ -113,7 +113,7 @@ class CreateVpbxEnvController extends AbstractActionController
 	}
 	protected function processMedia()
 	{
-		$media = (isset($this->wizardSessionContainer->media)) ?$this->wizardSessionContainer->media:null;
+		$media = $this->wizardSessionContainer->getMedia();
 		$hydrator = new ObjectProperty();
 		$mediatypeMapper = array(
 				'wtgreeting'=>'greeting', 
@@ -147,7 +147,7 @@ class CreateVpbxEnvController extends AbstractActionController
 	}
 	protected function processVpbxEnv()
 	{
-		$vpbxEnv = ($this->wizardSessionContainer->vpbxEnv)?$this->wizardSessionContainer->vpbxEnv:null;
+		$vpbxEnv = $this->wizardSessionContainer->getVpbxEnv();
 		if ($vpbxEnv)
 		{
 			$this->vpbxEnv = $this->vpbxEnvTable->saveVpbxEnv($vpbxEnv);
@@ -156,7 +156,7 @@ class CreateVpbxEnvController extends AbstractActionController
 	}
 	protected function processTrunksAndContext()
 	{
-		$vpbxEnv = $this->vpbxEnv; 
+		$vpbxEnv = $this->wizardSessionContainer->getVpbxEnv();
 		$trunk = new Trunk();
 		
 		$data = array(
@@ -197,7 +197,7 @@ class CreateVpbxEnvController extends AbstractActionController
 	}
 	protected function processInternal()
 	{
-		$internalnumbers = (isset($this->wizardSessionContainer->internalnumbers))?$this->wizardSessionContainer->internalnumbers:array();
+		$internalnumbers = $this->wizardSessionContainer->getInternalNumbers();
 		if (count($internalnumbers)==0)
 		{
 			return;
@@ -244,8 +244,8 @@ class CreateVpbxEnvController extends AbstractActionController
 	}
 	protected function processRoute()
 	{
-		$vpbxEnv = (isset($this->wizardSessionContainer->vpbxEnv))?$this->wizardSessionContainer->vpbxEnv:null;
-		$did = (isset($this->wizardSessionContainer->did))?$this->wizardSessionContainer->did:null;
+		$vpbxEnv = $this->wizardSessionContainer->getVpbxEnv();
+		$did = $this->wizardSessionContainer->getDid();
 		
 		$didDigigts = ($vpbxEnv && $did)?$did->digits:'';
 		

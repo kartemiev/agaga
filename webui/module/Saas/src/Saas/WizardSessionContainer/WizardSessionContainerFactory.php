@@ -20,6 +20,6 @@ class WizardSessionContainerFactory implements FactoryInterface
 				'cookie_lifetime' => $config['authTimeout'],
 		));
 		$manager = new SessionManager($sessionConfig);
-		return new SessionContainer('vpbx_wizard');
+		return new WizardSessionContainer('vpbx_wizard');
 	}
 }
