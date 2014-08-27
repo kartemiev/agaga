@@ -2,19 +2,24 @@
 namespace Saas\WizardSessionContainer;
 
 use Zend\Session\Container as SessionContainer;
-use Agaga\Entity\Did;
 use Zend\Session\ManagerInterface;
 use Saas\VpbxEnv\Model\VpbxEnv;
 use Saas\TempMedia\Model\TempMedia;
 use Vpbxui\Extension\Model\Extension;
+use Saas\FreeDid\Model\FreeDid;
 
 class WizardSessionContainer extends SessionContainer implements WizardSessionContainerInterface
 {	
-	protected $did;
+	public $did;
 	protected $vpbxEnv;	
 	protected $media;
 	protected $internalnumbers;
-	public function setDid(Did $did)
+	public function __construct($name='Default',Manager $manager=null)
+	{
+		parent::__construct($name, $manager);
+		$this->vpbxEnv = new VpbxEnv();
+	}
+	public function setDid(FreeDid $did)
 	{
 		$this->did = $did;
 		return $this;
@@ -54,5 +59,10 @@ class WizardSessionContainer extends SessionContainer implements WizardSessionCo
 		$this->internalnumbers->append($extension);
 		return $this;
 	}
+	public function getNumbersAllowed()
+	{
+		
+	}
+	
 	
 }

@@ -6,12 +6,12 @@ $formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
         <div class="span4"><u><?php
         echo $name;?></u><?php        
 ?><div><div class="inline"><?php        
-echo $formRenderer->formRow($starttime);
+echo $this->formRow($starttime);
 ?></div><div class="inline"><?php
-echo $formRenderer->formRow($endtime);
+echo $this->formRow($endtime);
 ?></div></div><?php
 
-echo isset($active)?$formRenderer->formRow($active):'';
+echo isset($active)?$this->formRow($active):'';
 
 ?></div>
 </div>

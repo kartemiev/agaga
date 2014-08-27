@@ -4,6 +4,14 @@ $this->headTitle($title);
  
 $form = $this->form;
 
+echo $this->headScript()
+->appendFile($this->basePath() .   '/js/bootstrap-switch.min.js')
+;
+echo $this->headlink()
+->appendStylesheet($this->basePath() .   '/css/bootstrap-switch.min.css')
+;
+
+
 $formRenderer = $this->formRenderer($form, 'renderer.bootstrap', 'vertical');
 
 $formRenderer->prepare();

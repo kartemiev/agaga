@@ -58,11 +58,8 @@ class FreeDidTable implements FreeDidTableInterface
 			$entity = $this->apiGateway->create($data);
 			$return = $entity->getId();
 		} else {
-			if ($this->getDid($id)) {
-				$this->apiGateway->update($data, $id, $patch);
-			} else {
-				throw new \Exception('id does not exist');
-			}
+  				
+				$this->apiGateway->update($data, $id, $patch); 					 
 		}
 		return (isset($return))?$return:null;
 	}

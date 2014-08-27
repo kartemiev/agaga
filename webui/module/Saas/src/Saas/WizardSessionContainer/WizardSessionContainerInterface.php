@@ -5,11 +5,12 @@ use Vpbxui\Extension\Model\Extension;
 use Agaga\Entity\Did;
 use Saas\VpbxEnv\Model\VpbxEnv;
 use Saas\TempMedia\Model\TempMedia;
+use Saas\FreeDid\Model\FreeDid;
 
 interface WizardSessionContainerInterface
 {
-	function setDid(Did $did);
- 
+    function setDid(FreeDid $did);
+	 
 	function getDid();
 	 
 	function setVpbxEnv(VpbxEnv $vpbxEnv);

@@ -10,15 +10,15 @@ use Saas\PickDid\Form\PickDidForm;
 use Zend\View\Model\JsonModel;
 use Saas\PickDid\Model\PickDid;
 use Saas\VpbxEnv\Model\VpbxEnv;
-use Zend\Session\Container as SessionContainer;
 use Saas\FreeDid\Model\FreeDid;
+use Saas\WizardSessionContainer\WizardSessionContainerInterface;
 
 
 class PickDidController extends AbstractActionController
 {
 	protected $freeDidTable;
 	protected $wizardSessionContainer;
-	public function __construct(FreeDidTable $freeDidTable, SessionContainer $wizardSessionContainer)
+	public function __construct(FreeDidTable $freeDidTable, WizardSessionContainerInterface $wizardSessionContainer)
 	{
 		$this->freeDidTable = $freeDidTable;
  		$this->wizardSessionContainer = $wizardSessionContainer;
@@ -37,7 +37,7 @@ class PickDidController extends AbstractActionController
 			if ($form->isValid()) {
 				
 				$did = $this->freeDidTable->getDid($pickDid->id);				
-				
+		 
 				if (!$did)
 				{
 					$this->flashMessenger()->addMessage('Извините, выбранный номер был уже занят - показаны другие номера');						
@@ -51,14 +51,16 @@ class PickDidController extends AbstractActionController
 				$didPatch = new FreeDid();
 				$didPatch->id = $did->id;
 				$currentDate = new \DateTime();
-				$didPatch->reservationdate = $currentDate->format('Y-m-d H:i:s');;
+				$didPatch->reservationdate = $currentDate->format('Y-m-d H:i:s');
 				$reservationDate = clone $currentDate;
 				$reservationDate->add(new \DateInterval("PT1H"));
-				$didPatch->reserveduntil = $reservationDate->format('Y-m-d H:i:s');;			 
-				$this->freeDidTable->saveDid($didPatch);
-				$this->wizardSessionContainer->did = $did;
-				
+				$didPatch->reserveduntil = $reservationDate->format('Y-m-d H:i:s');		 
+				$this->freeDidTable->saveDid($didPatch);				
+				$this->wizardSessionContainer->setDid($did);
+ 				
 				$this->flashMessenger()->addMessage('Успешно выделен номер '.$did->digits);
+ 				
+ 				
 				return $this->redirect()->toRoute('wizard',array('action'=>'step2'));
 			}
 		}

@@ -15,7 +15,7 @@ class PickDidForm extends Form
 	
  		$this->add(array(
  				'type' => 'Zend\Form\Element\Radio',
- 				'name' => 'did',
+ 				'name' => 'outgoingtrunk_did',
  				'options' => array(
  						'label' => 'Выберите городской номер',
  						 'value_options' => array(

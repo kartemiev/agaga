@@ -1,9 +1,9 @@
 <?php
-namespace Saas\CreateInternal\Form;
+namespace Saas\NumberAllowed\Form;
 
 use Zend\Form\Form;
 
-class NumbersAllowedForm extends Form
+class NumberAllowedForm extends Form
 {
 	public function __construct($name = null)
 	{
@@ -17,9 +17,9 @@ class NumbersAllowedForm extends Form
              'name' => 'chk_group',
              'options' => array(
                       'value_options' => array(
-                             '100' => '100-199',
-                             '200' => '200-299',
-                             '300' => '300-399',
+                            '100' => '100-199',
+                            '200' => '200-299',
+                            '300' => '300-399',
                      		'400' => '400-499',
                      		'500' => '500-599',
                      		'600' => '600-699',

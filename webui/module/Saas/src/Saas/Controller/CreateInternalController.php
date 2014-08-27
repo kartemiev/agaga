@@ -4,7 +4,7 @@ namespace Saas\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Saas\CreateInternal\Form\CreateInternalForm;
-use Saas\CreateInternal\Form\NumbersAllowedForm;
+use Saas\NumberAllowed\Form\NumberAllowedForm;
 use Saas\CreateInternal\Model\CreateInternalInputFilterFactory;
 
 class CreateInternalController extends AbstractActionController
@@ -18,7 +18,7 @@ class CreateInternalController extends AbstractActionController
 		$ccoperatorlistForm->setAttribute('id', 'ccoperatorlist');
 		$ccoperatorlistForm->get('number')->setAttribute('id', 'ccoperatorselect');
 		
-		$numbersAllowedForm = new NumbersAllowedForm();		
+		$numbersAllowedForm = new NumberAllowedForm();		
 		$numbersAllowedForm->get('chk_group')->setValue("300");
 		
  		return new ViewModel(

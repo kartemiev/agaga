@@ -84,7 +84,7 @@ class ApiGateway implements ApiGatewayInterface
 		$this->checkHttpResultCodes($res,array(Response::STATUS_CODE_200));
 		$response = $res->json();
 		$data = $response['data'];
-		$object = clone $this->arrayObjectPrototype;
+ 		$object = clone $this->arrayObjectPrototype;
 		$this->defaultHydrator->hydrate($data, $object);
 		return $object;
 	}
