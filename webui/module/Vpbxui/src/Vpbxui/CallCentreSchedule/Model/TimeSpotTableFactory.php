@@ -8,8 +8,9 @@ use Vpbxui\CallCentreSchedule\Model\TimeSpotTable;
 class TimeSpotTableFactory implements FactoryInterface
 {     
         public function createService(ServiceLocatorInterface $serviceLocator) {
-            $tableGateway = $serviceLocator->get('Vpbxui\CallCentreSchedule\Model\TimeSpotTableGateway');
-            $table = new TimeSpotTable($tableGateway);
-            return $table;
+             return new TimeSpotTable(
+             		$serviceLocator->get('Vpbxui\CallCentreSchedule\Model\TimeSpotTableGateway'),
+             		$serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidProvider')
+			);
         }     
 }

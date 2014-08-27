@@ -3,20 +3,25 @@ namespace Vpbxui\CallCentreSchedule\Model;
 
 use Zend\Db\TableGateway\TableGateway;
 use Vpbxui\CallCentreSchedule\Model\CallCentreScheduleTableInterface;
+use Vpbxui\Service\VpbxidProvider\VpbxidProviderInterface;
+use Zend\Db\Sql\Select;
 
 
 class CallCentreScheduleTable implements CallCentreScheduleTableInterface
 {
     protected $tableGateway;
-    public function __construct(TableGateway $tableGateway)
+    protected $vpbxidProvider;
+    public function __construct(TableGateway $tableGateway, VpbxidProviderInterface $vpbxidProvider)
     {
         $this->tableGateway = $tableGateway;
+        $this->vpbxidProvider = $vpbxidProvider;
     }
     
-    public function getCallCentreSchedule($vpbxid)
+    public function getCallCentreSchedule()
     {
-    	$vpbxid  = (int) $vpbxid;
-    	$rowset = $this->tableGateway->select(array('vpbx_id' => $vpbxid));
+    	$rowset = $this->tableGateway->select(function (Select $select) {
+    		$this->vpbxidProvider->vpbxFilter($select);    		
+    	});
     	 
     	$row = $rowset->current();
     	if (!$row) {
@@ -58,13 +63,9 @@ class CallCentreScheduleTable implements CallCentreScheduleTableInterface
     		'e_regularwd' => $callcentreschedule->e_regularwd			
         	);
      
-     	$vpbxid = (int)$callcentreschedule->vpbx_id;
-    	if ($vpbxid == 0) {
-    		$vpbxid = 1;
-    	};
-    	 
-    		if ($this->getCallCentreSchedule($vpbxid)) {
-    			$this->tableGateway->update($data, array('vpbx_id' => $vpbxid));
+     	 $cSchedule = $this->getCallCentreSchedule();
+    		if ($cSchedule) {
+    			$this->tableGateway->update($data, array('vpbx_id' => $cSchedule->vpbx_id));
     		} else {
     			throw new \Exception('vpbx id does not exist');
     		}

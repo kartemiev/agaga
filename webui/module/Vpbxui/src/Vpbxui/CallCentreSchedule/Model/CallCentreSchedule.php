@@ -41,7 +41,6 @@ class CallCentreSchedule
     protected $inputFilter;
     public function exchangeArray($data)
     {
-    	$this->vpbx_id     = (isset($data['vpbx_id'])) ? $data['vpbx_id'] : null;    	 
         $this->s_monday     = (isset($data['s_monday'])) ? $data['s_monday'] : null;
         $this->e_monday     = (isset($data['e_monday'])) ? $data['e_monday'] : null;        
         $this->active_monday     = (isset($data['active_monday'])) ? $data['active_monday'] : null;
