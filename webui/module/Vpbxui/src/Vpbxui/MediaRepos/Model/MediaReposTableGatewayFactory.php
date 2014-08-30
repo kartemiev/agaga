@@ -18,6 +18,7 @@ class MediaReposTableGatewayFactory implements FactoryInterface
         $resultSetPrototype->setArrayObjectPrototype(new MediaRepos());
         $featureSet = new FeatureSet();
         $featureSet->addFeature(new SequenceFeature('id','mediarepos_id_seq'));
+        $featureSet->addFeature($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));
         return new TableGateway('mediarepos', $dbAdapter, $featureSet, $resultSetPrototype);
     }
 }

@@ -6,6 +6,7 @@ use Zend\Db\ResultSet\ResultSet;
 use Vpbxui\ExtensionGroup\Model\ExtensionGroup;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use Zend\Db\TableGateway\Feature\FeatureSet;
 
 class ExtensionGroupTableGatewayFactory implements FactoryInterface
 {
@@ -14,6 +15,8 @@ class ExtensionGroupTableGatewayFactory implements FactoryInterface
         $dbAdapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
         $resultSetPrototype = new ResultSet();
         $resultSetPrototype->setArrayObjectPrototype(new ExtensionGroup());
-        return new TableGateway('extensiongroups', $dbAdapter, null, $resultSetPrototype);
+        $featureSet = new FeatureSet();
+        $featureSet->addFeature($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));
+        return new TableGateway('extensiongroups', $dbAdapter, $featureSet, $resultSetPrototype);
     }    
 }

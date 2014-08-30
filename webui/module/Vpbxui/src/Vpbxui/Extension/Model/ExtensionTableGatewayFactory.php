@@ -17,7 +17,8 @@ class ExtensionTableGatewayFactory implements FactoryInterface
         $extension = $serviceLocator->get('Vpbxui\Extension\Model\Extension');
         $resultSetPrototype->setArrayObjectPrototype($extension);
         $featureSet = new FeatureSet();
-        $featureSet->addFeature(new SequenceFeature('id','sip_serial'));        
+        $featureSet->addFeature(new SequenceFeature('id','sip_serial'));    
+        $featureSet->addFeature($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));    
         return new TableGateway('sip', $dbAdapter, $featureSet, $resultSetPrototype);
     }
 }

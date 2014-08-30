@@ -36,6 +36,13 @@ class ForwardFeatureController extends AbstractActionController {
       
     public function activateAction()
     {   
+        
+        /*
+         * 
+         * !TODO: При изначальной установке переадресации не проговаривается номер на который устанавливается переадресация
+         * от Андрея Гранковского
+         * 
+         */
         $agi = $this->agi;            
         $currentForwardState = $this->originator->diversion_unconditional_status;
         $currentForwardNum = $this->originator->diversion_unconditional_number;

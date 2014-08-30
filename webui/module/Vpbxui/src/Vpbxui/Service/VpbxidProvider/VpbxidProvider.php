@@ -29,9 +29,9 @@ class VpbxidProvider implements VpbxidProviderInterface
 	{
 		if (!$this->vpbxid)
 		{
-			$vpbxid = ($this->authService->hasIdentity())?$this->authService->getIdentity()->getVpbxid():null;
+			$this->vpbxid = ($this->authService->hasIdentity())?$this->authService->getIdentity()->getVpbxid():null;
 		}
-		return $vpbxid;
+		return $this->vpbxid;
 	}	
 	public function isSuperuser()
 	{

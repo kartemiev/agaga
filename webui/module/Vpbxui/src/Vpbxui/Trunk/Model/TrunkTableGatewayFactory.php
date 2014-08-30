@@ -18,6 +18,7 @@ class TrunkTableGatewayFactory implements FactoryInterface
     	$resultSetPrototype->setArrayObjectPrototype(new Trunk());
     	$featureSet = new FeatureSet();
     	$featureSet->addFeature(new SequenceFeature('id','sip_serial'));
+    	$featureSet->addFeature($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));
     	return new TableGateway('sip', $dbAdapter, $featureSet, $resultSetPrototype);        	 
     }
 }

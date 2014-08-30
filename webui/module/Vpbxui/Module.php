@@ -282,7 +282,10 @@ class Module
         	'Vpbxui\AuthCode\Model\AuthCodeTableGateway' => 'Vpbxui\AuthCode\Model\AuthCodeTableGatewayFactory', 
         	'Vpbxui\UserVpbxLinker\Model\UserVpbxLinkerTable'=> 'Vpbxui\UserVpbxLinker\Model\UserVpbxLinkerTableFactory',
         	'Vpbxui\UserVpbxLinker\Model\UserVpbxLinkerTableGateway'=> 'Vpbxui\UserVpbxLinker\Model\UserVpbxLinkerTableGatewayFactory',
-        	'Vpbxui\Service\VpbxidProvider\VpbxidProvider' => 'Vpbxui\Service\VpbxidProvider\VpbxidProviderFactory'       		
+        	'Vpbxui\Service\VpbxidProvider\VpbxidProvider' => 'Vpbxui\Service\VpbxidProvider\VpbxidProviderFactory',
+            'Vpbxui\FeatureTest\Model\FeatureTestTable'=>'Vpbxui\FeatureTest\Model\FeatureTestTableFactory',
+            'Vpbxui\FeatureTest\Model\FeatureTestTableGateway'=>'Vpbxui\FeatureTest\Model\FeatureTestTableGatewayFactory',
+            'Vpbxui\Service\VpbxidProvider\VpbxidFeature'=>'Vpbxui\Service\VpbxidProvider\VpbxidFeatureFactory'       		
            ),
         'shared'=>array(
         		'navigation'=>'false',

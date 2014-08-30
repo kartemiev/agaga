@@ -10,11 +10,9 @@ class ExtensionGroupProfileTableFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         $tableGateway = $serviceLocator->get('Vpbxui\ExtensionGroupProfile\Model\ExtensionGroupProfileTableGateway');
-        $vpbxidProvider = $serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidProvider');        
-        $table = new ExtensionGroupProfileTable(
-        					$tableGateway,
-        					$vpbxidProvider
-						);
+         $table = new ExtensionGroupProfileTable(
+        					$tableGateway
+ 						);
         return $table;
     }
 }

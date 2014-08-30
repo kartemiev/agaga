@@ -6,6 +6,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\TableGateway\TableGateway;
 use Vpbxui\Offday\Model\Offday;
 use Zend\Db\ResultSet\HydratingResultSet;
+use Zend\Db\TableGateway\Feature\FeatureSet;
 
 class OffdayTableGatewayFactory implements FactoryInterface
 {
@@ -14,6 +15,8 @@ class OffdayTableGatewayFactory implements FactoryInterface
         $dbAdapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
         $resultSetPrototype = new HydratingResultSet();
         $resultSetPrototype->setObjectPrototype(new Offday());
-        return new TableGateway('schedule_replacements', $dbAdapter, null, $resultSetPrototype);
+        $featureSet = new FeatureSet();
+        $featureSet->addFeature($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));
+        return new TableGateway('schedule_replacements', $dbAdapter, $featureSet, $resultSetPrototype);
     }
 }

@@ -5,23 +5,19 @@ use Vpbxui\ExtensionGroupProfile\Model\ExtensionGroupProfile;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
 use Vpbxui\ExtensionGroupProfile\Model\ExtensionGroupProfileTableInterface;
-use Vpbxui\Service\VpbxidProvider\VpbxidProviderInterface;
-
+ 
 class ExtensionGroupProfileTable implements ExtensionGroupProfileTableInterface {
 
     protected $tableGateway;
-    protected $vpbxidProvider;
-    public function __construct(TableGateway $tableGateway, VpbxidProviderInterface $vpbxidProvider)
+    public function __construct(TableGateway $tableGateway)
     {
     	$this->tableGateway = $tableGateway;
-    	$this->vpbxidProvider = $vpbxidProvider;
-    }
+     }
     
     public function fetchAll($filter=null)
     {
     	$resultSet = $this->tableGateway->select($filter,function (Select $select) {
-    	$this->vpbxidProvider->vpbxFilter($select);    		
-      	$select->order('profilename ASC');     
+       	$select->order('profilename ASC');     
     });
             $resultSet->buffer();
 
@@ -34,8 +30,7 @@ class ExtensionGroupProfileTable implements ExtensionGroupProfileTableInterface 
     	
     	$sql = $this->tableGateway->getSql();
     	$select = $sql->select();
-    	$this->vpbxidProvider->vpbxFilter($select);    	 
-     	 
+      	 
     	$select->where->equalTo('id', $id);
     	  
     	$select->limit(1);
@@ -64,15 +59,12 @@ class ExtensionGroupProfileTable implements ExtensionGroupProfileTableInterface 
     	    'forwarding' => $extensionGroupProfile->forwarding,
     	);
     	$id = (int)$extensionGroupProfile->id;
-    	$data['vpbxid'] = ($this->vpbxidProvider->isSuperuser())?$extensionGroup->vpbxid:$vpbxid;
-    	$vpbxid = $this->vpbxidProvider->getVpbxId();
-    	 
+     	 
     	if ($id == 0) {
-    		$data['vpbxid']=$vpbxid;    		
-    		$this->tableGateway->insert($data);
+     		$this->tableGateway->insert($data);
     	} else {
     		if ($this->getExtensionGroupProfile($id)) {
-    			$this->tableGateway->update($data, array('id' => $id, 'vpbxid' => $vpbxid));
+    			$this->tableGateway->update($data, array('id' => $id));
     		} else {
     			throw new \Exception('Form id does not exist');
     		}
@@ -85,8 +77,7 @@ class ExtensionGroupProfileTable implements ExtensionGroupProfileTableInterface 
     	$sql = $this->tableGateway->getSql();
     	$select = $sql->select();
     	$select->where->equalTo('id',$id);
-    	$this->vpbxidProvider->vpbxFilter($select);
-    	$this->tableGateway->delete(array('id' => $id));
+     	$this->tableGateway->delete(array('id' => $id));
     }
    
 }

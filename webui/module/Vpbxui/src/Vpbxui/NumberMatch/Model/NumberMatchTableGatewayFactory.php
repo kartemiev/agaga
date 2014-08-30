@@ -18,6 +18,7 @@ class NumberMatchTableGatewayFactory implements FactoryInterface
         $resultSetPrototype->setObjectPrototype(new NumberMatch());
         $featureSet = new FeatureSet();
         $featureSet->addFeature(new SequenceFeature('id','number_match_id_seq'));
+        $featureSet->addFeature($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));
         return new TableGateway('number_match', $dbAdapter, $featureSet, $resultSetPrototype);
     }
 }

@@ -10,8 +10,7 @@ class MediaReposTable implements  MediaReposTableInterface
 {
 
     protected $tableGateway;
-    protected $vpbxid;
-    public function __construct(TableGateway $tableGateway)
+     public function __construct(TableGateway $tableGateway)
     {
     	$this->tableGateway = $tableGateway;
     }
@@ -28,7 +27,7 @@ class MediaReposTable implements  MediaReposTableInterface
     }
     
     
-    public function getMediaReposById($id, $vpbxid)
+    public function getMediaReposById($id)
     {
     	$id  = (int) $id;
     	$rowset = $this->tableGateway->select(array('id' => $id));
@@ -44,8 +43,7 @@ class MediaReposTable implements  MediaReposTableInterface
     public function saveMediaRepos(MediaRepos $mediarepos)
     {        
     	$data = array(
-     	    'vpbxid' => $mediarepos->vpbxid,
-    	    'custname' =>$mediarepos->custname,
+     	    'custname' =>$mediarepos->custname,
     	    'custdesc' =>$mediarepos->custdesc,
     	    'contenttype' =>$mediarepos->contenttype,
     	    'filesize' =>$mediarepos->filesize,
@@ -54,13 +52,12 @@ class MediaReposTable implements  MediaReposTableInterface
     	    'extension' =>$mediarepos->extension    	        	
      	);
     	$id = (int)$mediarepos->id;
-    	$vpbxid  = (int)$mediarepos->vpbxid;
-    	if ($id == 0) {
+     	if ($id == 0) {
     		$this->tableGateway->insert($data);
     		$return = $this->tableGateway->getLastInsertValue();
     	} else {
-    		if ($this->getMediaReposById($id, $mediarepos->vpbxid)) {
-    			$this->tableGateway->update($data, array('id' => $id, 'vpbxid'=>$mediarepos->vpbxid));
+    		if ($this->getMediaReposById($id)) {
+    			$this->tableGateway->update($data, array('id' => $id));
     		} else {
     			throw new \Exception('Form id does not exist');
     		}

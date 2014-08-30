@@ -4,18 +4,18 @@ namespace Vpbxui\Conference\Model;
 use Zend\Db\TableGateway\TableGateway;
 use Vpbxui\Conference\Model\ConferenceTableInterface;
 use Zend\Db\Sql\Select;
-  
+   
 class ConferenceTable implements ConferenceTableInterface
 {
 
     const CONF_EXPIRY_SQL_FILTER = 'datesettoexpiry>NOW()';
     
     protected $tableGateway;
-
+     
     public function __construct(TableGateway $tablegateway)
     {
         $this->tableGateway = $tablegateway;
-    }
+     }
 
     public function getConferenceByConfNumber($confnumber)
     {

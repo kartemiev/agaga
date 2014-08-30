@@ -18,6 +18,7 @@ class RouteTableGatewayFactory implements FactoryInterface
         $resultSetPrototype->setArrayObjectPrototype(new Route());
         $featureSet = new FeatureSet();
         $featureSet->addFeature(new SequenceFeature('id','route_id_seq'));        
+        $featureSet->addFeature($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));
         return new TableGateway('route', $dbAdapter, $featureSet, $resultSetPrototype);
     }
 }
