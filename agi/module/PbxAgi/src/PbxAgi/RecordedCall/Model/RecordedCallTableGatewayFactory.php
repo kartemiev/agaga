@@ -5,6 +5,7 @@ use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Db\TableGateway\Feature\FeatureSet;
 
 class RecordedCallTableGatewayFactory implements FactoryInterface
 {
@@ -12,6 +13,8 @@ class RecordedCallTableGatewayFactory implements FactoryInterface
            $dbAdapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
            $resultSetPrototype = new ResultSet();
            $resultSetPrototype->setArrayObjectPrototype(new RecordedCall());
-           return new TableGateway('RecordedCall', $dbAdapter, null, $resultSetPrototype);
+           $featureSet = new FeatureSet();
+           $featureSet->addFeature($serviceLocator->get('PbxAgi\Service\VpbxidProvider\VpbxidFeature'));
+           return new TableGateway('RecordedCall', $dbAdapter, $featureSet, $resultSetPrototype);
 	}	
 }

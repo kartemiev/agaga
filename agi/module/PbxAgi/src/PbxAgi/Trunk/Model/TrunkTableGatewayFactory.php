@@ -16,6 +16,8 @@ class TrunkTableGatewayFactory implements FactoryInterface
     	$dbAdapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
     	$resultSetPrototype = new ResultSet();
     	$resultSetPrototype->setArrayObjectPrototype(new Trunk());
-    	return new TableGateway('sip', $dbAdapter, null, $resultSetPrototype);        	 
+    	$featureSet = new FeatureSet();
+    	$featureSet->addFeature('PbxAgi\Service\VpbxidProvider\VpbxidFeature');
+    	return new TableGateway('sip', $dbAdapter, $featureSet, $resultSetPrototype);        	 
     }
 }

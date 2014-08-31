@@ -19,6 +19,7 @@ class ConferenceTableGatewayFactory implements FactoryInterface
         $resultSetPrototype->setArrayObjectPrototype(new Conference());
         $featureSet = new FeatureSet();
         $featureSet->addFeature(new SequenceFeature('id','conference_serial'));
+        $featureSet->addFeature($serviceLocator->get('PbxAgi\Service\VpbxidProvider\VpbxidFeature'));
         return new TableGateway('conference', $dbAdapter, $featureSet, $resultSetPrototype);
                 
     }

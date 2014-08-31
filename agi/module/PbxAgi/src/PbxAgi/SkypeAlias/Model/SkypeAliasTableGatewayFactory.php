@@ -16,6 +16,8 @@ class SkypeAliasTableGatewayFactory implements FactoryInterface
 		$dbAdapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
 		$resultSetPrototype = new ResultSet();
  		$resultSetPrototype->setArrayObjectPrototype(new SkypeAlias());	 
-		return new TableGateway('skype_aliases', $dbAdapter, null, $resultSetPrototype);
+ 		$featureSet = new FeatureSet();
+ 		$featureSet->addFeature($serviceLocator->get('PbxAgi\Service\VpbxidProvider\VpbxidFeature'));
+		return new TableGateway('skype_aliases', $dbAdapter, $featureSet, $resultSetPrototype);
 	}
 }

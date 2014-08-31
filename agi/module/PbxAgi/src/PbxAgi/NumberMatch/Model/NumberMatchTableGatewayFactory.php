@@ -16,6 +16,8 @@ class NumberMatchTableGatewayFactory implements FactoryInterface
         $dbAdapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
         $resultSetPrototype = new HydratingResultSet();
         $resultSetPrototype->setObjectPrototype(new NumberMatch());        
-        return new TableGateway('number_match', $dbAdapter, null, $resultSetPrototype);
+        $featureSet = new FeatureSet();
+        $featureSet->addFeature($serviceLocator->get('PbxAgi\Service\VpbxidProvider\VpbxidFeature'));
+        return new TableGateway('number_match', $dbAdapter, $featureSet, $resultSetPrototype);
     }
 }

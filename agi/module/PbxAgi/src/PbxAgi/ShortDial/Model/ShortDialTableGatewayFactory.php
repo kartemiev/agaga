@@ -19,6 +19,7 @@ class ShortDialTableGatewayFactory implements FactoryInterface
         $resultSetPrototype->setArrayObjectPrototype(new ShortDial());
         $featureSet = new FeatureSet();        
         $featureSet->addFeature(new SequenceFeature('id','shortdialtable_id_seq'));
+        $featureSet->addFeature('PbxAgi\Service\VpbxidProvider\VpbxidFeature');
         return new TableGateway('shortdialtable', $dbAdapter, $featureSet, $resultSetPrototype);
         
     }

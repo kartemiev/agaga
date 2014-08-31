@@ -6,6 +6,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use PbxAgi\TrunkAssoc\Model\TrunkAssoc;
+use Zend\Db\TableGateway\Feature\FeatureSet;
 
 class TrunkAssocTableGatewayFactory implements  FactoryInterface
 {
@@ -15,6 +16,8 @@ class TrunkAssocTableGatewayFactory implements  FactoryInterface
 		$resultSetPrototype = new ResultSet();
 		$trunkAssoc = new TrunkAssoc();
 		$resultSetPrototype->setArrayObjectPrototype($trunkAssoc);
-		return new TableGateway('trunkassoc', $dbAdapter, null, $resultSetPrototype);
+		$featureSet = new FeatureSet();
+		$featureSet->addFeature($serviceLocator->get('PbxAgi\Service\VpbxidProvider\VpbxidFeature'));
+		return new TableGateway('trunkassoc', $dbAdapter, $featureSet, $resultSetPrototype);
 	}
 }

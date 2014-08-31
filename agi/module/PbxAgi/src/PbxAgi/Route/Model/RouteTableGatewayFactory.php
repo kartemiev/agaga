@@ -16,6 +16,8 @@ class RouteTableGatewayFactory implements FactoryInterface
         $dbAdapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
         $resultSetPrototype = new ResultSet();
         $resultSetPrototype->setArrayObjectPrototype(new Route());
-        return new TableGateway('route', $dbAdapter, null, $resultSetPrototype);
+        $featureSet = new FeatureSet();
+        $featureSet->addFeature($serviceLocator->get('PbxAgi\Service\VpbxidProvider\VpbxidFeature'));
+        return new TableGateway('route', $dbAdapter, $featureSet, $resultSetPrototype);
     }
 }

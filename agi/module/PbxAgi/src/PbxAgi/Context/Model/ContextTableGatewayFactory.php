@@ -16,6 +16,8 @@ class ContextTableGatewayFactory implements FactoryInterface
 		$dbAdapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
 		$resultSetPrototype = new ResultSet();
  		$resultSetPrototype->setArrayObjectPrototype(new Context());
-  		return new TableGateway('context', $dbAdapter,  null, $resultSetPrototype);
+ 		$featureSet = new FeatureSet();
+ 		$featureSet->addFeature($serviceLocator->get('PbxAgi\Service\VpbxidProvider\VpbxidFeature'));
+  		return new TableGateway('context', $dbAdapter,  $featureSet, $resultSetPrototype);
  	}
 }

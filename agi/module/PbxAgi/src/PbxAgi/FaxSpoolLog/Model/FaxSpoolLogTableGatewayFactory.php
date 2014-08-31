@@ -18,6 +18,7 @@ class FaxSpoolLogTableGatewayFactory implements FactoryInterface
         $dbAdapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
         $featureSet = new FeatureSet();
         $featureSet->addFeature(new SequenceFeature('id','faxspoollog_id_seq'));
+        $featureSet->addFeature($serviceLocator->get('PbxAgi\Service\VpbxidProvider\VpbxidFeature'));
         return new TableGateway('faxspool', $dbAdapter, $featureSet, 
             new HydratingResultSet(new ReflectionHydrator(), new FaxSpool()));
     }

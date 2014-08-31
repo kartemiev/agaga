@@ -16,6 +16,8 @@ class TrunkDestinationTableGatewayFactory implements FactoryInterface
     	$dbAdapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
     	$resultSetPrototype = new ResultSet();
     	$resultSetPrototype->setArrayObjectPrototype(new TrunkDestination());
+    	$featureSet = new FeatureSet();
+    	$featureSet->addFeature($serviceLocator->get('PbxAgi\Service\VpbxidProvider\VpbxidFeature'));
       	return new TableGateway('trunkdestinations', $dbAdapter, null, $resultSetPrototype);        	 
     }
 }
