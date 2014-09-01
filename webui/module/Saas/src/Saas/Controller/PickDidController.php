@@ -4,8 +4,6 @@ namespace Saas\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Saas\FreeDid\Model\FreeDidTable;
-use Zend\Paginator\Paginator;
-use Saas\Gizzle\ApiSelect;
 use Saas\PickDid\Form\PickDidForm;
 use Zend\View\Model\JsonModel;
 use Saas\PickDid\Model\PickDid;
@@ -36,7 +34,7 @@ class PickDidController extends AbstractActionController
 			$form->setData($request->getPost());
 			if ($form->isValid()) {
 				
-				$did = $this->freeDidTable->getDid($pickDid->id);				
+				$did = $this->freeDidTable->getDid($pickDid->outgoingtrunk_did);				
 		 
 				if (!$did)
 				{
@@ -44,7 +42,7 @@ class PickDidController extends AbstractActionController
 					return $this->redirect()->toRoute('pickdid');						
 				}
  				$vpbxEnv = new VpbxEnv();
- 				$vpbxEnv->outgoingtrunk_did = $did->id;
+ 				$vpbxEnv->outgoingtrunk_did = $did->outgoingtrunk_did;
 				$vpbxEnv->vpbx_name = '';
 				$vpbxEnv->vpbx_description = '';
 				$this->wizardSessionContainer->vpbxEnv = $vpbxEnv;
@@ -67,7 +65,6 @@ class PickDidController extends AbstractActionController
 		 		
 		return new ViewModel(
 				array(
-						'page'=>$page,
 						'form'=>$form,
 						'flashMessages'=>$this->flashMessenger()->getMessages()
  				)

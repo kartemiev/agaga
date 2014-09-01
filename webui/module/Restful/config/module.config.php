@@ -1,22 +1,29 @@
 <?php
 return array(
     'router' => array(
-        'routes' => array( 
-        		'wizard' => array(
-        				'type' => 'Segment',
-        		
-        				'options' => array(
-        						'route' => '/api/wizard[/:action]',
-        						'constraints' => array(
-        								'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
-        						),
-        						'defaults' => array(
-        								'controller' => 'Saas\Controller\VpbxWizard',
-        								'action' => 'index',
-        						),
-        				),
-        				'may_terminate'=>true
-        		),
+        'routes' => array(
+						'api' => array(
+								'type'    => 'literal',
+								'options' => array(
+										'route'    => '/api',									 
+								),
+								'may_terminate' => false,
+								'child_routes' => array(								    		    								    
+										'freedid' => array(
+												'type'    => 'segment',
+												'options' => array(
+														'route'    => '/did/free[/:id]',
+														'constraints' => array(
+																'id' => '[0-9]*',
+														),
+														'defaults' => array(
+																'controller' => 'Restful\Controller\WizardFreeDid',
+														),
+												),
+												'may_terminate' => true,
+										),		    
+								    ),
+						    ),
             ),
         ),
   

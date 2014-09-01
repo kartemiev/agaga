@@ -1,9 +1,9 @@
 <?php
 namespace Saas\Did\Model;
 
-use Did\Gizzle\ApiGatewayInterface;
-use Agaga\Entity\Did;
- 
+use Saas\Gizzle\ApiGatewayInterface;
+use Saas\Did\Model\Did;
+
 class DidTable implements DidTableInterface
 {
 	protected $apiGateway;

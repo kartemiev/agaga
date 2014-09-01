@@ -21,7 +21,7 @@ use Zend\View\Helper\Navigation;
 
 class Module
 {
-    protected $whitelist = array('zfcuser/login','home','vpbxui/registerpbx','createconference','wizard','pickdid','createinternal','internalapi','overview');
+    protected $whitelist = array('zfcuser/login','home','vpbxui/registerpbx','createconference','wizard','pickdid','createinternal','internalapi','overview','api/freedid');
     public function onBootstrap(MvcEvent $e)
     {                    
         $sm = $e->getApplication()->getServiceManager();

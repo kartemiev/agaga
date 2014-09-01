@@ -1,7 +1,7 @@
 <?php
 namespace Saas\Did\Model;
 
-use Agaga\Entity\Did;
+use Saas\Did\Model\Did;
 
 interface DidTableInterface
 {

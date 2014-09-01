@@ -390,16 +390,16 @@ function reloadPickableDid(){
  		 
  	 	  $('.bar').css('width', valeur+'%').attr('aria-valuenow', valeur);    
  	}, 500);
- 	 var result = $.ajax({ url: "/pickdid/model", success:
+ 	 var result = $.ajax({ url: "/api/did/free", success:
 			function(){
     		 $('#rowcont').empty();
 				 var responseJson = $.parseJSON(result.responseText);
-				 $.each(responseJson.dids,function(key, did){
+				 $.each(responseJson.data,function(key, did){
 					 var digits;
 					  did.digits.replace(/([\d]{3})([\d]{3})([\d]{2})([\d]{2})/g, function($0,$1,$2,$3,$4){
 						 digits = " + 7 ("+$1+") "+$2+" - "+$3+" "+$4;
 					 });
-					 $('#rowcont').append("<span class='pickableradio nopadding span3 offset1'><input name='did' type='radio' value='"+did.id+"' data-digits='"+digits+"'>"+digits+'</span>'); 
+					 $('#rowcont').append("<span class='pickableradio nopadding span3 offset1'><input name='outgoingtrunk_did' type='radio' value='"+did.id+"' data-digits='"+digits+"'>"+digits+'</span>'); 
 					 $('.pickableradio').css('cursor','pointer');
 					 $('.pickableradio').click(function(event){
 							$(event.currentTarget).children('input').first().prop( "checked", true );
@@ -411,17 +411,26 @@ function reloadPickableDid(){
 					  reloadPickableDid();
 				  });
 				 var random = Math.round(Math.random()*10);
-				 var randbtn = $("input[name='did']").eq(random);
-				 $("#largedid").text(randbtn.data('digits'));
+				 var randbtn = $("input[name='outgoingtrunk_did']").eq(random);
+			//	 $("#largedid").text(randbtn.data('digits'));
+				$("#largedid").text('не выбран');
+
 				 var valeur = 100;
 		 	 	  $('.bar').css('width', valeur+'%').attr('aria-valuenow', valeur);    
 		 	 	  
 		 	 	  $('.pickableradio').click(function(e){
-		 	 		 $("#largedid").text($(e.currentTarget).children('input').first().data('digits'));
-		 	 		  var json = $(e.target).parents('form').serializeArray();
-		 	 		  $.ajax('',{method:"POST",data:json},function(){})
+						$("#largedid").text('резервирование...');
+		 	 		 $(".wiznext").first().attr('disabled','disabled');;
+		 	 		 
+		 	 		 var json = $(e.target).parents('form').serializeArray();
+ 		 	 		  $.ajax('/api/did/free/'+json[0].value,{method:'PATCH',data:{status:'reserved'}, complete: 
+		 	 			function(){
+				 	 		 $("#largedid").text($(e.currentTarget).children('input').first().data('digits'));
+				 	 		 $(".wiznext").first().removeAttr('disabled');
+		 	 		  }  
+		 	 		  });
 		 	 	  });
-	 				randbtn.click();
+	 				/*randbtn.click();*/
 
  
 			 },

@@ -17,7 +17,7 @@ class TrunkTableGatewayFactory implements FactoryInterface
     	$resultSetPrototype = new ResultSet();
     	$resultSetPrototype->setArrayObjectPrototype(new Trunk());
     	$featureSet = new FeatureSet();
-    	$featureSet->addFeature('PbxAgi\Service\VpbxidProvider\VpbxidFeature');
+    	$featureSet->addFeature($serviceLocator->get('PbxAgi\Service\VpbxidProvider\VpbxidFeature'));
     	return new TableGateway('sip', $dbAdapter, $featureSet, $resultSetPrototype);        	 
     }
 }

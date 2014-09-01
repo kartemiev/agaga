@@ -329,7 +329,8 @@ return array(
                     	'Vpbxui\Controller\RegisterPbx',
                     	'Saas\Controller\VpbxWizard',	
                     	'Saas\Controller\CreateInternal',	
-                        'Saas\Controller\InternalApi'                    		
+                        'Saas\Controller\InternalApi',
+                        'Restful\Controller\WizardFreeDid'                    		
                     		
                     ),
                      'roles' => array('guest')
@@ -340,7 +341,8 @@ return array(
             'BjyAuthorize\Guard\Route' => array(
                 array('route' => 'zfcuser/login', 'roles' => array('guest')),
             	array('route' => 'vpbxui/registerpbx', 'roles' => array('guest')),
-            		
+                array('route' => 'api/freedid', 'roles' => array('guest')),
+                
                 array('route' => 'createconference', 'roles' => array('guest')),    
             		array('route' => 'pickdid', 'roles' => array('guest')),
             		array('route' => 'wizard', 'roles' => array('guest')),

@@ -3,9 +3,9 @@ namespace Saas\Did\Model;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
-use Agaga\Entity\Did;
 use Saas\Gizzle\ApiGateway;
-use Zend\Stdlib\Hydrator\ClassMethods;
+use Saas\Did\Model\Did;
+use Zend\Stdlib\Hydrator\ObjectProperty;
 
 class DidTableGatewayFactory implements FactoryInterface
 {
@@ -15,7 +15,7 @@ class DidTableGatewayFactory implements FactoryInterface
  		$apiGateway = new ApiGateway($config);
  		$apiGateway->setUrl('/api/did/free'); 		
  		$apiGateway->setArrayObjectPrototype(new Did());
- 		$apiGateway->setDefaultHydrator(new ClassMethods());  			
+ 		$apiGateway->setDefaultHydrator(new ObjectProperty());  			
  		return $apiGateway;
 	}
 }

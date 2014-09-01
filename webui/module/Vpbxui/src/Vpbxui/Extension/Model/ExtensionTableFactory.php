@@ -11,8 +11,7 @@ class ExtensionTableFactory implements FactoryInterface
     {
         $tableGateway = $serviceLocator->get('ExtensionTableGateway');
          return new ExtensionTable(
-        			$tableGateway, 
-        			$vpbxidProvider
+        			$tableGateway
 				);
     }    
 }

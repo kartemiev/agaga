@@ -7,7 +7,8 @@ return array(
 		'ZfcUserAdmin',
         'BjyAuthorize',
         'Vpbxui',
-    	'Saas',    		
+    	'Saas',
+        'Restful',    		
         'ReverseForm'
     ),
 

@@ -1,5 +1,5 @@
 <?php
-namespace Did\Did\Model;
+namespace Saas\Did\Model;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;

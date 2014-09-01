@@ -8,13 +8,12 @@ use Zend\InputFilter\InputFilterInterface;
 
 class PickDid implements InputFilterAwareInterface
 {
-	public $did;
+	public $outgoingtrunk_did;
 	protected $inputFilter;
-	protected $dbAdapter;
 	
 	public function exchangeArray($data)
 	{
-		$this->id = (isset($data['did']))? $data['did']:null;
+		$this->outgoingtrunk_did = (isset($data['outgoingtrunk_did']))? $data['outgoingtrunk_did']:null;
 	}
 	public function getArrayCopy()
 	{
@@ -37,7 +36,7 @@ class PickDid implements InputFilterAwareInterface
 			$factory     = new InputFactory();
 			 
 			$inputFilter->add($factory->createInput(array(
-					'name'     => 'did',
+					'name'     => 'outgoingtrunk_did',
 					'required' => true,
 					'filters'  => array(
 							array('name' => 'Int'),

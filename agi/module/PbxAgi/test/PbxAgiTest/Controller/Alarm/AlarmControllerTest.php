@@ -268,7 +268,7 @@ class AlarmControllerTest extends AbstractControllerTestCase
      	$callFile->setExtension($extension);
      	$callFile->setPriority(1);
      	$callFile->setMaxRetries(3);
-     	$callFile->setWaitTime(2);
+     	$callFile->setWaitTime(60);
      	
      	
      	$mockedCallSpoolImpl = $this->mockedCallSpoolImpl;

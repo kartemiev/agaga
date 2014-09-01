@@ -41,10 +41,11 @@ class PickDidForm extends Form
  				)
  		));
 		 */
+/*
 		$this->add(array(
 				'name' => 'submit',
  				'attributes' => array('type' => 'submit', 'value' => 'далее', 'class' => 'primaryAction'),
  		));
-		
+	*/	
 	}
 }

@@ -50,6 +50,7 @@ class Module
     {
          return array(
         'factories'=> array(
+            'Restful\Controller\WizardFreeDid'=>'Restful\Controller\WizardFreeDidControllerFactory'
             ),
      );
     }

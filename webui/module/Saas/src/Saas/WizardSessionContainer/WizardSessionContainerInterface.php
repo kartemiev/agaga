@@ -2,7 +2,6 @@
 namespace Saas\WizardSessionContainer;
 
 use Vpbxui\Extension\Model\Extension;
-use Agaga\Entity\Did;
 use Saas\VpbxEnv\Model\VpbxEnv;
 use Saas\TempMedia\Model\TempMedia;
 use Saas\FreeDid\Model\FreeDid;
