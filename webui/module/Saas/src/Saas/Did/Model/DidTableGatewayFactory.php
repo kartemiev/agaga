@@ -13,7 +13,7 @@ class DidTableGatewayFactory implements FactoryInterface
 	{
 		$config = $serviceLocator->get('Config');		
  		$apiGateway = new ApiGateway($config);
- 		$apiGateway->setUrl('/api/did/free'); 		
+ 		$apiGateway->setUrl('/api/did'); 		
  		$apiGateway->setArrayObjectPrototype(new Did());
  		$apiGateway->setDefaultHydrator(new ObjectProperty());  			
  		return $apiGateway;

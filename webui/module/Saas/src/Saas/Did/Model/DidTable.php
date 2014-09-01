@@ -52,8 +52,17 @@ class DidTable implements DidTableInterface
 			$entity = $this->apiGateway->create($data);
 			$return = $entity->getId();
 		} else {
-			if ($this->getContext($id)) {
-				$this->apiGateway->update($data);
+			if ($this->getDid($id)) {
+			    $patch = false;
+			    foreach ($data as $key=>$value)
+			    {
+			        if (!isset($did->$key))
+			        {
+			            $patch = true;
+			            break;
+			        }
+			    }			    
+				$this->apiGateway->update($data,$id, $patch);
 			} else {
 				throw new \Exception('id does not exist');
 			}

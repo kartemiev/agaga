@@ -427,7 +427,10 @@ function reloadPickableDid(){
 		 	 			function(){
 				 	 		 $("#largedid").text($(e.currentTarget).children('input').first().data('digits'));
 				 	 		 $(".wiznext").first().removeAttr('disabled');
-		 	 		  }  
+		 	 		  },
+		 	 		  failed:function(resp){
+		 	 			  
+		 	 		  }
 		 	 		  });
 		 	 	  });
 	 				/*randbtn.click();*/

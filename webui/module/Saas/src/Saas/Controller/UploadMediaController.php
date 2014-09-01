@@ -45,7 +45,13 @@ class UploadMediaController extends AbstractActionController
 			$tempMedia->custname = $filedata['name'];
 			$tempMedia->filesize = $filedata['size'];
 			$tempMedia->contenttype = $filedata['type'];
-						
+			$mediatypeMapper = array(
+			    'wtgreeting'=>'greeting',
+			    'wegreeting'=>'greetingofftime',
+			    'mohtone'=>'musiconhold',
+			    'ringingbacktone'=>'ringingtone'
+			);
+			$tempMedia->mediatype = $mediatypeMapper[$name];		
 			$id = $tempMediaTable->saveTempMedia($tempMedia);
 			rename($filedata['tmp_name'],self::TMP_MEDIA_PATH.'/'.$id);	
 			$tempMedia->id = $id;			

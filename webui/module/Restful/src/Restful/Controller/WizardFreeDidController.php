@@ -62,9 +62,10 @@ class WizardFreeDidController extends AbstractRestfulController
 	            )
 	        );
 	    }
- 	    if ($this->wizardSessionContainer->getDid())
+	    /*
+ 	    if ($this->wizardSessionContainer->did)
 	    {
-	        $oldDid = $this->wizardSessionContainer->getDid();
+	        $oldDid = $this->wizardSessionContainer->did;
 	        $oldDidPatch = new Did();
 	        $oldDidPatch->id = $oldDid->id;
 	        $currentDate = new \DateTime();
@@ -73,7 +74,7 @@ class WizardFreeDidController extends AbstractRestfulController
 	        $oldDidPatch->reserveduntil = $currentDate->format('Y-m-d H:i:s');;
 	        $this->didTable->saveDid($oldDidPatch);
 	    }
-	     
+	    */ 
 	    
 	    try {
 	    $did = $this->freeDidTable->getDid($id);
@@ -97,7 +98,7 @@ class WizardFreeDidController extends AbstractRestfulController
 	    $vpbxEnv->outgoingtrunk_did = $id;
 	    $vpbxEnv->vpbx_name = '';
 	    $vpbxEnv->vpbx_description = '';	    
-	    $this->wizardSessionContainer->setVpbxEnv($vpbxEnv);
+	    $this->wizardSessionContainer->vpbxEnv = $vpbxEnv;
 	    $didPatch = new FreeDid();
 	    $didPatch->id = $id;
 	    $currentDate = new \DateTime();
@@ -108,7 +109,7 @@ class WizardFreeDidController extends AbstractRestfulController
 	    $this->freeDidTable->saveDid($didPatch);
 	    	    
  	    
-	    $this->wizardSessionContainer->did=$didPatch;
+	    $this->wizardSessionContainer->did=$did;
 	     
 	    
 	    return new JsonModel(

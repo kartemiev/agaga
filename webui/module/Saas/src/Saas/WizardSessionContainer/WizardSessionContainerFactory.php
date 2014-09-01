@@ -13,6 +13,7 @@ class WizardSessionContainerFactory implements FactoryInterface
 	{
 		$config = array('authTimeout'=>3600);
 		$sessionConfig = new SessionConfig();
+
 		$sessionConfig->setOptions(array(
 				'use_cookies' => true,
 				'cookie_httponly' => true,

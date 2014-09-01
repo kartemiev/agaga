@@ -87,6 +87,6 @@ class InternalApiController extends AbstractRestfulController
 			}
 		}
 		$this->wizardSessionContainer->internalnumbers = $internalnumbers;
-		return new JsonModel(array('data'=>$this->wizardSessionContainer->internalnumbers));
+		return new JsonModel(array('data'=>$internalnumbers));
 	}
 }
