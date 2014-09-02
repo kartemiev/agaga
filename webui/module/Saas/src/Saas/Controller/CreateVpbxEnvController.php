@@ -113,7 +113,7 @@ class CreateVpbxEnvController extends AbstractActionController
 	}
 	protected function processMedia()
 	{
-		$media = $this->wizardSessionContainer->getMedia();
+		$media = $this->wizardSessionContainer->media;
 		$hydrator = new ObjectProperty();
 		$mediatypeMapper = array(
 				'wtgreeting'=>'greeting', 
@@ -147,16 +147,21 @@ class CreateVpbxEnvController extends AbstractActionController
 	}
 	protected function processVpbxEnv()
 	{
-		$vpbxEnv = $this->wizardSessionContainer->getVpbxEnv();
+		$vpbxEnv = $this->wizardSessionContainer->vpbxEnv;
+		$vpbxEnv->vpbx_name = 'виртульная АТС для тестов';
+		$vpbxEnv->vpbx_description = 'виртульная АТС для тестов';
+		$vpbxEnv->vpbx_remotevpbxid = (string)$this->getVpbxId();
+		var_dump($vpbxEnv);
+		exit;
 		if ($vpbxEnv)
-		{
+		{		   
 			$this->vpbxEnv = $this->vpbxEnvTable->saveVpbxEnv($vpbxEnv);
 		}
 		return $this;
 	}
 	protected function processTrunksAndContext()
 	{
-		$vpbxEnv = $this->wizardSessionContainer->getVpbxEnv();
+		$vpbxEnv = $this->wizardSessionContainer->vpbxEnv;
 		$trunk = new Trunk();
 		
 		$data = array(
@@ -197,7 +202,7 @@ class CreateVpbxEnvController extends AbstractActionController
 	}
 	protected function processInternal()
 	{
-		$internalnumbers = $this->wizardSessionContainer->getInternalNumbers();
+		$internalnumbers = $this->wizardSessionContainer->internalnumbers;
 		if (count($internalnumbers)==0)
 		{
 			return;
@@ -244,8 +249,8 @@ class CreateVpbxEnvController extends AbstractActionController
 	}
 	protected function processRoute()
 	{
-		$vpbxEnv = $this->wizardSessionContainer->getVpbxEnv();
-		$did = $this->wizardSessionContainer->getDid();
+		$vpbxEnv = $this->wizardSessionContainer->vpbxEnv;
+		$did = $this->wizardSessionContainer->did;
 		
 		$didDigigts = ($vpbxEnv && $did)?$did->digits:'';
 		

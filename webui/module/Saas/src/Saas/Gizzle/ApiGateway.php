@@ -60,7 +60,7 @@ class ApiGateway implements ApiGatewayInterface
 	public function create($data)
 	{
 		$client = $this->client;
-		$res = $client->post($this->getUrl(), $data);
+		$res = $client->post($this->getUrl(),  array('json'=>$data,'auth'=>$this->auth));
 		$this->result = $res;
 		$this->checkContentType($res);
 		$this->checkHttpResultCodes($res, array(Response::STATUS_CODE_201, Response::STATUS_CODE_409));

@@ -1862,9 +1862,11 @@ CREATE VIEW cdr_callcentre_calls_answered AS
  SELECT t.id,
     t.calldate,
     t.operatoranswerednum[1] AS operatoranswerednum,
-    t.operatoransweredbillsec[1] AS operatoransweredbillsec
+    t.operatoransweredbillsec[1] AS operatoransweredbillsec,
+    t.vpbxid
    FROM ( SELECT t_1.id,
             c.calldate,
+            c.vpbxid,
             ARRAY( SELECT cdr.dst
                    FROM cdr
                   WHERE (((cdr.linkedid)::text = (t_1.linkedid)::text) AND ((cdr.dcontext)::text = 'dialsipexten'::text))) AS operatorcalledids,
@@ -3234,6 +3236,43 @@ UNION
 ALTER TABLE public.faxusers_jointemails OWNER TO agaga;
 
 --
+-- Name: feature_test; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE TABLE feature_test (
+    id integer NOT NULL,
+    vpbxid integer,
+    test1 integer,
+    test2 integer,
+    test3 integer,
+    testtxt character varying
+);
+
+
+ALTER TABLE public.feature_test OWNER TO agaga;
+
+--
+-- Name: feature_test_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+--
+
+CREATE SEQUENCE feature_test_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.feature_test_id_seq OWNER TO agaga;
+
+--
+-- Name: feature_test_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+--
+
+ALTER SEQUENCE feature_test_id_seq OWNED BY feature_test.id;
+
+
+--
 -- Name: functions; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
 --
 
@@ -3575,7 +3614,8 @@ ALTER TABLE public.pickupgroup_name_serial OWNER TO agaga;
 CREATE TABLE pickupgroup (
     name character varying(10) DEFAULT (nextval('pickupgroup_name_serial'::regclass))::character varying(100) NOT NULL,
     custname character varying(100),
-    description character varying(100)
+    description character varying(100),
+    vpbxid integer
 );
 
 
@@ -4228,6 +4268,13 @@ ALTER TABLE ONLY faxusers ALTER COLUMN id SET DEFAULT nextval('faxusers_id_seq':
 --
 
 ALTER TABLE ONLY faxusers_extra_email ALTER COLUMN id SET DEFAULT nextval('faxusers_extra_email_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY feature_test ALTER COLUMN id SET DEFAULT nextval('feature_test_id_seq'::regclass);
 
 
 --
@@ -35514,6 +35561,29 @@ SELECT pg_catalog.setval('faxusers_id_seq', 9, true);
 
 
 --
+-- Data for Name: feature_test; Type: TABLE DATA; Schema: public; Owner: agaga
+--
+
+COPY feature_test (id, vpbxid, test1, test2, test3, testtxt) FROM stdin;
+2	2	3	4	5	\N
+1	1	3	4	5	\N
+7	1	\N	\N	\N	\N
+9	1	\N	\N	\N	\N
+10	2	2	4	5	\N
+21	\N	\N	\N	\N	
+28	\N	\N	\N	\N	28
+36	\N	\N	\N	\N	36
+\.
+
+
+--
+-- Name: feature_test_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
+--
+
+SELECT pg_catalog.setval('feature_test_id_seq', 36, true);
+
+
+--
 -- Data for Name: functions; Type: TABLE DATA; Schema: public; Owner: agaga
 --
 
@@ -35726,6 +35796,28 @@ COPY pbx_settings (vpbxid, callcentre_status_override, vmtimeout, greeting, gree
 10	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
 11	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
 12	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+17	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+18	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+19	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+20	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+21	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+22	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+23	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+24	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+25	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+26	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+27	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+28	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+29	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+30	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+31	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+32	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+33	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+34	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+35	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+36	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+37	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+38	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
 \.
 
 
@@ -35733,16 +35825,16 @@ COPY pbx_settings (vpbxid, callcentre_status_override, vmtimeout, greeting, gree
 -- Name: pbx_settings_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('pbx_settings_seq', 12, true);
+SELECT pg_catalog.setval('pbx_settings_seq', 38, true);
 
 
 --
 -- Data for Name: pickupgroup; Type: TABLE DATA; Schema: public; Owner: agaga
 --
 
-COPY pickupgroup (name, custname, description) FROM stdin;
-0		группа по умолчанию
-10	бухгалтерия	
+COPY pickupgroup (name, custname, description, vpbxid) FROM stdin;
+0		группа по умолчанию	1
+10	бухгалтерия		1
 \.
 
 
@@ -36205,31 +36297,41 @@ SELECT pg_catalog.setval('shortdialtable_id_seq', 89, true);
 --
 
 COPY sip (id, context, callingpres, deny, permit, secret, md5secret, remotesecret, transport, host, nat, type, accountcode, amaflags, callerid, defaultip, dtmfmode, fromuser, fromdomain, insecure, language, mailbox, qualify, regexten, rtptimeout, rtpholdtimeout, setvar, disallow, allow, fullcontact, ipaddr, port, defaultuser, subscribecontext, directmedia, trustrpid, sendrpid, progressinband, promiscredir, useclientcode, callcounter, busylevel, allowoverlap, allowsubscribe, allowtransfer, ignoresdpversion, template, videosupport, maxcallbitrate, rfc2833compensate, "session-timers", "session-expires", "session-minse", "session-refresher", t38pt_usertpsource, outboundproxy, callbackextension, registertrying, timert1, timerb, qualifyfreq, contactpermit, contactdeny, lastms, regserver, regseconds, useragent, name, custname, custdesc, active, ringoncall, callgroup, rec_type, register, ctrunkentryref, pickupgroup, istemplate, extension, extensiontype, operatorstatus, callrecording, extensiongroup, outgoingcallspermission, extensionrecord, namedpickupgroup, namedcallgroup, transfer, statuschange, incoming, hold, forwarding, memberofcallcentreque, stamp, email, musicclass, musiconhold, callsequence, diversion_unconditional_status, diversion_unconditional_number, diversion_unavail_status, diversion_unavail_number, diversion_busy_status, diversion_busy_number, diversion_noanswer_status, diversion_noanswer_number, number_status, faxemail, peertype, routeref, diversion_unconditional_landingtype, diversion_unavail_landingtype, diversion_busy_landingtype, diversion_noanswer_landingtype, diversion_noanswer_duration, vpbxid) FROM stdin;
-161	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	yuYYu6QL	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	22	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		530			t	t	\N	phone	\N	\N	\N	f	530	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:33:58.529227		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-159	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	haIBO7s4	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	20	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		519			t	t	\N	phone	\N	\N	\N	f	519	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:29:16.426764		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-153	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	nN8eSYte	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	14	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		516			t	t	\N	phone	\N	\N	\N	f	516	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:20:44.242602		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-151	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	Fe7HEm4S	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	12	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		512			t	t	\N	phone	\N	\N	\N	f	512	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:13:39.097935		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-157	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	Bx48zznj	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	18	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		527			t	t	\N	phone	\N	\N	\N	f	527	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:26:17.556343		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-152	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	XtY4PqgB	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	13	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		544			t	t	\N	phone	\N	\N	\N	f	544	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:14:40.684259		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-154	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	mbsBJLMU	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	15	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		525			t	t	\N	phone	\N	\N	\N	f	525	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:21:46.341772		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-160	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	ipjMbh3z	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	21	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		528			t	t	\N	phone	\N	\N	\N	f	528	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:29:55.032774		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-164	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	drjAoIEC	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	25	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		524			t	t	\N	phone	\N	\N	\N	f	526	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:43:46.58342		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-149	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	X7oYwMLn	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	10	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		522			t	t	\N	phone	\N	\N	\N	f	521	operator	ABSENT	disabled	1	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:11:51.223055		1_mohtone	1_mohtone	SEQUENTIAL	ACTIVATED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	VOICEMAIL	NUMBER	NUMBER	NUMBER	20	1
-155	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	YjAQROmM	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	16	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		536	Иван Иванов		t	t	\N	phone	\N	\N	\N	f	536	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:23:10.024429		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-176	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	gpcNZJkm	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	37	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		102			t	t	\N	phone	\N	\N	\N	f	102	regular	ABSENT	disabled	9	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-18 06:15:45.36898		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-175	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	Yf3qUxii	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	36	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		101	Петр Петров		t	t	\N	phone	\N	\N	\N	f	101	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-18 06:15:24.008474		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	10	VOICEMAIL	NUMBER	NUMBER	NUMBER	20	1
-156	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	Xf70jPWh	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	17	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		514			t	t	\N	phone	\N	\N	\N	f	514	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:24:28.429594		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	DEACTIVATED		UNDEFINED		EXTENSION	10	NUMBER	NUMBER	NUMBER	VOICEMAIL	20	1
-148	vpbx_dialout	allowed			quit666	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	9	no	\N	\N	\N	\N	all	ulaw,alaw				510	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	0		0		510			t	t	\N	phone	\N	\N	\N	f	510	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:08:37.403791		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	30	1
-205	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	9S9rziwP	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	66	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		107			t	t	\N	phone	\N	\N	\N	f	107	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:13:55.919708		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
-143	vpbx_dialout	allowed			quit666	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	4	no	\N	\N	\N	\N	all	ulaw,alaw				502	default	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	0		0		502			t	t	\N	phone	\N	\N	\N	f	502	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-09-18 17:39:19.298244		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED	0	UNDEFINED	0	UNDEFINED	\N	UNDEFINED	0	UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-204	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	8yXtMCTf	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	65	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		106			t	t	\N	phone	\N	\N	\N	f	106	operator	ABSENT	disabled	1	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:13:23.000515		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
-140	vpbx_dialout	allowed			QWoIen0m	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	1	no	\N	\N	\N	\N	all	ulaw,alaw	sip:501@192.168.10.101:18028^3Brinstance=e974642430e04d94			501	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	0		1384100631	eyeBeam release 1102u stamp 52345	501	тест 1		t	t	\N	phone	\N	\N	\N	f	501	operator	LOGGED_IN	disabled	4	undefined	active	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-08-31 23:15:53.27787		1_mohtone	1_mohtone	SIMULRING	DEACTIVATED	89251999108	UNDEFINED		UNDEFINED	\N	ACTIVATED	333	UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	VOICEMAIL	30	1
-197	vpbx_trunks	allowed	\N	\N	testpassword	\N	\N	udp	serv-02.vector-tel.ru	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	58	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		495640804009	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	197	no	\N	\N	\N	\N	\N	\N		0		495640804009	Вектор телеком	\N	t	t	\N	phone	\N	\N	\N	f	\N	regular	ABSENT	disabled	0	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-22 01:44:54.283573		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		TRUNK	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-144	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	TIO4OKwU	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	5	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		503	Сидор Сидоров		t	t	\N	phone	\N	\N	\N	f	570	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:01:42.473342		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	\N
-202	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	9lqgaPtA	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	63	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		104			t	t	\N	phone	\N	\N	\N	f	104	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:04:01.920126		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
-203	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	s0Lz5djN	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	64	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		105			t	t	\N	phone	\N	\N	\N	f	105	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:13:03.598057		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	\N
-177	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	YdmOIdwp	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	38	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		103		тест	t	t	\N	phone	\N	\N	\N	f	103	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-18 06:18:22.733153		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-200	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	g84RgIJf	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	61	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		100			t	t	\N	phone	\N	\N	\N	f	100	operator	ABSENT	disabled	9	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:03:23.049404		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
+161	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	yuYYu6QL	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	22	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	530	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:33:58.529227		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+159	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	haIBO7s4	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	20	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	519	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:29:16.426764		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+153	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	nN8eSYte	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	14	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	516	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:20:44.242602		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+151	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	Fe7HEm4S	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	12	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	512	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:13:39.097935		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+157	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	Bx48zznj	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	18	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	527	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:26:17.556343		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+152	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	XtY4PqgB	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	13	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	544	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:14:40.684259		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+154	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	mbsBJLMU	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	15	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	525	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:21:46.341772		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+160	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	ipjMbh3z	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	21	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	528	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:29:55.032774		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+164	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	drjAoIEC	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	25	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	526	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:43:46.58342		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+149	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	X7oYwMLn	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	10	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	521	operator	ABSENT	disabled	1	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:11:51.223055		1_mohtone	1_mohtone	SEQUENTIAL	ACTIVATED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	VOICEMAIL	NUMBER	NUMBER	NUMBER	20	1
+155	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	YjAQROmM	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	16	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N	Иван Иванов		t	t	\N	phone	\N	\N	\N	f	536	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:23:10.024429		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+176	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	gpcNZJkm	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	37	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	102	regular	ABSENT	disabled	9	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-18 06:15:45.36898		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+175	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	Yf3qUxii	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	36	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N	Петр Петров		t	t	\N	phone	\N	\N	\N	f	101	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-18 06:15:24.008474		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	10	VOICEMAIL	NUMBER	NUMBER	NUMBER	20	1
+156	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	Xf70jPWh	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	17	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	514	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:24:28.429594		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	DEACTIVATED		UNDEFINED		EXTENSION	10	NUMBER	NUMBER	NUMBER	VOICEMAIL	20	1
+148	vpbx_dialout	allowed			quit666	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	9	no	\N	\N	\N	\N	all	ulaw,alaw				510	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	0		0		\N			t	t	\N	phone	\N	\N	\N	f	510	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:08:37.403791		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	30	1
+205	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	9S9rziwP	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	66	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	107	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:13:55.919708		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
+143	vpbx_dialout	allowed			quit666	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	4	no	\N	\N	\N	\N	all	ulaw,alaw				502	default	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	0		0		\N			t	t	\N	phone	\N	\N	\N	f	502	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-09-18 17:39:19.298244		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED	0	UNDEFINED	0	UNDEFINED	\N	UNDEFINED	0	UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+204	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	8yXtMCTf	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	65	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	106	operator	ABSENT	disabled	1	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:13:23.000515		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
+140	vpbx_dialout	allowed			QWoIen0m	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	1	no	\N	\N	\N	\N	all	ulaw,alaw	sip:501@192.168.10.101:18028^3Brinstance=e974642430e04d94			501	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	0		1384100631	eyeBeam release 1102u stamp 52345	\N	тест 1		t	t	\N	phone	\N	\N	\N	f	501	operator	LOGGED_IN	disabled	4	undefined	active	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-08-31 23:15:53.27787		1_mohtone	1_mohtone	SIMULRING	DEACTIVATED	89251999108	UNDEFINED		UNDEFINED	\N	ACTIVATED	333	UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	VOICEMAIL	30	1
+197	vpbx_trunks	allowed	\N	\N	testpassword	\N	\N	udp	serv-02.vector-tel.ru	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	58	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		495640804009	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	197	no	\N	\N	\N	\N	\N	\N		0		\N	Вектор телеком	\N	t	t	\N	phone	\N	\N	\N	f	\N	regular	ABSENT	disabled	0	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-22 01:44:54.283573		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		TRUNK	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+209	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		69	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		\N	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		\N			t	t	\N	phone		\N		f	300	regular	ABSENT	disabled	0	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 20:05:28.142412		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+144	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	TIO4OKwU	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	5	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N	Сидор Сидоров		t	t	\N	phone	\N	\N	\N	f	570	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:01:42.473342		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	\N
+202	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	9lqgaPtA	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	63	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	104	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:04:01.920126		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
+203	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	s0Lz5djN	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	64	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	105	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:13:03.598057		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	\N
+177	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	YdmOIdwp	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	38	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N		тест	t	t	\N	phone	\N	\N	\N	f	103	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-18 06:18:22.733153		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+200	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	g84RgIJf	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	61	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	100	operator	ABSENT	disabled	9	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:03:23.049404		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
+212	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		71	no					all	ulaw,alaw				\N		no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		\N			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 20:30:46.300863		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+214	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		73	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		\N			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:19:56.000621		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+215	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		74	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		\N			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:22:43.585691		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+216	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		75	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		333			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:26:45.410866		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+219	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		78	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		\N			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:34:17.697402		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+220	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		79	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		\N			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:36:11.441476		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+221	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		80	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		9			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:38:17.658897		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+222	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		81	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		91301			t	t	\N	phone		\N		f	301	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:42:19.891379		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
+224	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		83	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		900010301			t	t	\N	phone		\N		f	301	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 22:03:37.93225		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
 \.
 
 
@@ -36244,14 +36346,14 @@ SELECT pg_catalog.setval('sip_devices_id_seq', 1, false);
 -- Name: sip_mailbox; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('sip_mailbox', 67, true);
+SELECT pg_catalog.setval('sip_mailbox', 83, true);
 
 
 --
 -- Name: sip_serial; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('sip_serial', 206, true);
+SELECT pg_catalog.setval('sip_serial', 224, true);
 
 
 --
@@ -36280,6 +36382,12 @@ COPY temp_media (id, custname, custdesc, contenttype, filesize, mediatype) FROM 
 6	[kickass.to]team.sket.trinity.rae.1080p.torrent		application/octet-stream	171503	
 7	[kickass.to]dp.chicks.3.new.2013.21sextury.dvdrip.torrent		application/octet-stream	19875	
 9	_Г†°а®нЂм Г†аб®† М†а™•б, О Ђо°Ґ® ® ѓаЃз®е °•б†е.doc		application/msword	528384	
+10	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	
+11	РосСкрининг.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	152175	
+12	kartemiev.kdb.kdb		application/octet-stream	28764	
+13	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное МЮ.doc		application/msword	72704	
+14	ТЗ API Глюкометр v.4.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	158837	
+16	РосСкрининг.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	152175	greetingofftime
 \.
 
 
@@ -36287,7 +36395,7 @@ COPY temp_media (id, custname, custdesc, contenttype, filesize, mediatype) FROM 
 -- Name: temp_media_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('temp_media_id_seq', 9, true);
+SELECT pg_catalog.setval('temp_media_id_seq', 16, true);
 
 
 --
@@ -36349,6 +36457,35 @@ COPY "user" (user_id, username, email, display_name, password, state, role, vpbx
 41	\N	kartemiev9991@gmail.com	kartemiev9991@gmail.com	$2y$04$gJfrIBnBxyMlLu2LWr.sKeJdb4aVEggrl74Gc7Us/dNX.claBJvMy	\N	admin	\N
 42	\N	kartemiev9992@gmail.com	kartemiev9992@gmail.com	$2y$04$qQoj81t1plcy6kfO./87o.dD9pPa7wCpA5aKVzRuhKSJC4MXslgHS	\N	admin	\N
 43	\N	kartemiev9993@gmail.com	kartemiev9993@gmail.com	$2y$04$M75XLhKPu4TSuvkbeTkcYeBuOo65yPl6eP2VcrSSb/U0d.vsjI4Pe	\N	admin	12
+45	\N	kartemiev111@gmail.com	Vasya	$2y$04$bu6Q8wXgYjtv84esT1pTVuE0dZNVbjmpaws.FfM3wKn3a/ax44EAK	\N	admin	\N
+47	\N	kartemiev333433@gmail.com	Peter Ivanoff	$2y$04$RPATvO0YhJ.GXSOve5T8huEB6xiCJ9ZU/imUOd6RSDzKUPfa6rSEy	\N	admin	\N
+49	\N	kartemiev333444@gmail.com	Peter Ivanoff	$2y$04$xBXunkcI6JsUgs2yBQSk0up8pCdrr1pRkmq8I.DfGSwCNA58lcfOO	\N	admin	\N
+51	\N	kartemiev33322@gmail.com	Peter Ivanoff	$2y$04$HZup6JsPxb0AbQap.MfNw.zi4H1CxfSzJ3U5ZebE5VqZObLPkgZqa	\N	admin	\N
+53	\N	kartemiev33333@gmail.com	Вася Пупкин	$2y$04$HgjIZtDABm8xB3B6d3Ym1.xrPdbrBOMNVxgy/laKbODphPgqIej1y	\N	admin	\N
+55	\N	kartemiev33333233@gmail.com	Peter Ivanoff	$2y$04$sSymLIucIuuDwRl86VlMZ.R8QfVj2BHb3ROHwBkxI1Qh0Kx2CdxO.	\N	admin	\N
+57	\N	kartemiev333113@gmail.com	Peter Ivanoff	$2y$04$g8ua3QA5CQ4nY30AFJd2CeVt24cX4IqxuiYGawH6kQ6W5J7UN5cnu	\N	admin	\N
+59	\N	kartemiev333342@gmail.com	Peter Ivanoff	$2y$04$Kn7xMQ/KrY07rz/Vx73MAumNzZLYic1gJW2h5jSlru3wj7O4Yk3mG	\N	admin	17
+61	\N	kartemiev31113@gmail.com	Peter Ivanoff	$2y$04$I0HFqDEAqjSHJSOavh7SEeSVQnnjKwCTGVHlAyevdLJGpr9oEJEHa	\N	admin	18
+63	\N	kartemiev331233@gmail.com	Peter Ivanoff	$2y$04$LGGXEEeVA4wYGBVpbEUD5eDHsgrZrxeWLPqActYGUiIuWWUKYZd3e	\N	admin	19
+65	\N	kartemiev33223@gmail.com	Peter Ivanoff	$2y$04$ehuJJZm9YiFo3888OHM6fOpDtjgINaoqx2iEJrarh7xKTYPATxEGe	\N	admin	20
+67	\N	kartemiev3113@gmail.com	Peter Ivanoff	$2y$04$pUOzwiGL9g52ZZ/woNTwTOgDkN.HYM3iVjURyIEpGmXTwE6wK22SS	\N	admin	21
+69	\N	kartemiev33333113@gmail.com	Peter Ivanoff	$2y$04$m8lfNoU6QaBeUw4aY/wKXuYAvVPac9hyFhmEDs1IfGERMGxetyT6a	\N	admin	22
+71	\N	kartemiev3113113@gmail.com	Peter Ivanoff	$2y$04$QHNe8LhK15CHY9/LqTQJNedF0r4ABrPagybl20UuSQigTeJftiEMC	\N	admin	23
+73	\N	kartemiev3331333@gmail.com	Peter Ivanoff	$2y$04$YjeZApz7CY9WUKrKs9YDt.jkiVQFU.o9goWQA103ZX9ZtrHkdvtMa	\N	admin	24
+75	\N	kartemiev333188@gmail.com	Peter Ivanoff	$2y$04$SYfV3thaOYV5lP/4fVxlVe3fXy75UROk/GOBtBJgntWz37GpZPGM6	\N	admin	25
+77	\N	kartemiev332213@gmail.com	Peter Ivanoff	$2y$04$pxOxPSaTpLTzyF87wCe5Z.HkDiER6Fhmj.FyzNvnnBmltcms25Ity	\N	admin	26
+79	\N	kartemiev300113@gmail.com	Peter Ivanoff	$2y$04$dmAXsEYCCGbVbFTEMBluyenHRcpDhFYmXL.HsvKh4YJ7YPm66pzNG	\N	admin	27
+81	\N	kartemiev33443113@gmail.com	Peter Ivanoff	$2y$04$.HJQ3fZR6LpFLiaVgS3LkuYyGpaqHgfTKn63lF539GUbL12J4qjym	\N	admin	28
+83	\N	kartemiev@gmail3.com	Vasya	$2y$04$N7RzEYPhVkAH7kqhxlnOXeFQE1i5QvosCduVAvCt3oin4C92wgRM.	\N	admin	29
+85	\N	kartemiev3444@gmail.com	Peter Ivanoff	$2y$04$GPQtu/Ak8gXvkJ6keXqqeuMHWlA.VjsXELW.NJP2s2nDEXn4getsm	\N	admin	30
+87	\N	kartemiev3344@gmail.com	kjjdjkd	$2y$04$wQIJj1.C5BgtrTUfYOTwNOENFCGr0SVKrcAlAXBcTMfLEe95FiuGi	\N	admin	31
+89	\N	kartemiev888@gmail.com	Вася Пупкин	$2y$04$EBm2ZhTKLTmmZHzlDJMtquP5R0NbfVlPMgTL0RNK4Q99K7NZ4hVui	\N	admin	32
+91	\N	kartemiev344333@gmail.com	Peter Ivanoff	$2y$04$OaSb43mD0HsOD6KrtW9wte2tvcTtXxjmUdOQQImF7wOTbFkAwwQNO	\N	admin	33
+93	\N	kartemiev444999@gmail.com	Peter Ivanoff	$2y$04$Lww3vgOMJ1.avRQ/QwvM4uQNKod3UWlVJPZHm3SKpM01xc9qUJyvG	\N	admin	34
+95	\N	kartemiev444111@gmail.com	Peter Ivanoff	$2y$04$ch7aTprLjCkfmPpsTm9Oo.5MUlTxluJph0DMi9ufdrviUzTGSd3ce	\N	admin	35
+97	\N	kartemiev3334422@gmail.com	Peter Ivanoff	$2y$04$w04FfHpBPym4468KGWEsOOv85Q9rpuBgesVXX3huacdn4QNmSSeeu	\N	admin	36
+99	\N	kartemiev88899@gmail.com	Peter Ivanoff	$2y$04$VbqR92bOg1tRJYiFoKTF.O/qEXpHH9sGvW10JmBV2/pkL5zpiBsm2	\N	admin	37
+101	\N	kartemiev133333@gmail.com	Peter Ivanoff	$2y$04$yHT7yQF6X8Unw/6gvkls5uKKZ7leWyeAa05Gi5hDHDGUJN4lmkeLW	\N	admin	38
 \.
 
 
@@ -36366,7 +36503,7 @@ admin	0	\N	администратор
 -- Name: user_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('user_user_id_seq', 43, true);
+SELECT pg_catalog.setval('user_user_id_seq', 101, true);
 
 
 --
@@ -36535,6 +36672,14 @@ ALTER TABLE ONLY faxusers
 
 
 --
+-- Name: feature_test_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY feature_test
+    ADD CONSTRAINT feature_test_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: functions_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
@@ -36647,14 +36792,6 @@ ALTER TABLE ONLY shortdialtable
 
 
 --
--- Name: sip_devices_defaultuser_key; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY sip
-    ADD CONSTRAINT sip_devices_defaultuser_key UNIQUE (defaultuser);
-
-
---
 -- Name: sip_devices_name_unique; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
@@ -36668,14 +36805,6 @@ ALTER TABLE ONLY sip
 
 ALTER TABLE ONLY sip
     ADD CONSTRAINT sip_devices_pkey PRIMARY KEY (id);
-
-
---
--- Name: sip_extension_uniquie; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY sip
-    ADD CONSTRAINT sip_extension_uniquie UNIQUE (extension);
 
 
 --
@@ -36856,6 +36985,25 @@ CREATE INDEX rdate_date_index ON schedule_replacements USING btree (rdate);
 --
 
 CREATE INDEX sip_mailbox_index ON sip USING btree (mailbox);
+
+
+--
+-- Name: sip_insert_new_peername_extension; Type: RULE; Schema: public; Owner: agaga
+--
+
+CREATE RULE sip_insert_new_peername_extension AS
+    ON INSERT TO sip
+   WHERE (new.peertype = 'EXTENSION'::vpbx_peertype) DO  UPDATE sip SET name = (('9'::text || lpad((sip.vpbxid)::text, 4, '0'::text)) || lpad((sip.extension)::text, 4, '0'::text))
+  WHERE (sip.id = ( SELECT currval('sip_serial'::regclass) AS currval));
+
+
+--
+-- Name: test_txt_rule; Type: RULE; Schema: public; Owner: agaga
+--
+
+CREATE RULE test_txt_rule AS
+    ON INSERT TO feature_test DO  UPDATE feature_test SET testtxt = (feature_test.id)::character varying
+  WHERE (feature_test.id = ( SELECT currval('feature_test_id_seq'::regclass) AS currval));
 
 
 --
@@ -37126,6 +37274,14 @@ ALTER TABLE ONLY number_match
 
 ALTER TABLE ONLY operator_status_log
     ADD CONSTRAINT operator_status_log_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: pickupgroup_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY pickupgroup
+    ADD CONSTRAINT pickupgroup_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
 
 
 --
