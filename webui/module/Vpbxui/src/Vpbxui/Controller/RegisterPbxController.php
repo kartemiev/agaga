@@ -24,6 +24,7 @@ class RegisterPbxController extends AbstractActionController
 	protected $userService;
 	protected $options;
 	protected $pbxSettingsTable;
+	protected $redirect;
 	
 	public function __construct(
 			FormInterface $userForm, 
@@ -96,8 +97,9 @@ class RegisterPbxController extends AbstractActionController
 		$userFinal = $this->userService->getUserMapper()->findByEmail($user->getEmail());
 		$user->setId($userFinal->getId());
 		$this->userService->getUserMapper()->update($user);
+		$events = $this->getEventManager();
 		
-		if ($this->options->getLoginAfterRegistration()) {
+ 	 	if ($this->options->getLoginAfterRegistration()) {
 			$identityFields = $this->options->getAuthIdentityFields();
 			if (in_array('email', $identityFields)) {
 				$post['identity'] = $user->getEmail();
@@ -106,10 +108,25 @@ class RegisterPbxController extends AbstractActionController
 			}
 			$post['credential'] = $post['password'];
 			$request->setPost(new Parameters($post));
-			return $this->forward()->dispatch(static::CONTROLLER_NAME, array('action' => 'authenticate'));
+			
+			
+			$authresponse = $this->forward()->dispatch(static::CONTROLLER_NAME, array('action' => 'authenticate'));
+			$results = $events->trigger('register.preDispatch', $this);
+			if ($results->stopped()) {
+			    foreach ($results as $result)
+			    {
+			        	
+			        if ($result instanceof Response)
+			        {
+			            return $result;
+			        }
+			    }
+			}
+			return $authresponse;	
 		}
 		
-		// TODO: Add the redirect parameter here...
+	 
+		
 		return $this->redirect()->toUrl($this->url()->fromRoute(static::ROUTE_LOGIN) . ($redirect ? '?redirect='. rawurlencode($redirect) : ''));		
 	}
 }

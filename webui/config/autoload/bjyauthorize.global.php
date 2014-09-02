@@ -264,7 +264,8 @@ return array(
                     	'Vpbxui\Controller\CallCentreSchedule',
                     	'Vpbxui\Controller\AuthCode',
                         'zfcuseradmin',
-                        'zfcuser'                    		
+                        'zfcuser',
+                        'Saas\Controller\CreateVpbxEnv'                    		
                         ),
                      'roles' => array('admin')
                 ),                
@@ -348,6 +349,8 @@ return array(
             		array('route' => 'wizard', 'roles' => array('guest')),
             		array('route' => 'createinternal', 'roles' => array('guest')),
             		array('route' => 'internalapi', 'roles' => array('guest')),
+                array('route' => 'createvpbx', 'roles' => array('admin')),
+                
             		
                 array('route' => 'home', 'roles' => array('admin','supervisor','guest')),
                 array('route' => 'vpbxui/default', 'roles' => array('admin','supervisor')),

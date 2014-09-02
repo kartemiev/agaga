@@ -6,6 +6,7 @@ return array(
 		'ZfcAdmin',
 		'ZfcUserAdmin',
         'BjyAuthorize',
+        'SaasBootstrap',
         'Vpbxui',
     	'Saas',
         'Restful',    		
@@ -19,7 +20,7 @@ return array(
         ),
 
         'config_glob_paths' => array(
-            'config/autoload/{,*.}{global,local}.php',
+            'config/autoload/{,*.}{global,local}.php'        
         ),
     ),
 

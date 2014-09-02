@@ -20,8 +20,8 @@ class OverviewController extends AbstractActionController
 		$internalnumbers = (isset($wizardSessionContainer->internalnumbers))?$wizardSessionContainer->internalnumbers:array();
 		$vpbxEnv = (isset($wizardSessionContainer->vpbxEnv))?$wizardSessionContainer->vpbxEnv:null;	
 		$media = (isset($wizardSessionContainer->media))?$wizardSessionContainer->media:null;
-		$did = $wizardSessionContainer->did;
-  		return new ViewModel(
+		$did = $wizardSessionContainer->did;	
+   		return new ViewModel(
 				array(
 						'internalnumbers'=>$internalnumbers,
 						'vpbxEnv'=>$vpbxEnv,

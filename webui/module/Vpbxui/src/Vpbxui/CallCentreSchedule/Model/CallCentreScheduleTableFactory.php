@@ -10,8 +10,7 @@ class CallCentreScheduleTableFactory implements FactoryInterface
         public function createService(ServiceLocatorInterface $serviceLocator) {
             $tableGateway = $serviceLocator->get('Vpbxui\CallCentreSchedule\Model\CallCentreScheduleTableGateway');
             return new CallCentreScheduleTable(
-            		$serviceLocator->get('Vpbxui\CallCentreSchedule\Model\CallCentreScheduleTableGateway'),
-            		$serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidProvider')
+            		$serviceLocator->get('Vpbxui\CallCentreSchedule\Model\CallCentreScheduleTableGateway')
 			);
         }     
 }

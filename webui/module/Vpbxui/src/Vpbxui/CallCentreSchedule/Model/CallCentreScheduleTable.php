@@ -2,30 +2,23 @@
 namespace Vpbxui\CallCentreSchedule\Model;
 
 use Zend\Db\TableGateway\TableGateway;
-use Vpbxui\CallCentreSchedule\Model\CallCentreScheduleTableInterface;
-use Vpbxui\Service\VpbxidProvider\VpbxidProviderInterface;
-use Zend\Db\Sql\Select;
 
 
 class CallCentreScheduleTable implements CallCentreScheduleTableInterface
 {
     protected $tableGateway;
-    protected $vpbxidProvider;
-    public function __construct(TableGateway $tableGateway, VpbxidProviderInterface $vpbxidProvider)
+     public function __construct(TableGateway $tableGateway)
     {
         $this->tableGateway = $tableGateway;
-        $this->vpbxidProvider = $vpbxidProvider;
-    }
+     }
     
     public function getCallCentreSchedule()
     {
-    	$rowset = $this->tableGateway->select(function (Select $select) {
-    		$this->vpbxidProvider->vpbxFilter($select);    		
-    	});
+    	$rowset = $this->tableGateway->select();
     	 
     	$row = $rowset->current();
     	if (!$row) {
-    		throw new \Exception("Could not find row $vpbxid");
+    		throw new \Exception("Could not find row");
     	}
      
     	return $row;    	
@@ -65,7 +58,7 @@ class CallCentreScheduleTable implements CallCentreScheduleTableInterface
      
      	 $cSchedule = $this->getCallCentreSchedule();
     		if ($cSchedule) {
-    			$this->tableGateway->update($data, array('vpbx_id' => $cSchedule->vpbx_id));
+    			$this->tableGateway->update($data);
     		} else {
     			throw new \Exception('vpbx id does not exist');
     		}

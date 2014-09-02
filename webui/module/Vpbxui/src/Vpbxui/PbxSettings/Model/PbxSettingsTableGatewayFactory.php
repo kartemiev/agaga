@@ -18,7 +18,6 @@ class PbxSettingsTableGatewayFactory implements FactoryInterface
         $resultSetPrototype->setArrayObjectPrototype(new PbxSettings());
         $featureSet = new FeatureSet();
         $featureSet->addFeature(new SequenceFeature('vpbxid','pbx_settings_seq'));
-        $featureSet->addFeature($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));
-        return new TableGateway('pbx_settings', $dbAdapter, $featureSet, $resultSetPrototype);
+         return new TableGateway('pbx_settings', $dbAdapter, $featureSet, $resultSetPrototype);
     }
 }

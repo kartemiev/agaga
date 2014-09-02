@@ -48,6 +48,21 @@ return array(
         				),
         				'may_terminate'=>true
         		),
+            'createvpbx' => array(
+                'type' => 'Segment',
+            
+                'options' => array(
+                    'route' => '/createvpbx[/:action]',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Saas\Controller\CreateVpbxEnv',
+                        'action' => 'index',
+                    ),
+                ),
+                'may_terminate'=>true
+            ),
         		'internalapi' => array(
         				'type'    => 'segment',
         				'options' => array(
@@ -89,4 +104,5 @@ return array(
         		'DidNumberFormat'=>'Saas\View\Helper\DidNumberFormat'
          )
     ),
+  
 );

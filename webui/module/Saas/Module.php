@@ -65,7 +65,8 @@ class Module
         		'Saas\Controller\UploadMedia' => 'Saas\Controller\UploadMediaControllerFactory',
         		'Saas\Controller\CreateInternal' => 'Saas\Controller\CreateInternalControllerFactory',
         		'Saas\Controller\Overview'=> 'Saas\Controller\OverviewControllerFactory',
-        		'Saas\Controller\InternalApi' => 'Saas\Controller\InternalApiControllerFactory'
+        		'Saas\Controller\InternalApi' => 'Saas\Controller\InternalApiControllerFactory',
+                'Saas\Controller\CreateVpbxEnv' => 'Saas\Controller\CreateVpbxEnvControllerFactory'
             ),
      );
     }

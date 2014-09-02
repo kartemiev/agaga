@@ -3,24 +3,23 @@ namespace Vpbxui\PbxSettings\Model;
 use Zend\Db\TableGateway\TableGateway;
 use Vpbxui\PbxSettings\Model\PbxSettingsTableInterface;
 use Vpbxui\PbxSettings\Model\PbxSettings;
-use Vpbxui\Service\VpbxidProvider\VpbxidProviderInterface;
-use Zend\Crypt\PublicKey\Rsa\PublicKey;
+use Zend\Db\Sql\Select;
 
 class PbxSettingsTable implements PbxSettingsTableInterface
 {
     protected $tableGateway;
     protected $vpbxidProvider;
-    public function __construct(TableGateway $tableGateway, VpbxidProviderInterface $vpbxidProvider)
+    public function __construct(TableGateway $tableGateway)
     {
         $this->tableGateway = $tableGateway;
-        $this->vpbxidProvider = $vpbxidProvider;
-    }
+     }
     
     public function fetchAll($filter = null)
     {        
         if (!$filter) $filter = array();
-        $filter['vpbxid'] = ($filter['vpbxid'])?$filter['vpbxid']:1;
-        $resultSet = $this->tableGateway->select($filter);
+         $resultSet = $this->tableGateway->select(function(Select $select) use ($filter){
+             $select->where($filter);
+         });
         return $resultSet;
     }       
 
@@ -30,10 +29,6 @@ class PbxSettingsTable implements PbxSettingsTableInterface
     	
     	$sql = $this->tableGateway->getSql();
     	$select = $sql->select();
-    	$this->vpbxidProvider->vpbxFilter($select);    	 
-     	 
-    	$select->where->equalTo('vpbxid', $vpbxid);
-    	  
     	$select->limit(1);
      	$rowset = $this->tableGateway->selectWith($select);
 
@@ -55,9 +50,7 @@ class PbxSettingsTable implements PbxSettingsTableInterface
     		$this->tableGateway->insert($data);
     		$return = $this->tableGateway->getLastInsertValue();
     	} else {
-    		$vpbxid = $this->vpbxidProvider->getVpbxId();    		
-    		$data['vpbxid'] = ($this->vpbxidProvider->isSuperuser())?$pbxsettings->vpbxid:$vpbxid;    		
-    		if ($this->getPbxSettings($vpbxid)) {
+      		if ($this->getPbxSettings($vpbxid)) {
      			$this->tableGateway->update($data,array('vpbxid'=>$vpbxid));
      			
     		} else {

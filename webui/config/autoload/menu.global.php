@@ -4,8 +4,8 @@
 return array(
     'navigation' => array(
         'default'=>array(
-            /*
-            array(
+           
+            'conference'=>array(
                 'label' => 'телеконференция',
                 'title'=>'создание комнат телеконференций',
                 'route' => 'createconference',
@@ -13,7 +13,7 @@ return array(
                 'resource'   => 'mvc:conferencecreate.vpbxui', // resource
                 'controller' => 'Vpbxui\Controller\ConferenceBooking',
              ),
-             */
+           
             'login'=> array(
             		'label'=>'вход',
                 'title'=>'вход в защищенную область',
@@ -26,80 +26,7 @@ return array(
             		'visible'    => true, // not visible                        
             ),
 
-        		'index'=> array(
-        						'label'=>'регистрация',
-        						'title'=>'регистрация IP АТС',
-        						'route'=>'wizard',
-        						'module'     => 'saas',
-        						'controller' => 'Saas\Controller\VpbxWizard',
-        						'action'     => 'index',
-        						'resource'   => 'mvc:vpbxwizard.saas',
-        						'visible'    => true,
-        						'pages'=>array(
-        				
-        				
-        				
-        				'step1'=> array(
-        						'label'=>'шаг 1',
-        						'title'=>'регистрация IP АТС',
-        						'route'=>'wizard',
-        						'module'     => 'saas',
-        						'controller' => 'Saas\Controller\VpbxWizard',
-        						'action'     => 'step1',
-        						'resource'   => 'mvc:vpbxwizard.saas',
-        						'visible'    => true,
-        						'pages'=>array(
-        				
-        						'step2'=> array(
-        								'label'=>'шаг 2',
-        								'title'=>'регистрация IP АТС',
-        								'route'=>'wizard',
-        								'module'     => 'saas',
-        								'controller' => 'Saas\Controller\VpbxWizard',
-        								'action'     => 'step2',
-        								'resource'   => 'mvc:vpbxwizard.saas',
-        								'visible'    => true,
-        								'pages'=>array(
-        						
-        						
-        								'step3'=> array(
-        										'label'=>'шаг 3',
-        										'title'=>'регистрация IP АТС',
-        										'route'=>'wizard',
-        										'module'     => 'saas',
-        										'controller' => 'Saas\Controller\VpbxWizard',
-        										'action'     => 'step3',
-        										'resource'   => 'mvc:vpbxwizard.saas',
-        										'visible'    => true,
-        										'pages'=>array(
-        								
-        										'overview'=> array(
-        												'label'=>'просмотр',
-        												'title'=>'регистрация IP АТС',
-        												'route'=>'wizard',
-        												'module'     => 'saas',
-        												'controller' => 'Saas\Controller\VpbxWizard',
-        												'action'     => 'overview',
-        												'resource'   => 'mvc:vpbxwizard.saas',
-        												'visible'    => true,
-        												'pages'=>array(
-        										
-        												)
-        										),
-        								
-        								
-        										)
-        								),
-        						
-        								)
-        						),
-        				
-        				
-        						)
-        				),
-        				
-        			)
-        		),
+        		 
              
          'internal' => array(
              'id'=>'internal',
