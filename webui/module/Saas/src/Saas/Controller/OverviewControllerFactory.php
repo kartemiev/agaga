@@ -9,7 +9,7 @@ class OverviewControllerFactory implements FactoryInterface
 	{
 		$sl = (method_exists($serviceLocator,'getServiceLocator'))?$serviceLocator->getServiceLocator():$serviceLocator;		
 		return new OverviewController(
-				$sl->get('Saas\WizardSessionContainer\WizardSessionContainer')				
+				$sl->get('Saas\WizardSessionContainer\WizardSessionContainer')
 		);
 	}
 }

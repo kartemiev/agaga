@@ -10,8 +10,9 @@ return array(
         'Vpbxui',
     	'Saas',
         'Restful',    		
-        'ReverseForm'
-    ),
+        'ReverseForm',
+        'DOMPDFModule'        
+     ),
 
     'module_listener_options' => array(
         'module_paths' => array(

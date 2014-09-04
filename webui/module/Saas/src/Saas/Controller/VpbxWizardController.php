@@ -71,5 +71,15 @@ class VpbxWizardController extends AbstractActionController
 		$viewModel->addChild($overview, 'window');
 		return $viewModel;
 	}
-	
+	public function step4Action()
+	{  
+	    $registerModel = $this->forward()->dispatch('Vpbxui\Controller\RegisterPbx', array('action' => 'index'));
+		$viewModel = new ViewModel();
+		if ($registerModel instanceof Response)
+		{
+			return $registerModel;
+		}
+		$viewModel->addChild($registerModel, 'window');
+		return $viewModel;
+	}
 }

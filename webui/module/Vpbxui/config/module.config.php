@@ -21,7 +21,7 @@ return array(
                 ),
                 'may_terminate'=>true
             ),                           
- 'zfcuser' => array(
+            'zfcuser' => array(
                 'type' => 'Literal',
                 'priority' => 1000,
                 'options' => array(

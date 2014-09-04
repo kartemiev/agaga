@@ -1,0 +1,94 @@
+ <?php echo $this->indexView;?>
+ 
+ 
+<iframe id="frame" style="display:none"></iframe>
+ 
+ <div id="wizresultwindow" class="modal hide fade"  role="dialog" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+ 
+   <div class="modal-dialog">
+     <div class="modal-content">
+ 
+ <div class="modal-header">
+         
+<h4>Добро пожаловать в live-демонстрацию IP-АТС <strong>«АГАГА»!</strong></h4>
+ </div>
+          <div class="modal-body">
+        
+ 
+<div>
+</div>
+ 
+ <div class="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  настоятельно рекомендуем скачать список созданных помощником внутренних номеров и паролей 
+  <img class="clkdownload" title="скачать в формате csv" data-url="<?php echo $this->url('createvpbx',array('action'=>'csv'))?>" src="/img/document_excel_csv.png"> 
+  <img class="clkdownload" title="скачать в формате pdf" data-url="<?php echo $this->url('createvpbx',array('action'=>'pdf'))?>" src="/img/pdf_document.png"> 
+</div>
+ 
+ <p>Результаты работы помощника:</p>
+<ul class="ulchecked underlinedul">
+    <li>внутренние номера (всего по запросу создано <b><?php echo count($internalnumbers)?></b> номеров)
+     <img src="img/checkmark.png"></li>
+    <li>внешний транк - городской многоканальный номер cети ТФОП выделен <b><?php echo $this->DidNumberFormat($did->digits)?></b> - на 15 телефонных каналов связи<img src="img/checkmark.png"></li>
+    <li>загруженные приветствия и мелодии вызова установлены<img src="img/checkmark.png"></li>
+</ul>
+ 
+  
+  
+<br>
+<p>Рекомендуемые дальнейшие шаги:</p>
+<ol> 
+<li>Ознакомиться с руководством по эксплуатации IP АТС <img class="clkdownload" title="скачать в формате csv" data-url="<?php echo $this->url('createvpbx',array('action'=>'csv'))?>" src="/img/page-white-word-icon.png"> </li>
+<li>Настроить имеющееся IP оборудование - IP аппараты, шлюзы, софтфоны <img  title="посмотреть настройки"  href="#passwords" src="/img/view8.png"></li>
+<li>Ознакомиться с условиями предоставления услуг <img  title="посмотреть условия"  href="#passwords" src="/img/view8.png"></li>
+<li>Начать пользоваться системой - совершать исходящие и принимать входящие звонки на Ваш номер!</li>
+</ol>
+<br>
+<div id="useterms">
+<i>
+Внимание! Доступны только входящие и исходящие звонки (в режиме live demo исходящие вызовы только на городские номера г. Москвы в коде 495 и 499, с ограничением - не более 2-х минут разговора для каждого вызова и не более 20 минут разговоров в сутки)</div>
+</i>
+<br>
+<div id="passwords">
+<ul>
+<li>
+Имя сервера: serv-01.vector-tel.ru
+</li>
+<li>
+Порт: 5060
+</li>
+</ul>
+<table class="table table-striped table-bordered table-hover table-condensed">
+<tr>
+<th>номер АТС</th><th>SIP ID</th><th>SIP пароль</th>
+</tr>
+<?php foreach ($internalnumbers as $internal):?>
+<tr>
+
+<td>
+<?php echo $this->escapehtml($internal->extension)?>
+</td>
+<td>
+<?php echo $this->escapehtml($internal->name)?>
+</td>
+<td>
+<?php echo $this->escapehtml($internal->secret)?>
+</td>
+</tr>
+<?php endforeach;?>
+</table>
+</div>
+
+<br>
+<br>
+
+</div>
+
+<div class="modal-footer">  
+
+ <button class="btn" onclick="location.href='<?php echo $this->url('home')?>'">закрыть</button>
+ </div>
+    </div>
+ </div>
+ </div>
+ 

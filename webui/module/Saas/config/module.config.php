@@ -2,7 +2,8 @@
 return array(
 
     'router' => array(
-        'routes' => array( 
+        'routes' => array(
+             
         		'wizard' => array(
         				'type' => 'Segment',
         		
@@ -95,7 +96,10 @@ return array(
         ),
    		'template_map' => array(
    				'vpbx-wizard.phtml'         =>  __DIR__ . '/../view/layout/wizardPartial.phtml',
-   				'file-upload.phtml'         =>  __DIR__ . '/../view/layout/fileUploadPartial.phtml',   					
+   				'file-upload.phtml'         =>  __DIR__ . '/../view/layout/fileUploadPartial.phtml',   		
+   		    'createvpbx/csv' =>
+   		    __DIR__ .
+   		    '/../view/saas/create-vpbx-env/csv.phtml',
    				),
     ),
     'view_helpers' => array(

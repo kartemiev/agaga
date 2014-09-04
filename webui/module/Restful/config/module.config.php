@@ -21,7 +21,20 @@ return array(
 														),
 												),
 												'may_terminate' => true,
-										),		    
+										),		 
+								    'vpbxenv' => array(
+								        'type'    => 'segment',
+								        'options' => array(
+								            'route'    => '/vpbxenv[/:id]',
+								            'constraints' => array(
+								                'id' => '[0-9]*',
+								            ),
+								            'defaults' => array(
+								                'controller' => 'Restful\Controller\VpbxEnv',
+								            ),
+								        ),
+								        'may_terminate' => true,
+								    ),
 								    ),
 						    ),
             ),
@@ -40,6 +53,7 @@ return array(
             __DIR__ . '/../view',
         ),
    		'template_map' => array(
+   		   
    				),
     ),
     'view_helpers' => array(

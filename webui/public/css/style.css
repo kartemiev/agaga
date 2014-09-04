@@ -421,3 +421,16 @@ ul.nobullets
 {
     list-style-type: none;
 }
+.ulchecked
+{
+	 list-style-type:none;
+ }
+ 
+ .clkdownload
+ {
+	cursor: pointer; cursor: hand;
+ }
+.underlinedul>li
+ {
+	text-decoration:underline;
+ }

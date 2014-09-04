@@ -73,6 +73,7 @@ function(){
 );
 
 $(function(){
+	if($('.selectspecial#confnumber').exists()){
 $(".selectspecial#confnumber").select2({
     placeholder: "ожидайте загрузки",
     minimumInputLength: 0,
@@ -107,7 +108,7 @@ $(".selectspecial#confnumber").select2({
     dropdownCssClass: "bigdrop", // apply css that makes the dropdown taller
     escapeMarkup: function (m) { return m; } // we do not want to escape markup since we are displaying html in results
 });
-
+	}
  //$(".selectspecial#confnumber").select2("data",{id: "5976", text: "5976"});
 if (1===$(".selectspecial#confnumber").length){
 $.ajax('/createconference/fetch',{data:{},dataType:"jsonp",
@@ -567,7 +568,41 @@ $(function(){
 	     	$.ajax(url,{type:'PATCH',  contentType: "application/json; charset=utf-8", dataType:'json',data:JSON.stringify(numbers)});
 
  	   }));
- 	   
+ 	 	if ($("#loadvpbxenv").exists())
+ 		{
+  	 	 	 $('.progress').show();
+  	 	  
+ 	  		var url = $("#loadvpbxenv").attr('action');
+ 	  		$.post(url,{},function(){
+   		 		 
+ 	  				$('.progress').removeClass('active');
+   	  				var url = $("#loadvpbxenv").data('postloadurl');
+   	  			$('.modal').modal();  	  				
+    	  				
+ 	  				$('body').load(url,function(){
+ 	  					$('.modal').modal();
+  	 	  			//	alert("Поздравляем! Окружение виртуальной АТС успешно создано!");
+ 	  					$('.clkdownload').hover(function(e){
+ 	  			  	 		var target = e.target;
+  	  			  	 		
+ 	  			 	 	});
+ 	  			 	 	$('.clkdownload').click(function(e){
+ 	  			 	 		var target = e.target;
+ 	  			 	 		url = $(target).data('url');
+ 	  			 	 		download(url);
+ 	  			 	 	});
+
+ 	  				});
+ 	  				 
+ 	  	  		}
+ 	  		);
+ 	  		 
+ 	 	}
+ 	 	 
 }
 );
- 
+function download(path) 
+{
+    var ifrm = document.getElementById("frame");
+    ifrm.src = path;
+}

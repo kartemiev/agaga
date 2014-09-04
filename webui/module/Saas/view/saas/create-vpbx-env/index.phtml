@@ -1,0 +1,18 @@
+ <?php echo $this->indexView;?>
+ 
+<div id="createvpbxenv">
+<form id="loadvpbxenv" data-postloadurl="<?php echo $this->url('createvpbx',array('action'=>'overview'))?>" action="<?php echo $this->url('api/vpbxenv')?>">
+</form>
+ <div class="modal" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+        <div class="modal-header">
+           <p class="bg-info text-info"><img src="/img/database_gear.png">Ждите, создаются внутренние номера и окружение виртуальной АТС...</p>
+        </div>
+        <div class="modal-body">
+            <div class="progress active">
+                <div class="bar" style="width: 100%;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+    

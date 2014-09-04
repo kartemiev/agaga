@@ -1,0 +1,22 @@
+<html>
+  <body>
+  <table class="table table-striped table-bordered table-hover table-condensed">
+<tr>
+<th>&nbsp;</th><th>SIPID</th><th>password</th>
+</tr>
+<?php foreach ($internalnumbers as $internal):?>
+<tr>
+<td>
+<?php echo $this->escapehtml($internal->extension)?>
+</td>
+<td>
+<?php echo $this->escapehtml($internal->name)?>
+</td>
+<td>
+<?php echo $this->escapehtml($internal->secret)?>
+</td>
+</tr>
+<?php endforeach;?>
+</table>
+   </body>
+</html>

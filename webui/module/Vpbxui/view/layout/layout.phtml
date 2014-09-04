@@ -38,16 +38,7 @@
     </head>
     <body id="top">
     <div id="thisbody">
-<?php 
-
-if ($this->zfcUserIdentity()): ?>
-<div id="logininfo">
-    <p>пользователь:</p>
-    <p title="<?php echo 'Имя: '.$this->ZfcUserIdentity()->getUsername()."\nE-mail: ".$this->ZfcUserIdentity()->getEmail(); ?>"><u><?php echo $this->zfcUserDisplayName(); ?></u>&nbsp
-    <a href=<?php echo $this->url('zfcuser/logout')?> title="выход"><i class="icon-off"></i></a></p>
-</div>
-
-<?php endif;?>
+ 
         <div class="navbar navbar-inverse">
             <div class="navbar-inner">
                 <div class="container">
@@ -84,7 +75,7 @@ if ($this->zfcUserIdentity()): ?>
         </ul>                    
             </div>
   <div class="navbar">
-            <div class="">
+            <div>
                 <div class="container">            
      <?php 
      
@@ -99,6 +90,8 @@ if ($this->zfcUserIdentity()): ?>
      </div>       
      </div>
      </div>
+ 
+     
    <?php echo $this->partial('flashMessengerPartial', 
       array('viewmodel'=>$this->viewmodel())
       );?>

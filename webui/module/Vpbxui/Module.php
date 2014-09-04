@@ -18,6 +18,7 @@ use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\ResultSet\ResultSet;
 use Vpbxui\Version\Version;
 use Zend\View\Helper\Navigation;
+use Zend\Validator\NotEmpty;
 
 class Module
 {
@@ -70,7 +71,24 @@ class Module
                
         $events->attach('ZfcUser\Form\RegisterFilter','init', function($e) {
         	$filter = $e->getTarget();
-        	// Do what you please with the filter instance ($filter)
+        $validators = $filter->get('email')->getValidatorChain()->getValidators();
+        foreach ($validators as $validator) {
+         if ($validator['instance'] instanceof \ZfcUser\Validator\AbstractRecord) {
+        $validator['instance']->setOptions(array(
+            'messageTemplates' => array(
+                'recordFound' => 'Пользователь с таким адресом электронной почты уже зарегистрирован',
+            ),
+        ));
+        }
+        }
+        
+        foreach ($filter->getInputs() as $input)
+        {
+            $notEmpty = new NotEmpty(array('breakChainOnFailure'=>true));
+            $notEmpty->setMessage('поле не может быть пустым','isEmpty');
+             $validators = $input->getValidatorChain()->prependValidator($notEmpty,true);
+         }
+        
         });
             $sm  = $app->getServiceManager();
             

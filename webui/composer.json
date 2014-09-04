@@ -27,7 +27,8 @@
                "silvester/reverse-form": "dev-master",         
                "php-ffmpeg/php-ffmpeg":"*",
                "guzzlehttp/guzzle": "~4.0",
-               	"vectortel/agagavspapicommon":"dev-master"                             
+                "vectortel/agagavspapicommon":"dev-master",
+               "dino/dompdf-module": "dev-master"
        },
        "require-dev" : {
                "phpunit/phpunit" : "3.7.*",

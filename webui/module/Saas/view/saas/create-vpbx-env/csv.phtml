@@ -1,0 +1,8 @@
+<?php    
+if (count($internalnumbers) > 0) {
+    $fh = @fopen( 'php://output', 'w' );
+    foreach ($internalnumbers as $internal) {
+        fputcsv($fh, array($internal->extension,$internal->name,$internal->secret),';');
+    }
+    fclose($fh);
+}

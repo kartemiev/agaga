@@ -41,7 +41,7 @@ class RegisterPbxController extends AbstractActionController
 	public function indexAction()
 	{
 		$form = $this->userForm;
-		$form->get('display_name')->setLabel('Имя пользователя');
+ 		$form->get('display_name')->setLabel('Имя пользователя');
 		$form->get('password')->setLabel('Пароль');
 		$form->get('passwordVerify')->setLabel('Подтверждение пароля');
 		

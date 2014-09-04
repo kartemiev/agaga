@@ -265,7 +265,8 @@ return array(
                     	'Vpbxui\Controller\AuthCode',
                         'zfcuseradmin',
                         'zfcuser',
-                        'Saas\Controller\CreateVpbxEnv'                    		
+                        'Saas\Controller\CreateVpbxEnv',
+                        'Restful\Controller\VpbxEnv'                    		
                         ),
                      'roles' => array('admin')
                 ),                
@@ -343,6 +344,7 @@ return array(
                 array('route' => 'zfcuser/login', 'roles' => array('guest')),
             	array('route' => 'vpbxui/registerpbx', 'roles' => array('guest')),
                 array('route' => 'api/freedid', 'roles' => array('guest')),
+                array('route' => 'api/vpbxenv', 'roles' => array('admin')),
                 
                 array('route' => 'createconference', 'roles' => array('guest')),    
             		array('route' => 'pickdid', 'roles' => array('guest')),
