@@ -33,6 +33,9 @@ use Vpbxui\CallCentreSchedule\Model\CallCentreScheduleTableInterface;
 use Vpbxui\CallCentreSchedule\Model\CallCentreSchedule;
 use Vpbxui\Extension\Model\Extension;
 use Saas\WizardSessionContainer\WizardSessionContainerInterface;
+use Saas\Controller\UploadMediaController;
+use Saas\WizardSessionContainer\MediaTypeMapperNamingStrategy;
+use Zend\View\Model\JsonModel;
 
 class VpbxEnvController extends AbstractRestfulController
 {
@@ -98,13 +101,18 @@ class VpbxEnvController extends AbstractRestfulController
 		$this->numberMatchTable = $numberMatchTable;
 		$this->trunkDestinationTable = $trunkDestinationTable;
 		$this->callCentreScheduleTable = $callCentreScheduleTable;
+		$this->context = $context;
 	}
 	public function create($data)
 	{
 	
 	    $this->processVpbxEnv();
-	    $this->processMedia();
+	    $this->processMedia(); 	    
 	    $this->processTrunksAndContext();
+	    
+	    return new JsonModel();
+	     
+	    
 	    $this->processInternal();
 	    $this->processRoute();
 	    $this->processCallCentre();
@@ -114,12 +122,7 @@ class VpbxEnvController extends AbstractRestfulController
 	{
 	    $media = $this->wizardSessionContainer->media;
 	    $hydrator = new ObjectProperty();
-	    $mediatypeMapper = array(
-	        'wtgreeting'=>'greeting',
-	        'wegreeting'=>'greetingofftime',
-	        'mohtone'=>'musiconhold',
-	        'ringingbacktone'=>'ringingtone'
-	    );
+	    $mediaTypeMapperNamingStrategy = new MediaTypeMapperNamingStrategy();
 	    $generalSettingsTable = $this->generalSettingsTable;
 	    $vpbxId = $this->getVpbxId();
 	    $generalSettings = $this->generalSettingsTable->getSettings($vpbxId);
@@ -129,19 +132,22 @@ class VpbxEnvController extends AbstractRestfulController
 	        {
 	            $mediaRepos = new MediaRepos();
 	            $data = $hydrator->extract($tmpMedia);
-	            $hydrator->hydrate($mediaRepos,$data);
+	            unset($data['id']);
+	            $hydrator->hydrate($data, $mediaRepos);
 	            $mediaRepos->mediatype = 'ANYMEDIA';
 	            $mediaRepos->vpbxid = $this->vpbxId;
 	            $id = $this->mediaReposTable->saveMediaRepos($mediaRepos);
 	            rename(UploadMediaController::TMP_MEDIA_PATH.'/'.$tmpMedia->id, MediaReposController::VPBX_MEDIAREPOSDIR.'/'.$id);
-	            if (!array_key_exists($type,$mediatypeMapper))
+	            if (!$mediaTypeMapperNamingStrategy->hydrate($type))
 	            {
 	                continue;
 	            }
-	            $generalSettings->$mediatypeMapper[$type] = $id;
+	            $propertyName = $mediaTypeMapperNamingStrategy->hydrate($type);
+	            $generalSettings->$propertyName = $id;
 	        }
 	        $generalSettingsTable->saveSettings($generalSettings);
 	    }
+ 	     
 	    return $this;
 	}
 	protected function processVpbxEnv()
@@ -150,45 +156,42 @@ class VpbxEnvController extends AbstractRestfulController
 	    $vpbxEnv->vpbx_name = 'виртульная АТС для тестов';
 	    $vpbxEnv->vpbx_description = 'виртульная АТС для тестов';
 	    $vpbxEnv->vpbx_remotevpbxid = (string)$this->getVpbxId();
-	    var_dump($vpbxEnv);
-	    exit;
+	    
 	    if ($vpbxEnv)
 	    {
 	        $this->vpbxEnv = $this->vpbxEnvTable->saveVpbxEnv($vpbxEnv);
-	    }
+	    }	    
+	      
 	    return $this;
 	}
 	protected function processTrunksAndContext()
 	{
-	    $vpbxEnv = $this->wizardSessionContainer->vpbxEnv;
+	    $vpbxEnv = $this->vpbxEnv;
 	    $trunk = new Trunk();
 	
-	    $data = array(
-	        'name'=>$vpbxEnv->sip_name,
-	        'secret'=>$vpbxEnv->sip_secret,
-	        'host'=>'serv-02',
-	        'callbackexten'=>$vpbxEnv->sip_name,
-	        'context'=>'vpbx_dialout'
-	    );
-	    $trunk->exchangeArray($data);
+	    $trunk->name = $vpbxEnv->sip_name;
+	    $trunk->secret = $vpbxEnv->sip_secret;
+	    $trunk->host = 'serv-02';
+	    $trunk->callbackextension = $vpbxEnv->sip_name;
+	    $trunk->context = 'vpbx_dialout';
+
 	    $trunkId = $this->trunkTable->saveTrunk($trunk);
 	    $this->trunkId  = $trunkId;
+
 	    $ivr = new Ivr();
-	    $data = array(
-	        'custname' => 'основной',
-	        'custdesc' => 'основной'
-	    );
-	    $ivr->exchangeArray($data);
+	    $ivr->custname = 'основной';
+	    $ivr->custdesc = 'основной';
 	    $ivrId = $this->ivrTable->saveIvr($ivr);
-	
-	    $contextId = $context = clone $this->context;
+	    
+	    $context = clone $this->context;
 	    $data = array(
 	        'custname' => 'основной',
 	        'custdesc' => 'основной',
 	        'contexttype' => 'IVR',
 	        'ivrref'=>$ivrId
 	    );
-	    $this->contextTable->saveContext($context);
+	    $context->exchangeArray($data);
+	    $contextId = $this->contextTable->saveContext($context);
 	
 	    $trunkAssoc = new TrunkAssoc();
 	    $data = array(
@@ -197,6 +200,8 @@ class VpbxEnvController extends AbstractRestfulController
 	    );
 	    $trunkAssoc->exchangeArray($data);
 	    $this->trunkAssocTable->saveTrunkAssoc($trunkAssoc);
+	    $this->getResponse()->setStatusCode(201);
+	     
 	    return $this;
 	}
 	protected function processInternal()

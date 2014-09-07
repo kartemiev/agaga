@@ -11,7 +11,6 @@ use Saas\FreeDid\Model\FreeDid;
 class WizardSessionContainer extends SessionContainer implements WizardSessionContainerInterface
 {	
 	protected  $did;
-	protected  $vpbxEnv;	
 	protected  $media;
 	protected  $internalnumbers;
 	public function __construct($name='Default',ManagerInterface $manager=null)
