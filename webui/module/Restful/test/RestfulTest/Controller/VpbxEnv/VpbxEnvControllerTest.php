@@ -24,8 +24,15 @@ use Vpbxui\MediaRepos\Model\MediaRepos;
 use \Mockery as m;
 use Vpbxui\Trunk\Model\Trunk;
 use Vpbxui\Ivr\Model\Ivr;
-use Vpbxui\Context\Model\Context;
 use Vpbxui\TrunkAssoc\Model\TrunkAssoc;
+use Vpbxui\Extension\Model\Extension;
+use Vpbxui\ExtensionGroup\Model\ExtensionGroup;
+use Saas\Did\Model\Did;
+use Vpbxui\NumberMatch\Model\NumberMatch;
+use Vpbxui\RegEntry\Model\RegEntry;
+use Vpbxui\Route\Model\Route;
+use Vpbxui\TrunkDestination\Model\TrunkDestination;
+use Vpbxui\CallCentreSchedule\Model\CallCentreSchedule;
 
  
 
@@ -362,7 +369,7 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
  		$this->mockedTrunkTable->expects($this->once())
  		                        ->method('saveTrunk')
  		                         ->with($trunk)
- 		                         ->will($this->returnValue(1));
+ 		                         ->will($this->returnValue(422));
  		
  		
  		$ivr = new Ivr();
@@ -389,7 +396,7 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
 	    
 	    $trunkAssoc = new TrunkAssoc();
 	    $data = array(
-	        'trunkref'=>1,
+	        'trunkref'=>422,
 	        'contextref'=>1
 	    );
 	    $trunkAssoc->exchangeArray($data);
@@ -398,82 +405,98 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
 	                               ->with($trunkAssoc)
 	                               ->will($this->returnValue(null));
 	    
+	    
+	    $extensionGroup = new ExtensionGroup();
+	    $extensionGroup->name = 'обычные';
+	    $extensionGroup->custdesc = 'обычные';
+	    $extensionGroup->memberofcallcentreque = 'false';
+	    $extensionGroup->extensionrecord = 'false';
+ 	    $this->mockedExtensionGroupTable->expects($this->at(0))
+	                                    ->method('saveExtensionGroup')
+	                                    ->with($extensionGroup)
+	                                    ->will($this->returnValue(1));
+	     
+	    
+	    $extensionGroup = new ExtensionGroup();
+	    $extensionGroup->name = 'операторы';
+	    $extensionGroup->custdesc = 'операторы';
+	    $extensionGroup->memberofcallcentreque = 'true';
+	    $extensionGroup->extensionrecord = 'true';
+ 	    $this->mockedExtensionGroupTable->expects($this->at(1))
+	                                    ->method('saveExtensionGroup')
+	                                    ->with($extensionGroup)
+	                                    ->will($this->returnValue(2));
+	     
+	    
+	    
+	    $internalnumbers = array();	    
+	    $extension = new Extension();
+	    $extension->extension = 301;
+	    $extension->custname = 'Иван Петров';
+	    $extension->extensiontype = 'regular';
+	    $extension->extensiongroup = 1;
+	    $internalnumbers[]  = $extension;	     
+	    $extension = new Extension();
+	    $extension->extension = 302;
+	    $extension->custname = 'Петр Сидоров';
+	    $extension->extensiontype = 'operator';
+	    $extension->extensiongroup = 2;	     
+	    $internalnumbers[]  = $extension;
+	    $this->mockedWizardSessionContainer->internalnumbers = $internalnumbers;
+	
+		$did = new Did();
+		$did->digits='4997337930';
+		$this->mockedWizardSessionContainer->did = $did;
+
+		$numberMatch = new NumberMatch();
+		$numberMatch->custname = 'любой номер (catchall)';
+	    $this->mockedNumberMatchTable->expects($this->once())
+	                                    ->method('saveNumberMatch')
+	                                    ->with($numberMatch)
+	                                    ->will($this->returnValue(123));
+	     $regEntry = new RegEntry();
+	     $regEntry->numbermatchref = 123;
+	     $regEntry->regexpression = '/[\d]{7,15}/';
+
+	     $this->mockedRegEntryTable->expects($this->once())
+	                               ->method('saveRegEntry')
+	                               ->with($regEntry)
+	                               ->will($this->returnValue(124));
+	     
+	     $route = new Route();
+	     $route->custname = 'ТФОП 4997337930';
+	     $route->custdesc = '';
+	     $route->isdefault = true;
+	     
+	     $this->mockedRouteTable->expects($this->once())
+	                            ->method('saveRoute')
+	                            ->with($route)
+	                            ->will($this->returnValue(125));
+	    		
+	    $trunkDestination = new TrunkDestination();
+	    $trunkDestination->numbermatchref = 123;
+	    $trunkDestination->routeref = 125;
+	    $trunkDestination->trunkref = 422;
+
+	    $this->mockedTrunkDestinationTable->expects($this->once())
+	                                       ->method('saveTrunkDestination')
+	                                       ->with($trunkDestination)
+	                                       ->will($this->returnValue(126));
+	     
+	    $callCentreSchedule = new CallCentreSchedule();
+	    $this->mockedCallCentreScheduleTable->expects($this->once())
+	                                        ->method('saveCallCentreSchedule')
+	                                        ->with($callCentreSchedule)
+	                                        ->will($this->returnValue(null));
+	     
+	    
 		$result   = $this->controller->dispatch($this->request);
 		$response = $this->controller->getResponse();
-	
+		
 		
 		$this->assertEquals(Response::STATUS_CODE_201, $response->getStatusCode());
 	}
-	/*
-	public function testAbleToBookRoomForOneDay()
-	{		 
-		$this->routeMatch->setParam('action', 'index');
-		
-		$request = $this->request;
-		$request->setMethod(Request::METHOD_POST);
-		$post = $request->getPost();
-		$post->set('confnumber', '1234');
-		$post->set('reserveduration', '0');
-		$post->set('joinacl', 'ALL');
-		$post->set('pin', '1234');
-		
-		$durationSeconds =  24*60*60;  
-		$date = new \DateTime();
-		$date->modify("+{$durationSeconds} seconds");
-		$datesettoexpiry = $date->format('Y-m-d H:i:s');
-		
- 		$data = array(
-				'confnumber'=>'1234',
- 				'pin'=>'1234',
-				'joinacl'=>'ALL',			
- 				'reserveduration'=>'0'	
-				);
-		
- 		$serviceLocator = $this->controller->getServiceLocator();
- 		
-		$conference = $serviceLocator->get('Vpbxui\Conference\Model\Conference');
-
-		$form = $serviceLocator->get('Vpbxui\Conference\Form\ConferenceForm');
-		$form->setInputFilter($conference->getInputFilter());
-		$form->setData($data);
-		$formIsValid = $form->isValid();
-		$formData = $form->getData();
-		$conference->exchangeArray($formData);
-		$conference->datesettoexpiry = $datesettoexpiry;
-		$conference->isprivate = 1;
- 		 
-	
- 		$this->mockedDateTime->expects($this->once())
- 							 ->method('modify')
- 						     ->with("+{$durationSeconds} seconds")
- 							 ->will($this->returnValue(true));
-
- 		$this->mockedDateTime->expects($this->once())
- 							 ->method('format')
- 							 ->with('Y-m-d H:i:s')
- 							 ->will($this->returnValue($datesettoexpiry));
- 			
- 		
- 		$this->mockedConferenceTable->expects($this->once())
- 			 ->method('saveConference')
- 			 ->with($conference)
- 			 ->will($this->returnValue(true));
- 		
- 		$result = array(array('confnum'=>1234));
- 		$resultSet = new ResultSet();
- 		$resultSet->initialize($result);
-
- 		$this->mockedConferenceFreeTable->expects($this->once())
- 			 ->method('fetchAll')
- 			  ->with(array('confnumber'=>1234),1)
- 			  ->will($this->returnValue($resultSet));
- 		
-		$result   = $this->controller->dispatch($this->request);
-		$response = $this->controller->getResponse();
-	
-		$this->assertEquals(302, $response->getStatusCode());
-	}
-	*/
+ 
 	function tearDown()
 	{
 	    m::close();

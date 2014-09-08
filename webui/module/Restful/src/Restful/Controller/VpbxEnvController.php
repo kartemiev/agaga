@@ -108,15 +108,13 @@ class VpbxEnvController extends AbstractRestfulController
 	
 	    $this->processVpbxEnv();
 	    $this->processMedia(); 	    
-	    $this->processTrunksAndContext();
-	    
-	    return new JsonModel();
-	     
-	    
-	    $this->processInternal();
+	    $this->processTrunksAndContext();     
+	    $this->processInternal();	    
 	    $this->processRoute();
 	    $this->processCallCentre();
-	
+	    $this->getResponse()->setStatusCode(201);	     
+	    return new JsonModel();
+	     
 	}
 	protected function processMedia()
 	{
@@ -199,9 +197,9 @@ class VpbxEnvController extends AbstractRestfulController
 	        'contextref'=>$contextId
 	    );
 	    $trunkAssoc->exchangeArray($data);
-	    $this->trunkAssocTable->saveTrunkAssoc($trunkAssoc);
-	    $this->getResponse()->setStatusCode(201);
 	     
+	    $this->trunkAssocTable->saveTrunkAssoc($trunkAssoc);
+ 	     
 	    return $this;
 	}
 	protected function processInternal()
@@ -211,23 +209,20 @@ class VpbxEnvController extends AbstractRestfulController
 	    {
 	        return;
 	    }
-	    $vpbxid = $this->getVpbxId();
 	    $extensionGroupTable = $this->extensionGroupTable;
 	    $extensionGroup = new ExtensionGroup();
 	    $extensionGroup->name = 'обычные';
 	    $extensionGroup->custdesc = 'обычные';
 	    $extensionGroup->memberofcallcentreque = 'false';
 	    $extensionGroup->extensionrecord = 'false';
-	    $extensionGroup->vpbxid = $vpbxid;
 	    $regularExtensionGroupId = $extensionGroupTable->saveExtensionGroup($extensionGroup);
 	
 	    $extensionGroupTable = $this->extensionGroupTable;
 	    $extensionGroup = new ExtensionGroup();
-	    $extensionGroup->name = 'обычные';
-	    $extensionGroup->custdesc = 'обычные';
+	    $extensionGroup->name = 'операторы';
+	    $extensionGroup->custdesc = 'операторы';
 	    $extensionGroup->memberofcallcentreque = 'true';
 	    $extensionGroup->extensionrecord = 'true';
-	    $extensionGroup->vpbxid = $vpbxid;
 	    $operatorExtensionGroupId = $extensionGroupTable->saveExtensionGroup($extensionGroup);
 	
 	    	
@@ -235,8 +230,8 @@ class VpbxEnvController extends AbstractRestfulController
 	    {
 	        $extension = clone $this->extension;
 	        $extension->exchangeArray($internalnumber->getArrayCopy());
-	        $extension->vpbxid = $vpbxid;
-	        switch ($extension->extensiontype)
+	        $extension->extensiontype=$internalnumber->extensiontype;
+ 	        switch ($extension->extensiontype)
 	        {
 	            case 'operator':
 	                $extension->extensiongroup = $operatorExtensionGroupId;
@@ -283,6 +278,7 @@ class VpbxEnvController extends AbstractRestfulController
 	        'trunkref'=>$this->trunkId
 	
 	    );
+	    $trunkDestination->exchangeArray($data);
 	    $this->trunkDestinationTable->saveTrunkDestination($trunkDestination);
 	    return $this;
 	}
