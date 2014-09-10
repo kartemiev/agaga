@@ -1,9 +1,5 @@
 <?php
-return array(
-    'gizzle'=>array(
-        'base_url'=>'http://agagaapi.new',
-        'auth'=>array('kos@vector-tel.ru','quit666')
-    ),
+return array( 
     'router' => array(
         'routes' => array(
 						'api' => array(
