@@ -19,7 +19,7 @@ class CreateVpbxEnvController extends AbstractActionController
     }
 	public function indexAction()
 	{
-	    if (!isset($this->wizardSessionContainer->internalnumbers)&&!isset($this->wizardSessionContainer->did))
+	    if ((!isset($this->wizardSessionContainer->internalnumbers)&&!isset($this->wizardSessionContainer->did))||isset($this->wizardSessionContainer->completed))
 	    {
 	        return $this->redirect()->toRoute('home');
 	    }	     
@@ -40,8 +40,7 @@ class CreateVpbxEnvController extends AbstractActionController
 	{
 	    $internalnumbers = $this->extensionTable->fetchAll();
 	    $pdf = new PdfModel(array('internalnumbers'=>$internalnumbers));
-	    $pdf->setOption("filename", "internal");
-	     
+	    $pdf->setOption("filename", "internal");    
 	    return $pdf;
 	}
 	public function csvAction()

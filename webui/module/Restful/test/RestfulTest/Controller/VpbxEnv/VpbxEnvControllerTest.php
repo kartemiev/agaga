@@ -495,6 +495,8 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
 		
 		
 		$this->assertEquals(Response::STATUS_CODE_201, $response->getStatusCode());
+
+	   $this->assertEquals(true, $this->mockedWizardSessionContainer->completed);
 	}
  
 	function tearDown()

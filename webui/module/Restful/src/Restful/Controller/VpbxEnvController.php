@@ -105,16 +105,16 @@ class VpbxEnvController extends AbstractRestfulController
 	}
 	public function create($data)
 	{
-	
 	    $this->processVpbxEnv();
 	    $this->processMedia(); 	    
 	    $this->processTrunksAndContext();     
 	    $this->processInternal();	    
 	    $this->processRoute();
 	    $this->processCallCentre();
-	    $this->getResponse()->setStatusCode(201);	     
+	    $this->markCompletedWizardActionsCompleted();
+	    $this->getResponse()->setStatusCode(201);
+	   
 	    return new JsonModel();
-	     
 	}
 	protected function processMedia()
 	{
@@ -286,6 +286,11 @@ class VpbxEnvController extends AbstractRestfulController
 	{
 	    $callcentreSchedule = new CallCentreSchedule();
 	    $this->callCentreScheduleTable->saveCallCentreSchedule($callcentreSchedule);
+	}
+	
+	protected function markCompletedWizardActionsCompleted()
+	{
+	    $this->wizardSessionContainer->completed = true;
 	}
 	protected function getVpbxId()
 	{
