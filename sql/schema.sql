@@ -3981,11 +3981,19 @@ CREATE TABLE "user" (
     password character varying(128) NOT NULL,
     state smallint,
     role character varying(100) DEFAULT 'admin'::character varying,
-    vpbxid integer
+    vpbxid integer,
+    id integer
 );
 
 
 ALTER TABLE public."user" OWNER TO agaga;
+
+--
+-- Name: COLUMN "user".id; Type: COMMENT; Schema: public; Owner: agaga
+--
+
+COMMENT ON COLUMN "user".id IS 'nextval(''user_user_id_seq''::regclass)	';
+
 
 --
 -- Name: user_role; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
@@ -35580,7 +35588,7 @@ COPY feature_test (id, vpbxid, test1, test2, test3, testtxt) FROM stdin;
 -- Name: feature_test_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('feature_test_id_seq', 36, true);
+SELECT pg_catalog.setval('feature_test_id_seq', 39, true);
 
 
 --
@@ -35818,6 +35826,7 @@ COPY pbx_settings (vpbxid, callcentre_status_override, vmtimeout, greeting, gree
 36	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
 37	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
 38	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+39	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
 \.
 
 
@@ -35825,7 +35834,7 @@ COPY pbx_settings (vpbxid, callcentre_status_override, vmtimeout, greeting, gree
 -- Name: pbx_settings_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('pbx_settings_seq', 38, true);
+SELECT pg_catalog.setval('pbx_settings_seq', 39, true);
 
 
 --
@@ -36323,15 +36332,6 @@ COPY sip (id, context, callingpres, deny, permit, secret, md5secret, remotesecre
 203	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	s0Lz5djN	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	64	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	105	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:13:03.598057		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	\N
 177	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	YdmOIdwp	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	38	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N		тест	t	t	\N	phone	\N	\N	\N	f	103	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-18 06:18:22.733153		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
 200	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	g84RgIJf	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	61	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	100	operator	ABSENT	disabled	9	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:03:23.049404		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
-212	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		71	no					all	ulaw,alaw				\N		no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		\N			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 20:30:46.300863		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-214	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		73	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		\N			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:19:56.000621		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-215	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		74	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		\N			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:22:43.585691		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-216	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		75	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		333			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:26:45.410866		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-219	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		78	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		\N			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:34:17.697402		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-220	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		79	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		\N			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:36:11.441476		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-221	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		80	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		9			t	t	\N	phone		\N		f	\N	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:38:17.658897		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-222	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		81	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		91301			t	t	\N	phone		\N		f	301	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 21:42:19.891379		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-224	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		83	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		yes	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		900010301			t	t	\N	phone		\N		f	301	regular	ABSENT	disabled	\N	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 22:03:37.93225		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
 \.
 
 
@@ -36437,55 +36437,56 @@ SELECT pg_catalog.setval('trunkdestinations_id_seq', 38, true);
 -- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: agaga
 --
 
-COPY "user" (user_id, username, email, display_name, password, state, role, vpbxid) FROM stdin;
-1	\N	kartemiev@gmail.com	\N	$2y$04$EWs.NNHdnD38Pl/Pf97iceSs0GM3qfC3olpdTGFKfLG8vp4fnkYe2	\N	admin	1
-16	\N	kos@vector-tel.ru	test	$2y$04$g9mw1l9XHeK57x/XHJ8Ih.6bomqnMDI4E4pGrX4XZ65J7lp5DtzHW	\N	admin	1
-21	\N	supervisor@agaga.ru	supervisor@agaga.ru	$2y$04$0icXtDDz5d12qSipWQbJ4u5LotlNBsV8x6VmcANyKjiyBU/2QHany	\N	supervisor	1
-25	\N	lboikov@agaga.ru	lboikov	$2y$04$PG0EhAjTEXm/q6Tq7Qdb/O882zMQMIe/Gcan8M1FRVLEibW4UuTYm	\N	admin	1
-29	\N	kartemiev1@gmail.com	kartemiev1@gmail.com	$2y$04$TmUb4ZwzuZzdZPJWGQ9SBunJtx/vyNZmNqxTf.WP8fI/yVO1T9I0G	\N	admin	\N
-30	\N	kartemiev2@gmail.com	kartemiev2@gmail.com	$2y$04$suCiF0bahAGLSPTPNSMbd.gUzf0yS8.r44r0Jvg4s3MGxZsbl5auW	\N	admin	\N
-31	\N	kartemiev3@gmail.com	kartemiev3@gmail.com	$2y$04$8lgNxqYarNtUuspQsA9kMOxERgcfymtFG7PusAtlWDJEkoE6POObO	\N	admin	\N
-32	\N	kartemiev22@gmail.com	kartemiev22@gmail.com	$2y$04$pUCF94gmm7cJ99OrVJ5yq.1FhlgyK21SedyDzfuGbaxTw.r/glB1a	\N	admin	\N
-33	\N	kartemiev33@gmail.com	kartemiev33@gmail.com	$2y$04$KKNBjpMpE4L8fwkZbyUZzeziEQvWzZGcQo.HR.nntQvnlfPitkkEG	\N	admin	\N
-34	\N	kartemiev44@gmail.com	kartemiev44@gmail.com	$2y$04$Gz0e0lAIFBuxGkFpsAMgiO94RvikIXo2abU6KvsrasRbHnb2fuq1e	\N	admin	\N
-35	\N	kartemiev88@gmail.com	kartemiev88@gmail.com	$2y$04$H6ilvkH7/mrjx1oXk2jTv.32oKmvf6nMfhfk0DV5npR2r5rhonb2a	\N	admin	\N
-36	\N	kartemiev222@gmail.com	kartemiev222@gmail.com	$2y$04$2.1IAXMp13uqxqVx8leNDOjGtQ95gZKQkWRtXV5O/12mTinbQTHyq	\N	admin	\N
-37	\N	kartemiev4444@gmail.com	kartemiev4444@gmail.com	$2y$04$atiUxdx28Mjqjsa8dtTGIuSFdonuNCMilYQkebJAWoTadA5nuHhSi	\N	admin	\N
-38	\N	kartemiev3333@gmail.com	kartemiev3333@gmail.com	$2y$04$rok0Ml4i48VUOxgSiLMxU.eRBM6alVbedPYD0rhnCPAEV2dc2OBCe	\N	admin	\N
-39	\N	kartemiev999@gmail.com	kartemiev999@gmail.com	$2y$04$eqtFZ5z/nlFdfjgZYcq73eTMqj4/BOLk0wh7hBhoZ0kQUu8UeJxGC	\N	admin	\N
-40	\N	kartemiev1111@gmail.com	kartemiev1111@gmail.com	$2y$04$VkS9DsZSQiC1w.fktLzlyubVQTuBzSaePq3AC2buzdxQ0uBKDvw16	\N	admin	\N
-41	\N	kartemiev9991@gmail.com	kartemiev9991@gmail.com	$2y$04$gJfrIBnBxyMlLu2LWr.sKeJdb4aVEggrl74Gc7Us/dNX.claBJvMy	\N	admin	\N
-42	\N	kartemiev9992@gmail.com	kartemiev9992@gmail.com	$2y$04$qQoj81t1plcy6kfO./87o.dD9pPa7wCpA5aKVzRuhKSJC4MXslgHS	\N	admin	\N
-43	\N	kartemiev9993@gmail.com	kartemiev9993@gmail.com	$2y$04$M75XLhKPu4TSuvkbeTkcYeBuOo65yPl6eP2VcrSSb/U0d.vsjI4Pe	\N	admin	12
-45	\N	kartemiev111@gmail.com	Vasya	$2y$04$bu6Q8wXgYjtv84esT1pTVuE0dZNVbjmpaws.FfM3wKn3a/ax44EAK	\N	admin	\N
-47	\N	kartemiev333433@gmail.com	Peter Ivanoff	$2y$04$RPATvO0YhJ.GXSOve5T8huEB6xiCJ9ZU/imUOd6RSDzKUPfa6rSEy	\N	admin	\N
-49	\N	kartemiev333444@gmail.com	Peter Ivanoff	$2y$04$xBXunkcI6JsUgs2yBQSk0up8pCdrr1pRkmq8I.DfGSwCNA58lcfOO	\N	admin	\N
-51	\N	kartemiev33322@gmail.com	Peter Ivanoff	$2y$04$HZup6JsPxb0AbQap.MfNw.zi4H1CxfSzJ3U5ZebE5VqZObLPkgZqa	\N	admin	\N
-53	\N	kartemiev33333@gmail.com	Вася Пупкин	$2y$04$HgjIZtDABm8xB3B6d3Ym1.xrPdbrBOMNVxgy/laKbODphPgqIej1y	\N	admin	\N
-55	\N	kartemiev33333233@gmail.com	Peter Ivanoff	$2y$04$sSymLIucIuuDwRl86VlMZ.R8QfVj2BHb3ROHwBkxI1Qh0Kx2CdxO.	\N	admin	\N
-57	\N	kartemiev333113@gmail.com	Peter Ivanoff	$2y$04$g8ua3QA5CQ4nY30AFJd2CeVt24cX4IqxuiYGawH6kQ6W5J7UN5cnu	\N	admin	\N
-59	\N	kartemiev333342@gmail.com	Peter Ivanoff	$2y$04$Kn7xMQ/KrY07rz/Vx73MAumNzZLYic1gJW2h5jSlru3wj7O4Yk3mG	\N	admin	17
-61	\N	kartemiev31113@gmail.com	Peter Ivanoff	$2y$04$I0HFqDEAqjSHJSOavh7SEeSVQnnjKwCTGVHlAyevdLJGpr9oEJEHa	\N	admin	18
-63	\N	kartemiev331233@gmail.com	Peter Ivanoff	$2y$04$LGGXEEeVA4wYGBVpbEUD5eDHsgrZrxeWLPqActYGUiIuWWUKYZd3e	\N	admin	19
-65	\N	kartemiev33223@gmail.com	Peter Ivanoff	$2y$04$ehuJJZm9YiFo3888OHM6fOpDtjgINaoqx2iEJrarh7xKTYPATxEGe	\N	admin	20
-67	\N	kartemiev3113@gmail.com	Peter Ivanoff	$2y$04$pUOzwiGL9g52ZZ/woNTwTOgDkN.HYM3iVjURyIEpGmXTwE6wK22SS	\N	admin	21
-69	\N	kartemiev33333113@gmail.com	Peter Ivanoff	$2y$04$m8lfNoU6QaBeUw4aY/wKXuYAvVPac9hyFhmEDs1IfGERMGxetyT6a	\N	admin	22
-71	\N	kartemiev3113113@gmail.com	Peter Ivanoff	$2y$04$QHNe8LhK15CHY9/LqTQJNedF0r4ABrPagybl20UuSQigTeJftiEMC	\N	admin	23
-73	\N	kartemiev3331333@gmail.com	Peter Ivanoff	$2y$04$YjeZApz7CY9WUKrKs9YDt.jkiVQFU.o9goWQA103ZX9ZtrHkdvtMa	\N	admin	24
-75	\N	kartemiev333188@gmail.com	Peter Ivanoff	$2y$04$SYfV3thaOYV5lP/4fVxlVe3fXy75UROk/GOBtBJgntWz37GpZPGM6	\N	admin	25
-77	\N	kartemiev332213@gmail.com	Peter Ivanoff	$2y$04$pxOxPSaTpLTzyF87wCe5Z.HkDiER6Fhmj.FyzNvnnBmltcms25Ity	\N	admin	26
-79	\N	kartemiev300113@gmail.com	Peter Ivanoff	$2y$04$dmAXsEYCCGbVbFTEMBluyenHRcpDhFYmXL.HsvKh4YJ7YPm66pzNG	\N	admin	27
-81	\N	kartemiev33443113@gmail.com	Peter Ivanoff	$2y$04$.HJQ3fZR6LpFLiaVgS3LkuYyGpaqHgfTKn63lF539GUbL12J4qjym	\N	admin	28
-83	\N	kartemiev@gmail3.com	Vasya	$2y$04$N7RzEYPhVkAH7kqhxlnOXeFQE1i5QvosCduVAvCt3oin4C92wgRM.	\N	admin	29
-85	\N	kartemiev3444@gmail.com	Peter Ivanoff	$2y$04$GPQtu/Ak8gXvkJ6keXqqeuMHWlA.VjsXELW.NJP2s2nDEXn4getsm	\N	admin	30
-87	\N	kartemiev3344@gmail.com	kjjdjkd	$2y$04$wQIJj1.C5BgtrTUfYOTwNOENFCGr0SVKrcAlAXBcTMfLEe95FiuGi	\N	admin	31
-89	\N	kartemiev888@gmail.com	Вася Пупкин	$2y$04$EBm2ZhTKLTmmZHzlDJMtquP5R0NbfVlPMgTL0RNK4Q99K7NZ4hVui	\N	admin	32
-91	\N	kartemiev344333@gmail.com	Peter Ivanoff	$2y$04$OaSb43mD0HsOD6KrtW9wte2tvcTtXxjmUdOQQImF7wOTbFkAwwQNO	\N	admin	33
-93	\N	kartemiev444999@gmail.com	Peter Ivanoff	$2y$04$Lww3vgOMJ1.avRQ/QwvM4uQNKod3UWlVJPZHm3SKpM01xc9qUJyvG	\N	admin	34
-95	\N	kartemiev444111@gmail.com	Peter Ivanoff	$2y$04$ch7aTprLjCkfmPpsTm9Oo.5MUlTxluJph0DMi9ufdrviUzTGSd3ce	\N	admin	35
-97	\N	kartemiev3334422@gmail.com	Peter Ivanoff	$2y$04$w04FfHpBPym4468KGWEsOOv85Q9rpuBgesVXX3huacdn4QNmSSeeu	\N	admin	36
-99	\N	kartemiev88899@gmail.com	Peter Ivanoff	$2y$04$VbqR92bOg1tRJYiFoKTF.O/qEXpHH9sGvW10JmBV2/pkL5zpiBsm2	\N	admin	37
-101	\N	kartemiev133333@gmail.com	Peter Ivanoff	$2y$04$yHT7yQF6X8Unw/6gvkls5uKKZ7leWyeAa05Gi5hDHDGUJN4lmkeLW	\N	admin	38
+COPY "user" (user_id, username, email, display_name, password, state, role, vpbxid, id) FROM stdin;
+1	\N	kartemiev@gmail.com	\N	$2y$04$EWs.NNHdnD38Pl/Pf97iceSs0GM3qfC3olpdTGFKfLG8vp4fnkYe2	\N	admin	1	1
+16	\N	kos@vector-tel.ru	test	$2y$04$g9mw1l9XHeK57x/XHJ8Ih.6bomqnMDI4E4pGrX4XZ65J7lp5DtzHW	\N	admin	1	16
+21	\N	supervisor@agaga.ru	supervisor@agaga.ru	$2y$04$0icXtDDz5d12qSipWQbJ4u5LotlNBsV8x6VmcANyKjiyBU/2QHany	\N	supervisor	1	21
+25	\N	lboikov@agaga.ru	lboikov	$2y$04$PG0EhAjTEXm/q6Tq7Qdb/O882zMQMIe/Gcan8M1FRVLEibW4UuTYm	\N	admin	1	25
+29	\N	kartemiev1@gmail.com	kartemiev1@gmail.com	$2y$04$TmUb4ZwzuZzdZPJWGQ9SBunJtx/vyNZmNqxTf.WP8fI/yVO1T9I0G	\N	admin	\N	29
+30	\N	kartemiev2@gmail.com	kartemiev2@gmail.com	$2y$04$suCiF0bahAGLSPTPNSMbd.gUzf0yS8.r44r0Jvg4s3MGxZsbl5auW	\N	admin	\N	30
+31	\N	kartemiev3@gmail.com	kartemiev3@gmail.com	$2y$04$8lgNxqYarNtUuspQsA9kMOxERgcfymtFG7PusAtlWDJEkoE6POObO	\N	admin	\N	31
+32	\N	kartemiev22@gmail.com	kartemiev22@gmail.com	$2y$04$pUCF94gmm7cJ99OrVJ5yq.1FhlgyK21SedyDzfuGbaxTw.r/glB1a	\N	admin	\N	32
+33	\N	kartemiev33@gmail.com	kartemiev33@gmail.com	$2y$04$KKNBjpMpE4L8fwkZbyUZzeziEQvWzZGcQo.HR.nntQvnlfPitkkEG	\N	admin	\N	33
+34	\N	kartemiev44@gmail.com	kartemiev44@gmail.com	$2y$04$Gz0e0lAIFBuxGkFpsAMgiO94RvikIXo2abU6KvsrasRbHnb2fuq1e	\N	admin	\N	34
+35	\N	kartemiev88@gmail.com	kartemiev88@gmail.com	$2y$04$H6ilvkH7/mrjx1oXk2jTv.32oKmvf6nMfhfk0DV5npR2r5rhonb2a	\N	admin	\N	35
+36	\N	kartemiev222@gmail.com	kartemiev222@gmail.com	$2y$04$2.1IAXMp13uqxqVx8leNDOjGtQ95gZKQkWRtXV5O/12mTinbQTHyq	\N	admin	\N	36
+37	\N	kartemiev4444@gmail.com	kartemiev4444@gmail.com	$2y$04$atiUxdx28Mjqjsa8dtTGIuSFdonuNCMilYQkebJAWoTadA5nuHhSi	\N	admin	\N	37
+38	\N	kartemiev3333@gmail.com	kartemiev3333@gmail.com	$2y$04$rok0Ml4i48VUOxgSiLMxU.eRBM6alVbedPYD0rhnCPAEV2dc2OBCe	\N	admin	\N	38
+39	\N	kartemiev999@gmail.com	kartemiev999@gmail.com	$2y$04$eqtFZ5z/nlFdfjgZYcq73eTMqj4/BOLk0wh7hBhoZ0kQUu8UeJxGC	\N	admin	\N	39
+40	\N	kartemiev1111@gmail.com	kartemiev1111@gmail.com	$2y$04$VkS9DsZSQiC1w.fktLzlyubVQTuBzSaePq3AC2buzdxQ0uBKDvw16	\N	admin	\N	40
+41	\N	kartemiev9991@gmail.com	kartemiev9991@gmail.com	$2y$04$gJfrIBnBxyMlLu2LWr.sKeJdb4aVEggrl74Gc7Us/dNX.claBJvMy	\N	admin	\N	41
+42	\N	kartemiev9992@gmail.com	kartemiev9992@gmail.com	$2y$04$qQoj81t1plcy6kfO./87o.dD9pPa7wCpA5aKVzRuhKSJC4MXslgHS	\N	admin	\N	42
+43	\N	kartemiev9993@gmail.com	kartemiev9993@gmail.com	$2y$04$M75XLhKPu4TSuvkbeTkcYeBuOo65yPl6eP2VcrSSb/U0d.vsjI4Pe	\N	admin	12	43
+45	\N	kartemiev111@gmail.com	Vasya	$2y$04$bu6Q8wXgYjtv84esT1pTVuE0dZNVbjmpaws.FfM3wKn3a/ax44EAK	\N	admin	\N	45
+47	\N	kartemiev333433@gmail.com	Peter Ivanoff	$2y$04$RPATvO0YhJ.GXSOve5T8huEB6xiCJ9ZU/imUOd6RSDzKUPfa6rSEy	\N	admin	\N	47
+49	\N	kartemiev333444@gmail.com	Peter Ivanoff	$2y$04$xBXunkcI6JsUgs2yBQSk0up8pCdrr1pRkmq8I.DfGSwCNA58lcfOO	\N	admin	\N	49
+51	\N	kartemiev33322@gmail.com	Peter Ivanoff	$2y$04$HZup6JsPxb0AbQap.MfNw.zi4H1CxfSzJ3U5ZebE5VqZObLPkgZqa	\N	admin	\N	51
+53	\N	kartemiev33333@gmail.com	Вася Пупкин	$2y$04$HgjIZtDABm8xB3B6d3Ym1.xrPdbrBOMNVxgy/laKbODphPgqIej1y	\N	admin	\N	53
+55	\N	kartemiev33333233@gmail.com	Peter Ivanoff	$2y$04$sSymLIucIuuDwRl86VlMZ.R8QfVj2BHb3ROHwBkxI1Qh0Kx2CdxO.	\N	admin	\N	55
+57	\N	kartemiev333113@gmail.com	Peter Ivanoff	$2y$04$g8ua3QA5CQ4nY30AFJd2CeVt24cX4IqxuiYGawH6kQ6W5J7UN5cnu	\N	admin	\N	57
+59	\N	kartemiev333342@gmail.com	Peter Ivanoff	$2y$04$Kn7xMQ/KrY07rz/Vx73MAumNzZLYic1gJW2h5jSlru3wj7O4Yk3mG	\N	admin	17	59
+61	\N	kartemiev31113@gmail.com	Peter Ivanoff	$2y$04$I0HFqDEAqjSHJSOavh7SEeSVQnnjKwCTGVHlAyevdLJGpr9oEJEHa	\N	admin	18	61
+63	\N	kartemiev331233@gmail.com	Peter Ivanoff	$2y$04$LGGXEEeVA4wYGBVpbEUD5eDHsgrZrxeWLPqActYGUiIuWWUKYZd3e	\N	admin	19	63
+65	\N	kartemiev33223@gmail.com	Peter Ivanoff	$2y$04$ehuJJZm9YiFo3888OHM6fOpDtjgINaoqx2iEJrarh7xKTYPATxEGe	\N	admin	20	65
+67	\N	kartemiev3113@gmail.com	Peter Ivanoff	$2y$04$pUOzwiGL9g52ZZ/woNTwTOgDkN.HYM3iVjURyIEpGmXTwE6wK22SS	\N	admin	21	67
+69	\N	kartemiev33333113@gmail.com	Peter Ivanoff	$2y$04$m8lfNoU6QaBeUw4aY/wKXuYAvVPac9hyFhmEDs1IfGERMGxetyT6a	\N	admin	22	69
+71	\N	kartemiev3113113@gmail.com	Peter Ivanoff	$2y$04$QHNe8LhK15CHY9/LqTQJNedF0r4ABrPagybl20UuSQigTeJftiEMC	\N	admin	23	71
+73	\N	kartemiev3331333@gmail.com	Peter Ivanoff	$2y$04$YjeZApz7CY9WUKrKs9YDt.jkiVQFU.o9goWQA103ZX9ZtrHkdvtMa	\N	admin	24	73
+75	\N	kartemiev333188@gmail.com	Peter Ivanoff	$2y$04$SYfV3thaOYV5lP/4fVxlVe3fXy75UROk/GOBtBJgntWz37GpZPGM6	\N	admin	25	75
+77	\N	kartemiev332213@gmail.com	Peter Ivanoff	$2y$04$pxOxPSaTpLTzyF87wCe5Z.HkDiER6Fhmj.FyzNvnnBmltcms25Ity	\N	admin	26	77
+79	\N	kartemiev300113@gmail.com	Peter Ivanoff	$2y$04$dmAXsEYCCGbVbFTEMBluyenHRcpDhFYmXL.HsvKh4YJ7YPm66pzNG	\N	admin	27	79
+81	\N	kartemiev33443113@gmail.com	Peter Ivanoff	$2y$04$.HJQ3fZR6LpFLiaVgS3LkuYyGpaqHgfTKn63lF539GUbL12J4qjym	\N	admin	28	81
+83	\N	kartemiev@gmail3.com	Vasya	$2y$04$N7RzEYPhVkAH7kqhxlnOXeFQE1i5QvosCduVAvCt3oin4C92wgRM.	\N	admin	29	83
+85	\N	kartemiev3444@gmail.com	Peter Ivanoff	$2y$04$GPQtu/Ak8gXvkJ6keXqqeuMHWlA.VjsXELW.NJP2s2nDEXn4getsm	\N	admin	30	85
+87	\N	kartemiev3344@gmail.com	kjjdjkd	$2y$04$wQIJj1.C5BgtrTUfYOTwNOENFCGr0SVKrcAlAXBcTMfLEe95FiuGi	\N	admin	31	87
+89	\N	kartemiev888@gmail.com	Вася Пупкин	$2y$04$EBm2ZhTKLTmmZHzlDJMtquP5R0NbfVlPMgTL0RNK4Q99K7NZ4hVui	\N	admin	32	89
+91	\N	kartemiev344333@gmail.com	Peter Ivanoff	$2y$04$OaSb43mD0HsOD6KrtW9wte2tvcTtXxjmUdOQQImF7wOTbFkAwwQNO	\N	admin	33	91
+93	\N	kartemiev444999@gmail.com	Peter Ivanoff	$2y$04$Lww3vgOMJ1.avRQ/QwvM4uQNKod3UWlVJPZHm3SKpM01xc9qUJyvG	\N	admin	34	93
+95	\N	kartemiev444111@gmail.com	Peter Ivanoff	$2y$04$ch7aTprLjCkfmPpsTm9Oo.5MUlTxluJph0DMi9ufdrviUzTGSd3ce	\N	admin	35	95
+97	\N	kartemiev3334422@gmail.com	Peter Ivanoff	$2y$04$w04FfHpBPym4468KGWEsOOv85Q9rpuBgesVXX3huacdn4QNmSSeeu	\N	admin	36	97
+99	\N	kartemiev88899@gmail.com	Peter Ivanoff	$2y$04$VbqR92bOg1tRJYiFoKTF.O/qEXpHH9sGvW10JmBV2/pkL5zpiBsm2	\N	admin	37	99
+101	\N	kartemiev133333@gmail.com	Peter Ivanoff	$2y$04$yHT7yQF6X8Unw/6gvkls5uKKZ7leWyeAa05Gi5hDHDGUJN4lmkeLW	\N	admin	38	101
+103	\N	kartemiev333223@gmail.com	Peter Ivanoff	$2y$04$EBzUnt4Gpb9kIWHsxBByK.9pDHsDWGHFOvQchHnEiTG2oSOZHTLQS	\N	admin	\N	103
 \.
 
 
@@ -36503,7 +36504,7 @@ admin	0	\N	администратор
 -- Name: user_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('user_user_id_seq', 101, true);
+SELECT pg_catalog.setval('user_user_id_seq', 103, true);
 
 
 --
