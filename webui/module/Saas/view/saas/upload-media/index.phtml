@@ -1,50 +1,125 @@
- 
 <?php
 echo $this->headScript()
  		  ->appendFile($this->basePath() .   '/js/jquery.ui.widget.js')
  		  ->appendFile($this->basePath() .   '/js/jquery.iframe-transport.js')
  		  ->appendFile($this->basePath() .   '/js/jquery.fileupload.js')
- 		  	
-;
+ 		  ->appendFile($this->basePath(). '/js/jquery.jplayer.min.js');
+echo $this->headLink()->prependStylesheet($this->basePath() . '/skin/jplayer.blue.monday.css');
+
 ?>
 <br>
-<br>
+
+  
+
+  <div class="panel-group" id="accordion">
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
+          приветствие рабочего дня
+        </a>
+      </h4>
+    </div>
+    <div id="collapseOne" class="panel-collapse collapse">
+      <div class="panel-body">
+   <?php echo $this->partial('temp-media.phtml',array('defaultSound'=>$this->url('playtmpmedia',array('action'=>'play','id'=>$media['wtgreeting']->id)), 'media'=>$media['wtgreeting'],'uploadLinkLabel'=>'рабочего дня - используется в рабочее время','indexNum'=>1, 'dataUploadInputName'=>'wtgreeting'))?>
+      </div>
+    </div>
+  </div>
+    <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+          приветствие выходного дня
+        </a>
+      </h4>
+    </div>
+    <div id="collapseFour" class="panel-collapse collapse">
+      <div class="panel-body">
+   <?php echo $this->partial('temp-media.phtml',array('defaultSound'=>$this->url('playtmpmedia',array('action'=>'play','id'=>$media['wegreeting']->id)), 'media'=>$media['wegreeting'], 'uploadLinkLabel'=>'нерабочего дня - используется во внерабочее время','indexNum'=>2, 'dataUploadInputName'=>'wegreeting'))?>
+      </div>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+          музыка звонка
+        </a>
+      </h4>
+    </div>
+    <div id="collapseTwo" class="panel-collapse collapse">
+      <div class="panel-body">
+      <?php echo $this->partial('temp-media.phtml',array('defaultSound'=>$this->url('playtmpmedia',array('action'=>'play','id'=>$media['ringingbacktone']->id)),'media'=>$media['ringingbacktone'], 'uploadLinkLabel'=>'вызова - используется вместо сигнала КПВ при входящих вызовах','indexNum'=>3, 'dataUploadInputName'=>'ringingbacktone'))?>
+      </div>
+    </div>
+  </div>
  
-<ol>
-<li>Приветствия:</li>
-<ul>
-<li>рабочего дня - используется в рабочее время <div><input id="wtgreeting" class="fileupload" type="file" name="wtgreeting" data-url=""></div> </li>
-<li>нерабочего дня - используется в нерабочее время <div><input id="wegreeting" class="fileupload"  type="file" name="wegreeting" data-url=""></div> </li>
-</ul>
-<br>
-<li>Мелодии:</li>
-<ul>
-<li>вызова - используется вместо сигнала КПВ при входящих вызовах  <div><input id="ringingbacktone" class="fileupload" type="file" name="ringingbacktone" data-url=""></div></li>
-<li>на удержание - используется при использовании услуги удержания вызова <div><input id="musiconhold" type="file" class="fileupload"  name="musiconhold" data-url=""> </div></li>
-</ul>
-</ol>
+ 
+   <div class="panel panel-default">
+    <div class="panel-heading">
+      <h4 class="panel-title">
+        <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+          мелодия на удержание
+        </a>
+      </h4>
+    </div>
+    <div id="collapseThree" class="panel-collapse collapse">
+      <div class="panel-body">
+        <?php echo $this->partial('temp-media.phtml',array('defaultSound'=>$this->url('playtmpmedia',array('action'=>'play','id'=>$media['musiconhold']->id)), 'media'=>$media['musiconhold'], 'uploadLinkLabel'=>'на удержание - используется при использовании услуги удержания вызова','indexNum'=>4, 'dataUploadInputName'=>'musiconhold'))?>      </div>
+    </div>
+  </div>
+ 
+</div>
+ 
+
  	<br>
 <br>
  
 <div class="wizardbuttom">
 <button class="btn btn-primary" onclick="location.href='<?php echo $this->url('wizard',array('action'=>'step3'))?>'">далее</button>
 </div>
- 	
-  <script>
-$(function () {
-    $('.fileupload').fileupload({
-        dataType: 'json',
-        done: function (e, data) {
-            	if (null===data.result.file.name)
-            	{
-                	alert('ошибка загрузки!');
-                }
-            	else
-            	{
-                  $('#'+e.target.id).replaceWith('<a href="">'+data.result.file.name+'</a>');    
-            	}
-        }
-    });
-});
-</script>
+ 	<div id="modalcontainer" style="display: none">
+  <div class="modal" id="pleaseWaitDialog" data-backdrop="static" data-keyboard="false">
+     
+        <div class="modal-body">
+            <div class="progress active">
+                <div class="bar" style="width: 0%;"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+    
+  	<div id="modalcontainer1" style="display: none">
+  <div class="modal" id="chooseFileDialog" data-backdrop="static" data-keyboard="false">     
+        <div class="modal-body">
+            <input class="fileupload" type="file" data-url="">
+        </div>
+    </div>
+    </div>
+     <script>
  
+$(function(){
+$(".jp-jplayer1").each(function(i,player){
+  
+	var sound = $(player).data('defaultsound');
+	var indexnum = $(player).data('indexnum');
+	console.log(indexnum);
+     $(player).jPlayer({
+         ready: function() {
+             $(player).jPlayer("setMedia", {
+                 title:"Стандартное приветствие",                 
+                 mp3: sound
+             });
+         },
+         loop: false,
+         swfPath: "/js/Jplayer.swf",
+         title:"Стандартное приветствие",                          
+         supplied: "mp3",
+         cssSelectorAncestor: "#jp_container_"+indexnum
+     });
+}
+); 
+});
+
+ </script>

@@ -25,6 +25,17 @@ class TempMediaTable implements TempMediaTableInterface
     }
     
     
+    public function getDefaultGreetings()
+    {
+        $resultSet = $this->tableGateway->select(function (Select $select) {
+            $select->where(array('accesslevel'=>'global'));
+        });
+        $resultSet->buffer();
+        
+        return $resultSet;
+        
+    }
+    
     public function getTempMediaById($id)
     {
     	$id  = (int) $id;
@@ -46,6 +57,7 @@ class TempMediaTable implements TempMediaTableInterface
     	    'contenttype' =>$tempmedia->contenttype,
     	    'filesize' =>$tempmedia->filesize,
     	    'mediatype' =>$tempmedia->mediatype,
+    	    'accesslevel'=>$tempmedia->accesslevel
       	);
     	$id = (int)$tempmedia->id;
     	if ($id == 0) {

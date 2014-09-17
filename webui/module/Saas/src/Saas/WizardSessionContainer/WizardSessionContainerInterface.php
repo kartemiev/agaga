@@ -16,9 +16,6 @@ interface WizardSessionContainerInterface
 	 
 	function getVpbxEnv();
 	 
-	function setMedia(TempMedia $media);
-	 
-	function getMedia();
 	 
 	function getInternalNumbers();
 	 

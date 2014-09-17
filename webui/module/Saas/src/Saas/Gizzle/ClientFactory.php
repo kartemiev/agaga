@@ -10,8 +10,6 @@ class ClientFactory implements FactoryInterface
 	public function createService(ServiceLocatorInterface $serviceLocator)
 	{
 		$config = $serviceLocator->get('Config');	
-		var_dump($config);
-		throw new \Exception();	 
-		return new Client($config['gizzle']);
+  		return new Client($config['gizzle']);
 	}
 }

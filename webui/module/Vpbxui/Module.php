@@ -22,7 +22,7 @@ use Zend\Validator\NotEmpty;
 
 class Module
 {
-    protected $whitelist = array('zfcuser/login','home','vpbxui/registerpbx','createconference','wizard','pickdid','createinternal','internalapi','overview','api/freedid');
+    protected $whitelist = array('zfcuser/login','home','vpbxui/registerpbx','createconference','wizard','pickdid','createinternal','internalapi','overview','api/freedid', 'playtmpmedia');
     public function onBootstrap(MvcEvent $e)
     {                    
         $sm = $e->getApplication()->getServiceManager();
@@ -346,7 +346,7 @@ class Module
          	'Vpbxui\Controller\NumberMatch' => 'Vpbxui\Controller\NumberMatchController',
          	'Vpbxui\Controller\ExtensionDefaults'=>	'Vpbxui\Controller\ExtensionDefaultsController',
          	'Vpbxui\Controller\FaxUser'=> 'Vpbxui\Controller\FaxUserControllerFactory',
-         	'Vpbxui\Controller\CallCentreSettings' => 'Vpbxui\Controller\CallCentreSettingsController'          	         		
+         	'Vpbxui\Controller\CallCentreSettings' => 'Vpbxui\Controller\CallCentreSettingsController'
             ),
         'factories'=> array(
         	'Vpbxui\Controller\Monitoring'=>'Vpbxui\Controller\MonitoringControllerFactory',        		

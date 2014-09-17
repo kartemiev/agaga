@@ -64,6 +64,21 @@ return array(
                 ),
                 'may_terminate'=>true
             ),
+            'captcha' => array(
+                'type' => 'Segment',
+            
+                'options' => array(
+                    'route' => '/captcha[/:action]',
+                    'constraints' => array(
+                        'action' => '[a-zA-Z][a-zA-Z0-9_-]*',
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Saas\Controller\Captcha',
+                        'action' => 'index',
+                    ),
+                ),
+                'may_terminate'=>true
+            ),
         		'internalapi' => array(
         				'type'    => 'segment',
         				'options' => array(
@@ -79,6 +94,22 @@ return array(
         					
         				'may_terminate' => true,
         		),
+            'playtmpmedia' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'    => '/playtmpmedia[/:id]',
+                    'constraints' => array(
+                        'id' => '[0-9]*',
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Saas\Controller\PlayTmpMedia',
+                        'action'=>'play'
+                    ),
+            
+                ),
+                 
+                'may_terminate' => true,
+            ),
             ),
         ),
   
@@ -96,7 +127,9 @@ return array(
         ),
    		'template_map' => array(
    				'vpbx-wizard.phtml'         =>  __DIR__ . '/../view/layout/wizardPartial.phtml',
-   				'file-upload.phtml'         =>  __DIR__ . '/../view/layout/fileUploadPartial.phtml',   		
+   				'file-upload.phtml'         =>  __DIR__ . '/../view/layout/fileUploadPartial.phtml',
+   		        'temp-media.phtml'         =>  __DIR__ . '/../view/layout/tempMediaBlockPartial.phtml',
+   		    	
    		    'createvpbx/csv' =>
    		    __DIR__ .
    		    '/../view/saas/create-vpbx-env/csv.phtml',

@@ -12,6 +12,8 @@ use Zend\Stdlib\Parameters;
 use Vpbxui\PbxSettings\Model\PbxSettingsTableInterface;
 use Vpbxui\PbxSettings\Model\PbxSettings;
 use Zend\Db\Sql\Ddl\Column\Varchar;
+use Zend\Form\Element\Captcha;
+use Zend\Captcha\Image as CaptchaImage;
 
 class RegisterPbxController extends AbstractActionController
 {
@@ -47,7 +49,30 @@ class RegisterPbxController extends AbstractActionController
 		
 		$form->get('email')->setLabel('Адрес электронной почты');
 		$form->get('submit')->setlabel('создать');
-
+		
+		$dirdata = './data';
+		
+		//pass captcha image options
+		$captchaImage = new CaptchaImage(  array(
+		    'font' => $dirdata . '/fonts/arial.ttf',
+		    'width' => 250,
+		    'height' => 100,
+		    'dotNoiseLevel' => 40,
+		    'lineNoiseLevel' => 3)
+		);
+		$captchaImage->setImgDir($dirdata.'/captcha');
+		$captchaImage->setImgUrl('/captcha');
+		
+		$form->add(array(
+		    'type' => 'Zend\Form\Element\Captcha',
+		    'name' => 'captcha',
+		    'options' => array(
+		        'label' => 'символы на картинке',
+		        'captcha' => $captchaImage,
+		    ),
+		));
+		
+        
 		if ($this->zfcUserAuthentication()->hasIdentity()) {
 			return $this->redirect()->toRoute($this->options->getLoginRedirectRoute());
 		}

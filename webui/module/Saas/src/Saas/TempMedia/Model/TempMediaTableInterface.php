@@ -7,5 +7,6 @@ interface TempMediaTableInterface
   function getTempMediaById($id);
   function saveTempMedia(TempMedia $tempmedia);
   function deleteTempMedia($id);
-    
+  function getDefaultGreetings();
+  
 }

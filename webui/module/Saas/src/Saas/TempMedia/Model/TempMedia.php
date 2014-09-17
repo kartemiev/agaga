@@ -14,6 +14,7 @@ class TempMedia implements InputFilterAwareInterface
     public $contenttype = '';
     public $filesize;
     public $mediatype = '';
+    public $accesslevel = 'session';
     public function exchangeArray($data)
     {
         $this->id     = (isset($data['id'])) ? $data['id'] : null;
@@ -21,8 +22,8 @@ class TempMedia implements InputFilterAwareInterface
         $this->custdesc     = (isset($data['custdesc'])) ? $data['custdesc'] : null;
         $this->contenttype     = (isset($data['contenttype'])) ? $data['contenttype'] : null;
         $this->filesize     = (isset($data['filesize'])) ? $data['filesize'] : null;
-        $this->mediatype     = (isset($data['mediatype'])) ? $data['mediatype'] : null;        
-        
+        $this->mediatype     = (isset($data['mediatype'])) ? $data['mediatype'] : null;                
+        $this->accesslevel = (isset($data['accesslevel'])) ? $data['accesslevel'] : null;   
     }
     public function getArrayCopy()
     {

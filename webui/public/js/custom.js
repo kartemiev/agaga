@@ -1,6 +1,6 @@
 $.fn.exists = function () {
     return this.length !== 0;
-}  
+};  
 
 $(window).on('load', function () {
 
@@ -22,7 +22,7 @@ jQuery.expr[':'].regex = function(elem, index, match) {
         regexFlags = 'ig',
         regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g,''), regexFlags);
     return regex.test(jQuery(elem)[attr.method](attr.property));
-} 
+};
 
 function ajaxasizeLinksGlobally(){
     $('a').click(function(event)
@@ -598,7 +598,50 @@ $(function(){
  	  		);
  	  		 
  	 	}
- 	 	 
+
+ 	 	$(function () {
+ 	 	    $('.fileupload').fileupload({
+ 	 	        dataType: 'json',
+  	 	        progressall:function (e, data) {
+ 	 	  	 	 	 $('.progress').show();
+ 	 	          var progress = parseInt(data.loaded / data.total * 100, 10);
+  	 		  $('.bar').css('width', progress+'%').attr('aria-valuenow', progress);    
+  	 	 	    
+ 	 	    },
+ 	 	    
+ 	 	  add: function (e, data) {
+ 	 		  
+	  			$('.modal').modal();  	  				
+	  			$('#modalcontainer').show();
+  	            data.submit();
+ 	        },
+ 	         
+ 	 	        done: function (e, data) {
+  		  			$('.modal').modal('toggle');  	  				
+ 		  			$('#modalcontainer').hide();
+
+ 	 	            	if (null===data.result.file.name)
+ 	 	            	{
+ 	 	                	alert('ошибка загрузки!');
+ 	 	                }
+ 	 	            	else
+ 	 	            	{
+ // 	 	            		console.log(
+  	 	            				$(this).parent().find('.jptitle').first().html(data.result.file.name)
+  	 	            				//); 
+ 	 	                  //  $('#'+e.target.id).replaceWith('<a href="">'+data.result.file.name+'</a>');    
+ 	 	            	}
+ 	 	        }
+ 	 	    });
+ 	 	});
+  	 	
+ 	 	$('.uploadMediaDialog').click(
+ 	 			function(e){
+ 	 				e.preventDefault();
+ 	 				var idName = '#'+$(e.target).data('formname');
+ 	 				$(idName).trigger('click');  
+ 	 			}
+ 	 	);	 
 }
 );
 function download(path) 

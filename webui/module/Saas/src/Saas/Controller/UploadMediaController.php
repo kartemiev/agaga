@@ -65,4 +65,5 @@ class UploadMediaController extends AbstractActionController
 				'media'=>$media
 		));
 	}
+	 
 }

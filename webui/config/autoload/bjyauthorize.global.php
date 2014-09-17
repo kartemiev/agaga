@@ -332,7 +332,9 @@ return array(
                     	'Saas\Controller\VpbxWizard',	
                     	'Saas\Controller\CreateInternal',	
                         'Saas\Controller\InternalApi',
-                        'Restful\Controller\WizardFreeDid'                    		
+                        'Restful\Controller\WizardFreeDid',
+                        'Saas\Controller\PlayTmpMedia',
+                        'Saas\Controller\Captcha'                    		
                     		
                     ),
                      'roles' => array('guest')
@@ -342,6 +344,8 @@ return array(
             
             'BjyAuthorize\Guard\Route' => array(
                 array('route' => 'zfcuser/login', 'roles' => array('guest')),
+                array('route' => 'playtmpmedia', 'roles' => array('guest')),
+                
             	array('route' => 'vpbxui/registerpbx', 'roles' => array('guest')),
                 array('route' => 'api/freedid', 'roles' => array('guest')),
                 array('route' => 'api/vpbxenv', 'roles' => array('admin')),
@@ -351,6 +355,7 @@ return array(
             		array('route' => 'wizard', 'roles' => array('guest')),
             		array('route' => 'createinternal', 'roles' => array('guest')),
             		array('route' => 'internalapi', 'roles' => array('guest')),
+                array('route' => 'captcha', 'roles' => array('guest')),                
                 array('route' => 'createvpbx', 'roles' => array('admin')),
                 
             		

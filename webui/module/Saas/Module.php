@@ -59,6 +59,7 @@ class Module
     public function getControllerConfig()
     {
          return array(
+        'invokables'=>array('Saas\Controller\Captcha'=>'Saas\Controller\CaptchaController'),                         
         'factories'=> array(
         		'Saas\Controller\PickDid' => 'Saas\Controller\PickDidControllerFactory',
         		'Saas\Controller\VpbxWizard' => 'Saas\Controller\VpbxWizardControllerFactory',
@@ -66,7 +67,8 @@ class Module
         		'Saas\Controller\CreateInternal' => 'Saas\Controller\CreateInternalControllerFactory',
         		'Saas\Controller\Overview'=> 'Saas\Controller\OverviewControllerFactory',
         		'Saas\Controller\InternalApi' => 'Saas\Controller\InternalApiControllerFactory',
-                'Saas\Controller\CreateVpbxEnv' => 'Saas\Controller\CreateVpbxEnvControllerFactory'
+                'Saas\Controller\CreateVpbxEnv' => 'Saas\Controller\CreateVpbxEnvControllerFactory',
+                'Saas\Controller\PlayTmpMedia' => 'Saas\Controller\PlayTmpMediaControllerFactory'
             ),
      );
     }

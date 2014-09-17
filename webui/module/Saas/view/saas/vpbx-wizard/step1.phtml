@@ -3,6 +3,10 @@
 $title = 'выбор телефонного номера';
 $this->headTitle($title);
 ?>
+<div class="alert alert-info alert-dismissible" role="alert">
+  <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only"></span></button>
+  на данном шаге необходимо выбрать Городской номер телефонной сети общего пользования для тестирования входящих вызовов с внешних номеров. В настоящее время в наличии имеются только номера в коде 499 Московской Городской Телефонной Сети.
+</div>
 <h4>Шаг 1. Выбор номера.</h4>
 <?php
 echo $this->partial('vpbx-wizard.phtml',array('content'=>$window));

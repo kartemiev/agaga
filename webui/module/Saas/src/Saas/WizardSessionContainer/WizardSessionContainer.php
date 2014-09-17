@@ -4,19 +4,17 @@ namespace Saas\WizardSessionContainer;
 use Zend\Session\Container as SessionContainer;
 use Zend\Session\ManagerInterface;
 use Saas\VpbxEnv\Model\VpbxEnv;
-use Saas\TempMedia\Model\TempMedia;
 use Vpbxui\Extension\Model\Extension;
 use Saas\FreeDid\Model\FreeDid;
-
 class WizardSessionContainer extends SessionContainer implements WizardSessionContainerInterface
 {	
 	protected  $did;
-	protected  $media;
 	protected  $internalnumbers;
 	public function __construct($name='Default',ManagerInterface $manager=null)
 	{
 		parent::__construct($name, $manager);
 		$this->vpbxEnv = new VpbxEnv();
+	
 	}
 	public function setDid(FreeDid $did)
 	{
@@ -35,11 +33,6 @@ class WizardSessionContainer extends SessionContainer implements WizardSessionCo
 	public function getVpbxEnv()
 	{
 		return $this->vpbxEnv;
-	}
-	public function setMedia(TempMedia $media)
-	{
-		$this->media = $media;
-		return $this;
 	}
 	public function getMedia()
 	{
@@ -62,6 +55,4 @@ class WizardSessionContainer extends SessionContainer implements WizardSessionCo
 	{
 		
 	}
-	
-	
 }
