@@ -114,18 +114,22 @@ class VpbxEnvController extends AbstractRestfulController
 	    $this->markCompletedWizardActionsCompleted();
 	    $this->getResponse()->setStatusCode(201);
 	   
-	    return new JsonModel();
+	    return new JsonModel(array('success'=>true));
 	}
 	protected function processMedia()
 	{
-	    $media = $this->wizardSessionContainer->media;
-	    $hydrator = new ObjectProperty();
-	    $mediaTypeMapperNamingStrategy = new MediaTypeMapperNamingStrategy();
-	    $generalSettingsTable = $this->generalSettingsTable;
-	    $vpbxId = $this->getVpbxId();
-	    $generalSettings = $this->generalSettingsTable->getSettings($vpbxId);
-	    if ($media)
+	    $mediaStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_media']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_media']:false;
+	    if (!$mediaStageCompleted)
 	    {
+	        
+	       $media = $this->wizardSessionContainer->media;
+	       $hydrator = new ObjectProperty();
+	       $mediaTypeMapperNamingStrategy = new MediaTypeMapperNamingStrategy();
+	       $generalSettingsTable = $this->generalSettingsTable;
+	       $vpbxId = $this->getVpbxId();
+	       $generalSettings = $this->generalSettingsTable->getSettings($vpbxId);
+	       if ($media)
+	       {
 	        foreach ($media as $type => $tmpMedia)
 	        {
 	            $mediaRepos = new MediaRepos();
@@ -140,97 +144,120 @@ class VpbxEnvController extends AbstractRestfulController
 	            {
 	                continue;
 	            }
-	            $propertyName = $mediaTypeMapperNamingStrategy->hydrate($type);
-	            $generalSettings->$propertyName = $id;
-	        }
-	        $generalSettingsTable->saveSettings($generalSettings);
-	    }
- 	     
+	               $propertyName = $mediaTypeMapperNamingStrategy->hydrate($type);
+	               $generalSettings->$propertyName = $id;
+	           }
+	           $generalSettingsTable->saveSettings($generalSettings);
+	       }
+	       $this->wizardSessionContainer->wizardActionsCompletedList['process_media'] = true;
+	     
+	    } 
 	    return $this;
 	}
 	protected function processVpbxEnv()
 	{
-	    $vpbxEnv = $this->wizardSessionContainer->vpbxEnv;
-	    $vpbxEnv->vpbx_name = 'виртульная АТС для тестов';
-	    $vpbxEnv->vpbx_description = 'виртульная АТС для тестов';
-	    $vpbxEnv->vpbx_remotevpbxid = (string)$this->getVpbxId();
-	    
-	    if ($vpbxEnv)
+	    $callCentreStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_vpbx_env']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_vpbx_env']:false;
+	    if (!$vpbxEnvStageCompleted)
 	    {
-	        $this->vpbxEnv = $this->vpbxEnvTable->saveVpbxEnv($vpbxEnv);
-	    }	    
-	      
+	       $vpbxEnv = $this->wizardSessionContainer->vpbxEnv;
+	       $vpbxEnv->vpbx_name = 'виртульная АТС для тестов';
+	       $vpbxEnv->vpbx_description = 'виртульная АТС для тестов';
+	       $vpbxEnv->vpbx_remotevpbxid = (string)$this->getVpbxId();
+	       $did = $this->wizardSessionContainer->did;
+	       $vpbxEnv->outgoingtrunk_did = $did->id;
+ 	      if ($vpbxEnv)
+	       {
+	           $this->vpbxEnv = $this->vpbxEnvTable->saveVpbxEnv($vpbxEnv);
+	       }
+	       $this->wizardSessionContainer->wizardActionsCompletedList['process_vpbx_env'] = true;
+	    } 
 	    return $this;
 	}
 	protected function processTrunksAndContext()
 	{
-	    $vpbxEnv = $this->vpbxEnv;
-	    $trunk = new Trunk();
-	
-	    $trunk->name = $vpbxEnv->sip_name;
-	    $trunk->secret = $vpbxEnv->sip_secret;
-	    $trunk->host = 'serv-02';
-	    $trunk->callbackextension = $vpbxEnv->sip_name;
-	    $trunk->context = 'vpbx_dialout';
+	    $processTrunksAndContextStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_trunks_and_context']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_trunks_and_context']:false;
 
-	    $trunkId = $this->trunkTable->saveTrunk($trunk);
-	    $this->trunkId  = $trunkId;
-
-	    $ivr = new Ivr();
-	    $ivr->custname = 'основной';
-	    $ivr->custdesc = 'основной';
-	    $ivrId = $this->ivrTable->saveIvr($ivr);
+	    if (!$processTrunksAndContextStageCompleted)
+	    {
 	    
-	    $context = clone $this->context;
-	    $data = array(
+	       $vpbxEnv = $this->vpbxEnv;
+	       $trunk = new Trunk();
+	
+	       $trunk->name = $vpbxEnv->sip_name;
+	       $trunk->secret = $vpbxEnv->sip_secret;
+	       $trunk->host = 'serv-02';
+	       $trunk->port = '5060';
+	       $trunk->callbackextension = $vpbxEnv->sip_name;
+	       $trunk->context = 'vpbx_dialout';
+
+	       $trunkId = $this->trunkTable->saveTrunk($trunk);
+	       $this->trunkId  = $trunkId;
+
+	       $ivr = new Ivr();
+	       $ivr->custname = 'основной';
+	       $ivr->custdesc = 'основной';
+	       $ivrId = $this->ivrTable->saveIvr($ivr);
+	    
+	       $context = clone $this->context;
+	       $data = array(
 	        'custname' => 'основной',
 	        'custdesc' => 'основной',
 	        'contexttype' => 'IVR',
 	        'ivrref'=>$ivrId
-	    );
-	    $context->exchangeArray($data);
-	    $contextId = $this->contextTable->saveContext($context);
+	       );
+	       $context->exchangeArray($data);
+	       $contextId = $this->contextTable->saveContext($context);
 	
-	    $trunkAssoc = new TrunkAssoc();
-	    $data = array(
+	       $trunkAssoc = new TrunkAssoc();
+	       $data = array(
 	        'trunkref'=>$trunkId,
 	        'contextref'=>$contextId
-	    );
-	    $trunkAssoc->exchangeArray($data);
+	       );
+	       $trunkAssoc->exchangeArray($data);
 	     
-	    $this->trunkAssocTable->saveTrunkAssoc($trunkAssoc);
- 	     
+	       $this->trunkAssocTable->saveTrunkAssoc($trunkAssoc);
+	       $this->wizardSessionContainer->wizardActionsCompletedList['process_trunks_and_context'] = true;
+	       
+	    } 
 	    return $this;
 	}
 	protected function processInternal()
 	{
-	    $internalnumbers = $this->wizardSessionContainer->internalnumbers;
-	    if (count($internalnumbers)==0)
+	    $internalNumbersStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_internal']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_internal']:false;
+	    if (!$internalNumbersStageCompleted)
 	    {
-	        return;
-	    }
-	    $extensionGroupTable = $this->extensionGroupTable;
-	    $extensionGroup = new ExtensionGroup();
-	    $extensionGroup->name = 'обычные';
-	    $extensionGroup->custdesc = 'обычные';
-	    $extensionGroup->memberofcallcentreque = 'false';
-	    $extensionGroup->extensionrecord = 'false';
-	    $regularExtensionGroupId = $extensionGroupTable->saveExtensionGroup($extensionGroup);
+	       $internalnumbers = $this->wizardSessionContainer->internalnumbers;
+	       if (count($internalnumbers)==0)
+	       {
+	           return;
+	       }
+	       $extensionGroupTable = $this->extensionGroupTable;
+	       $extensionGroup = new ExtensionGroup();
+	       $extensionGroup->name = 'обычные';
+	       $extensionGroup->custdesc = 'обычные';
+	       $extensionGroup->memberofcallcentreque = 'false';
+	       $extensionGroup->extensionrecord = 'undefined';
+	       $regularExtensionGroupId = $extensionGroupTable->saveExtensionGroup($extensionGroup);
 	
-	    $extensionGroupTable = $this->extensionGroupTable;
-	    $extensionGroup = new ExtensionGroup();
-	    $extensionGroup->name = 'операторы';
-	    $extensionGroup->custdesc = 'операторы';
-	    $extensionGroup->memberofcallcentreque = 'true';
-	    $extensionGroup->extensionrecord = 'true';
-	    $operatorExtensionGroupId = $extensionGroupTable->saveExtensionGroup($extensionGroup);
+	       $extensionGroupTable = $this->extensionGroupTable;
+	       $extensionGroup = new ExtensionGroup();
+	       $extensionGroup->name = 'операторы';
+	       $extensionGroup->custdesc = 'операторы';
+	       $extensionGroup->memberofcallcentreque = 'true';
+	       $extensionGroup->extensionrecord = 'active';
+	       $operatorExtensionGroupId = $extensionGroupTable->saveExtensionGroup($extensionGroup);
 	
 	    	
-	    foreach ($internalnumbers as $internalnumber)
-	    {
+	       foreach ($internalnumbers as $internalnumber)
+	       {
 	        $extension = clone $this->extension;
 	        $extension->exchangeArray($internalnumber->getArrayCopy());
 	        $extension->extensiontype=$internalnumber->extensiontype;
+	        $extension->diversion_unconditional_status = 'UNDEFINED';
+            $extension->diversion_busy_status = 'UNDEFINED';
+            $extension->diversion_noanswer_status = 'UNDEFINED';       
+            $extension->diversion_unavail_status = 'UNDEFINED';     
+	        $extension->email ='';	         
  	        switch ($extension->extensiontype)
 	        {
 	            case 'operator':
@@ -243,49 +270,63 @@ class VpbxEnvController extends AbstractRestfulController
 	                throw new \Exception('непредвиденная ошибка');
 	        }
 	        $this->extensionTable->saveExtension($extension);
+	       }
+	       $this->wizardSessionContainer->wizardActionsCompletedList['process_internal'] = true;
+	       
 	    }
 	    return $this;
 	}
 	protected function processRoute()
 	{
-	    $vpbxEnv = $this->wizardSessionContainer->vpbxEnv;
-	    $did = $this->wizardSessionContainer->did;
+	    $routeStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_route']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_route']:false;
+	    if (!$routeStageCompleted)
+	    {
+	       $vpbxEnv = $this->wizardSessionContainer->vpbxEnv;
+	       $did = $this->wizardSessionContainer->did;
 	
-	    $didDigigts = ($vpbxEnv && $did)?$did->digits:'';
+	       $didDigigts = ($vpbxEnv && $did)?$did->digits:'';
 	
-	    $numberMatch = new NumberMatch();
-	    $numberMatch->custname = 'любой номер (catchall)';
-	    $numberMatchId = $this->numberMatchTable->saveNumberMatch($numberMatch);
+	       $numberMatch = new NumberMatch();
+	       $numberMatch->custname = 'любой номер (catchall)';
+	       $numberMatchId = $this->numberMatchTable->saveNumberMatch($numberMatch);
 	
-	    $regEntry = new RegEntry();
-	    $data = array(
-	        'numbermatchref'=>$numberMatchId,
-	        'regexpression'=> '/[\d]{7,15}/'
-	    );
-	    $regEntry->exchangeArray($data);
-	    $regEntryId = $this->regEntryTable->saveRegEntry($regEntry);
+	       $regEntry = new RegEntry();
+	       $data = array(
+	           'numbermatchref'=>$numberMatchId,
+	           'regexpression'=> '/[\d]{7,15}/'
+	       );
+	       $regEntry->exchangeArray($data);
+	       $regEntryId = $this->regEntryTable->saveRegEntry($regEntry);
 	
-	    $route = new Route();
-	    $route->custname = 'ТФОП '.$didDigigts;
-	    $route->custdesc = '';
-	    $route->isdefault = true;
-	    $routeId = $this->routeTable->saveRoute($route);
+	       $route = new Route();
+	       $route->custname = 'ТФОП '.$didDigigts;
+	       $route->custdesc = '';
+	       $route->isdefault = true;
+	       $routeId = $this->routeTable->saveRoute($route);
 	
-	    $trunkDestination = new TrunkDestination();
-	    $data = array(
-	        'numbermatchref'=>$numberMatchId,
-	        'routeref'=>$routeId,
-	        'trunkref'=>$this->trunkId
+	       $trunkDestination = new TrunkDestination();
+	       $data = array(
+	           'numbermatchref'=>$numberMatchId,
+	           'routeref'=>$routeId,
+	           'trunkref'=>$this->trunkId
 	
-	    );
-	    $trunkDestination->exchangeArray($data);
-	    $this->trunkDestinationTable->saveTrunkDestination($trunkDestination);
+	       );
+	       $trunkDestination->exchangeArray($data);
+	       $this->trunkDestinationTable->saveTrunkDestination($trunkDestination);
+	       $this->wizardSessionContainer->wizardActionsCompletedList['process_route'] = true;	     
+	    }
 	    return $this;
 	}
 	protected function processCallCentre()
 	{
-	    $callcentreSchedule = new CallCentreSchedule();
-	    $this->callCentreScheduleTable->saveCallCentreSchedule($callcentreSchedule);
+	    $callCentreStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_callcentre']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_callcentre']:false;
+	    if (!$routeStageCompleted)
+	    {
+	       $callcentreSchedule = new CallCentreSchedule();
+	       $callcentreSchedule->exchangeArray(array());
+	       $this->callCentreScheduleTable->saveCallCentreSchedule($callcentreSchedule);
+	       $this->wizardSessionContainer->wizardActionsCompletedList['process_callcentre'] = true;	       
+	    }
 	}
 	
 	protected function markCompletedWizardActionsCompleted()

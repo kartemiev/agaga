@@ -77,6 +77,7 @@ class VpbxEnv
 		$this->vpbx_remotevpbxid = (isset($data['vpbx_remotevpbxid']))? $data['vpbx_remotevpbxid']:null;
 		$this->vpbx_expiry = (isset($data['vpbx_expiry']))? $data['vpbx_expiry']:null;
 		$this->outgoing_trunk_id = (isset($data['outgoing_trunk_id']))? $data['outgoing_trunk_id']:null;
+		$this->outgoingtrunk_did = (isset($data['outgoingtrunk_did']))? $data['outgoingtrunk_did']:null;
 		$this->sip_id = (isset($data['sip_id']))? $data['sip_id']:null;		
 		$this->sip_name = (isset($data['sip_name']))? $data['sip_name']:null;
 		$this->sip_secret = (isset($data['sip_secret']))? $data['sip_secret']:null;

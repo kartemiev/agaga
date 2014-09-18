@@ -3,7 +3,6 @@ namespace Saas\WizardSessionContainer;
 
 use Vpbxui\Extension\Model\Extension;
 use Saas\VpbxEnv\Model\VpbxEnv;
-use Saas\TempMedia\Model\TempMedia;
 use Saas\FreeDid\Model\FreeDid;
 
 interface WizardSessionContainerInterface

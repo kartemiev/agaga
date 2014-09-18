@@ -8,6 +8,7 @@ use Zend\View\Model\JsonModel;
 use Zend\Http\Response;
 use Zend\Form\Annotation\AnnotationBuilder as FormBuilder;
 use Saas\VpbxEnv\Model\VpbxEnv;
+use Saas\FreeDid\Model\FreeDid;
 
 class WizardVpbxEnvController extends AbstractRestfulController
 {

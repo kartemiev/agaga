@@ -106,7 +106,6 @@ class ApiGateway implements ApiGatewayInterface
 	protected function checkContentType($res)
 	{
 		return;
-		var_dump($res->getHeader('content-type'));
 		if (self::CONTENT_TYPE!==$res->getHeader('content-type'))
 		{
 			throw new ContentTypeMismatchException();

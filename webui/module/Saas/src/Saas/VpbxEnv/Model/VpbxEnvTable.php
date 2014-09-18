@@ -21,18 +21,17 @@ class VpbxEnvTable implements VpbxEnvTableInterface
 	public function saveVpbxEnv(VpbxEnv $vpbxenv)
 	{		
 		$data = array(
-				'name' => $vpbxenv->name,
-				'description' => $vpbxenv->description,
-				'remotevpbxid' => $vpbxenv->remotevpbxid,
-				'created' => $vpbxenv->created,
-				'expiry' => $vpbxenv->expiry,
-				'did' => $vpbxenv->did				
+				'vpbx_name' => $vpbxenv->vpbx_name,
+				'vpbx_description' => $vpbxenv->vpbx_description,
+				'vpbx_remotevpbxid' => $vpbxenv->vpbx_remotevpbxid,
+		 
+				'outgoingtrunk_did' => $vpbxenv->outgoingtrunk_did				
  		);
 		
-		$id = (int)$vpbxenv->id;
+		$id = isset($vpbxenv->id)?(int)$vpbxenv->id:null;
 		if ($id == 0) {
-			$entity = $this->apiGateway->create($data);
-			$return = $entity->getId();
+ 			$entity = $this->apiGateway->create($data);
+			$return = $entity->id;
 		} else {
 			if ($this->getVpbxEnv($id)) {
 				$this->apiGateway->update($data, $id);

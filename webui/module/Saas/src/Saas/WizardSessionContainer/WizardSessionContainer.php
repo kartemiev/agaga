@@ -6,6 +6,7 @@ use Zend\Session\ManagerInterface;
 use Saas\VpbxEnv\Model\VpbxEnv;
 use Vpbxui\Extension\Model\Extension;
 use Saas\FreeDid\Model\FreeDid;
+
 class WizardSessionContainer extends SessionContainer implements WizardSessionContainerInterface
 {	
 	protected  $did;
@@ -14,7 +15,7 @@ class WizardSessionContainer extends SessionContainer implements WizardSessionCo
 	{
 		parent::__construct($name, $manager);
 		$this->vpbxEnv = new VpbxEnv();
-	
+	    $this->wizardActionsCompletedList = array();
 	}
 	public function setDid(FreeDid $did)
 	{

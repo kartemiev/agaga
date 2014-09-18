@@ -3989,13 +3989,6 @@ CREATE TABLE "user" (
 ALTER TABLE public."user" OWNER TO agaga;
 
 --
--- Name: COLUMN "user".id; Type: COMMENT; Schema: public; Owner: agaga
---
-
-COMMENT ON COLUMN "user".id IS 'nextval(''user_user_id_seq''::regclass)	';
-
-
---
 -- Name: user_role; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
 --
 
@@ -35827,6 +35820,8 @@ COPY pbx_settings (vpbxid, callcentre_status_override, vmtimeout, greeting, gree
 37	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
 38	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
 39	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+40	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+41	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
 \.
 
 
@@ -35834,7 +35829,7 @@ COPY pbx_settings (vpbxid, callcentre_status_override, vmtimeout, greeting, gree
 -- Name: pbx_settings_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('pbx_settings_seq', 39, true);
+SELECT pg_catalog.setval('pbx_settings_seq', 41, true);
 
 
 --
@@ -36388,6 +36383,67 @@ COPY temp_media (id, custname, custdesc, contenttype, filesize, mediatype) FROM 
 13	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное МЮ.doc		application/msword	72704	
 14	ТЗ API Глюкометр v.4.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	158837	
 16	РосСкрининг.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	152175	greetingofftime
+17	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	greeting
+20	ТЗ API Глюкометр v.4.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	158837	greeting
+21	РосСкрининг.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	152175	greeting
+22	ТЗ API Глюкометр v.4.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	158837	greeting
+24	ТЗ API Глюкометр v.4.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	158837	greetingofftime
+25	ТЗ API Глюкометр v.4.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	158837	greeting
+26	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	greetingofftime
+27	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	ringingtone
+31	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	greeting
+32	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	greetingofftime
+33	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	ringingtone
+35	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	greeting
+36	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+37	03 Cant Sell Dope Forever.mp3			0	greeting
+38	_Г†°а®нЂм Г†аб®† М†а™•б, О Ђо°Ґ® ® ѓаЃз®е °•б†е.doc		application/msword	528384	greeting
+39	03 Cant Sell Dope Forever.mp3			0	greeting
+40	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+41	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+42	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+43	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+44	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+45	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+46	09 Dedication (Skit).mp3		audio/mp3	215957	greetingofftime
+47	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+48	09 Dedication (Skit).mp3		audio/mp3	215957	greetingofftime
+49	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+50	_Г†°а®нЂм Г†аб®† М†а™•б, О Ђо°Ґ® ® ѓаЃз®е °•б†е.doc		application/msword	528384	greetingofftime
+51	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+52	_Г†°а®нЂм Г†аб®† М†а™•б, О Ђо°Ґ® ® ѓаЃз®е °•б†е.doc		application/msword	528384	greetingofftime
+53	_Г†°а®нЂм Г†аб®† М†а™•б, О Ђо°Ґ® ® ѓаЃз®е °•б†е.doc		application/msword	528384	greeting
+54	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+55	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+56	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+57	03 Cant Sell Dope Forever.mp3			0	greeting
+58	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+59	09 Dedication (Skit).mp3		audio/mp3	215957	greetingofftime
+60	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+61	117883__arclegend05__alarm-clock.wav		audio/wav	2045302	ringingtone
+63	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+64	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+65	09 Dedication (Skit).mp3		audio/mp3	215957	greetingofftime
+66	840925a06e22.mp3			0	greeting
+67	09 Dedication (Skit).mp3		audio/mp3	215957	greetingofftime
+68	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+69	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+70	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+71	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+72	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+73	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+74	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+75	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+76	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+77	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+78	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+79	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+80	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+81	09 Dedication (Skit).mp3		audio/mp3	215957	ringingtone
+82	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+83	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
+84	840925a06e22.mp3			0	greeting
+85	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
 \.
 
 
@@ -36395,7 +36451,7 @@ COPY temp_media (id, custname, custdesc, contenttype, filesize, mediatype) FROM 
 -- Name: temp_media_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('temp_media_id_seq', 16, true);
+SELECT pg_catalog.setval('temp_media_id_seq', 85, true);
 
 
 --
@@ -36448,6 +36504,7 @@ COPY "user" (user_id, username, email, display_name, password, state, role, vpbx
 32	\N	kartemiev22@gmail.com	kartemiev22@gmail.com	$2y$04$pUCF94gmm7cJ99OrVJ5yq.1FhlgyK21SedyDzfuGbaxTw.r/glB1a	\N	admin	\N	32
 33	\N	kartemiev33@gmail.com	kartemiev33@gmail.com	$2y$04$KKNBjpMpE4L8fwkZbyUZzeziEQvWzZGcQo.HR.nntQvnlfPitkkEG	\N	admin	\N	33
 34	\N	kartemiev44@gmail.com	kartemiev44@gmail.com	$2y$04$Gz0e0lAIFBuxGkFpsAMgiO94RvikIXo2abU6KvsrasRbHnb2fuq1e	\N	admin	\N	34
+110	test	test	test		\N	admin	1	110
 35	\N	kartemiev88@gmail.com	kartemiev88@gmail.com	$2y$04$H6ilvkH7/mrjx1oXk2jTv.32oKmvf6nMfhfk0DV5npR2r5rhonb2a	\N	admin	\N	35
 36	\N	kartemiev222@gmail.com	kartemiev222@gmail.com	$2y$04$2.1IAXMp13uqxqVx8leNDOjGtQ95gZKQkWRtXV5O/12mTinbQTHyq	\N	admin	\N	36
 37	\N	kartemiev4444@gmail.com	kartemiev4444@gmail.com	$2y$04$atiUxdx28Mjqjsa8dtTGIuSFdonuNCMilYQkebJAWoTadA5nuHhSi	\N	admin	\N	37
@@ -36486,7 +36543,6 @@ COPY "user" (user_id, username, email, display_name, password, state, role, vpbx
 97	\N	kartemiev3334422@gmail.com	Peter Ivanoff	$2y$04$w04FfHpBPym4468KGWEsOOv85Q9rpuBgesVXX3huacdn4QNmSSeeu	\N	admin	36	97
 99	\N	kartemiev88899@gmail.com	Peter Ivanoff	$2y$04$VbqR92bOg1tRJYiFoKTF.O/qEXpHH9sGvW10JmBV2/pkL5zpiBsm2	\N	admin	37	99
 101	\N	kartemiev133333@gmail.com	Peter Ivanoff	$2y$04$yHT7yQF6X8Unw/6gvkls5uKKZ7leWyeAa05Gi5hDHDGUJN4lmkeLW	\N	admin	38	101
-103	\N	kartemiev333223@gmail.com	Peter Ivanoff	$2y$04$EBzUnt4Gpb9kIWHsxBByK.9pDHsDWGHFOvQchHnEiTG2oSOZHTLQS	\N	admin	\N	103
 \.
 
 
@@ -36504,7 +36560,7 @@ admin	0	\N	администратор
 -- Name: user_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('user_user_id_seq', 103, true);
+SELECT pg_catalog.setval('user_user_id_seq', 177, true);
 
 
 --
@@ -37008,6 +37064,14 @@ CREATE RULE test_txt_rule AS
 
 
 --
+-- Name: user_update_id_value; Type: RULE; Schema: public; Owner: agaga
+--
+
+CREATE RULE user_update_id_value AS
+    ON INSERT TO "user" DO  UPDATE "user" SET id = "user".user_id;
+
+
+--
 -- Name: update_directions; Type: TRIGGER; Schema: public; Owner: agaga
 --
 
@@ -37314,7 +37378,7 @@ ALTER TABLE ONLY schedule_replacements
 --
 
 ALTER TABLE ONLY shortdialtable
-    ADD CONSTRAINT shortdialtable_peerid_fkey FOREIGN KEY (peerid) REFERENCES sip(id);
+    ADD CONSTRAINT shortdialtable_peerid_fkey FOREIGN KEY (peerid) REFERENCES sip(id) ON DELETE CASCADE;
 
 
 --

@@ -41,31 +41,31 @@ class CallCentreSchedule
     protected $inputFilter;
     public function exchangeArray($data)
     {
-        $this->s_monday     = (isset($data['s_monday'])) ? $data['s_monday'] : null;
-        $this->e_monday     = (isset($data['e_monday'])) ? $data['e_monday'] : null;        
-        $this->active_monday     = (isset($data['active_monday'])) ? $data['active_monday'] : null;
-        $this->s_tuesday     = (isset($data['s_tuesday'])) ? $data['s_tuesday'] : null;        
-        $this->e_tuesday     = (isset($data['e_tuesday'])) ? $data['e_tuesday'] : null;
-        $this->active_tuesday     = (isset($data['active_tuesday'])) ? $data['active_tuesday'] : null;  
-        $this->s_wednesday     = (isset($data['s_wednesday'])) ? $data['s_wednesday'] : null;
-        $this->e_wednesday     = (isset($data['e_wednesday'])) ? $data['e_wednesday'] : null;
-        $this->active_wednesday     = (isset($data['active_wednesday'])) ? $data['active_wednesday'] : null;
-        $this->s_thursday     = (isset($data['s_thursday'])) ? $data['s_thursday'] : null;        
-        $this->e_thursday     = (isset($data['e_thursday'])) ? $data['e_thursday'] : null;        
-        $this->active_thursday     = (isset($data['active_thursday'])) ? $data['active_thursday'] : null;                        
-        $this->s_friday     = (isset($data['s_friday'])) ? $data['s_friday'] : null;
-        $this->e_friday     = (isset($data['e_friday'])) ? $data['e_friday'] : null;
-        $this->active_friday     = (isset($data['active_friday'])) ? $data['active_friday'] : null;
-        $this->s_saturday     = (isset($data['s_saturday'])) ? $data['s_saturday'] : null;
-        $this->e_saturday     = (isset($data['e_saturday'])) ? $data['e_saturday'] : null;
-        $this->active_saturday     = (isset($data['active_saturday'])) ? $data['active_saturday'] : null;        
-        $this->s_sunday     = (isset($data['s_sunday'])) ? $data['s_sunday'] : null;
-        $this->e_sunday     = (isset($data['e_sunday'])) ? $data['e_sunday'] : null;
-        $this->active_sunday     = (isset($data['active_sunday'])) ? $data['active_sunday'] : null;        
-        $this->s_shortday     = (isset($data['s_shortday'])) ? $data['s_shortday'] : null;
-        $this->e_shortday     = (isset($data['e_shortday'])) ? $data['e_shortday'] : null;
-        $this->s_regularwd     = (isset($data['s_regularwd'])) ? $data['s_regularwd'] : null;
-        $this->e_regularwd     = (isset($data['e_regularwd'])) ? $data['e_regularwd'] : null;
+        $this->s_monday     = (isset($data['s_monday'])) ? $data['s_monday'] : '09:00';
+        $this->e_monday     = (isset($data['e_monday'])) ? $data['e_monday'] : '18:00';        
+        $this->active_monday     = (isset($data['active_monday'])) ? $data['active_monday'] : true;
+        $this->s_tuesday     = (isset($data['s_tuesday'])) ? $data['s_tuesday'] : '09:00';        
+        $this->e_tuesday     = (isset($data['e_tuesday'])) ? $data['e_tuesday'] : '18:00';
+        $this->active_tuesday     = (isset($data['active_tuesday'])) ? $data['active_tuesday'] : true;  
+        $this->s_wednesday     = (isset($data['s_wednesday'])) ? $data['s_wednesday'] : '09:00';
+        $this->e_wednesday     = (isset($data['e_wednesday'])) ? $data['e_wednesday'] : '18:00';
+        $this->active_wednesday     = (isset($data['active_wednesday'])) ? $data['active_wednesday'] : true;
+        $this->s_thursday     = (isset($data['s_thursday'])) ? $data['s_thursday'] : '09:00';;        
+        $this->e_thursday     = (isset($data['e_thursday'])) ? $data['e_thursday'] : '18:00';;        
+        $this->active_thursday     = (isset($data['active_thursday'])) ? $data['active_thursday'] : true;                        
+        $this->s_friday     = (isset($data['s_friday'])) ? $data['s_friday'] : '09:00';
+        $this->e_friday     = (isset($data['e_friday'])) ? $data['e_friday'] : '18:00';
+        $this->active_friday     = (isset($data['active_friday'])) ? $data['active_friday'] : true;
+        $this->s_saturday     = (isset($data['s_saturday'])) ? $data['s_saturday'] : '00:00';
+        $this->e_saturday     = (isset($data['e_saturday'])) ? $data['e_saturday'] : '00:00';
+        $this->active_saturday     = (isset($data['active_saturday'])) ? $data['active_saturday'] : false;        
+        $this->s_sunday     = (isset($data['s_sunday'])) ? $data['s_sunday'] : '00:00';
+        $this->e_sunday     = (isset($data['e_sunday'])) ? $data['e_sunday'] : '00:00';
+        $this->active_sunday     = (isset($data['active_sunday'])) ? $data['active_sunday'] : false;        
+        $this->s_shortday     = (isset($data['s_shortday'])) ? $data['s_shortday'] : '00:00';
+        $this->e_shortday     = (isset($data['e_shortday'])) ? $data['e_shortday'] : '00:00';
+        $this->s_regularwd     = (isset($data['s_regularwd'])) ? $data['s_regularwd'] : '00:00';
+        $this->e_regularwd     = (isset($data['e_regularwd'])) ? $data['e_regularwd'] : '00:00';
     }
     public function getArrayCopy()
     {

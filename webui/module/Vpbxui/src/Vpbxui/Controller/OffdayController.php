@@ -208,7 +208,6 @@ class OffdayController extends AbstractActionController {
         $form->setData($post);
         if ($form->isValid()) {
             $data = $form->getData();
-            var_dump($data);
             
             exit;
             $file = new \SplFileObject("animals.csv");

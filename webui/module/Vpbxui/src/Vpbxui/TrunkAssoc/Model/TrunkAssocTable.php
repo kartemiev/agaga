@@ -5,8 +5,7 @@ use Vpbxui\TrunkAssoc\Model\TrunkAssocTableInterface;
 use Vpbxui\TrunkAssoc\Model\TrunkAssoc;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Sql\Select;
-use Zend\Db\Sql\Expression;
-
+ 
 class TrunkAssocTable implements TrunkAssocTableInterface
 {
 	public function __construct(TableGateway $tableGateway)
