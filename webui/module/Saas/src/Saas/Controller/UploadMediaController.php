@@ -42,8 +42,7 @@ class UploadMediaController extends AbstractActionController
 			$file =  array_slice($request->getFiles()->toArray(),0,1);
 			$filedata = array_shift(array_values($file));
 			$name = key($file);
- 			$data = array('file'=>array('name'=>$filedata['name']));
-			$tempMedia = new TempMedia();
+ 			$tempMedia = new TempMedia();
 			$tempMedia->custname = $filedata['name'];
 			$tempMedia->filesize = $filedata['size'];
 			$tempMedia->contenttype = $filedata['type'];
@@ -58,7 +57,8 @@ class UploadMediaController extends AbstractActionController
 			rename($filedata['tmp_name'],$this->appConfig->getTempMediaPath().'/'.$id);	
 			$tempMedia->id = $id;			
 			$wizardSessionContainer->media[$name] = $tempMedia;
-			 
+			$data = array('file'=>array('id'=>$id,'name'=>$filedata['name']));
+				
 			return new JsonModel($data);
 		}
 		return new ViewModel(array(

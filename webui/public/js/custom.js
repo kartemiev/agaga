@@ -627,11 +627,22 @@ $(function(){
  	 	                }
  	 	            	else
  	 	            	{
+ 	 	            		var player = $(e.target).closest('.jpcontainer').first().children('.jp-jplayer1').first();
+ 	 	                    var indexnum =  $(player).data('indexnum');
+
+ 	 	            		$(player).jPlayer("destroy");
+ 	 	                    $(player).data('defaultsound','/playtmpmedia/'+data.result.file.id);
+  	 	                    $(player).data('indexnum',indexnum);
+ 
+ 	 	       	 			bootstrapJplayer1(player);
+ 	 	       	 			
  // 	 	            		console.log(
- 	 	            		console.log(data.result.file.name);
-  	 	            				$(this).parent().find('.jptitle').first().html(data.result.file.name)
+ 	 	            		//console.log(data.result.file.name);
+ 	 	                    $(e.target).parent().find('a').text(data.result.file.name);
+ 	 	            				
+  	 	            			//	$(this).parent().find('.jptitle').first().html(data.result.file.name)
   	 	            				//); 
- 	 	                  //  $('#'+e.target.id).replaceWith('<a href="">'+data.result.file.name+'</a>');    
+// 	 	            		$(e.target).parent().first().text(data.result.file.name);    
  	 	            	}
  	 	        }
  	 	    });
@@ -645,21 +656,7 @@ $(function(){
  	 			}
  	 	);	 
  	 	$(".jp-jplayer1").each(function(i,player){
- 	 	  
- 	 		var sound = $(player).data('defaultsound');
- 	 		var indexnum = $(player).data('indexnum');
-  	 	     $(player).jPlayer({
- 	 	         ready: function() {
- 	 	             $(player).jPlayer("setMedia", {
- 	 	                  mp3: sound
- 	 	             });
- 	 	         },
- 	 	   //      preload:"none",
- 	 	         loop: false,
- 	 	         swfPath: "/js/Jplayer.swf",
- 	 	         supplied: "mp3",
- 	 	         cssSelectorAncestor: "#jp_container_"+indexnum
- 	 	     });
+ 	 		bootstrapJplayer1(player);
  	 	}
  	 	);
  	 	$('.mediacollapse').on('show.bs.collapse', function (event) {
@@ -668,6 +665,24 @@ $(function(){
   	 	});
 }
 );
+function bootstrapJplayer1(player)
+{
+	var sound = $(player).data('defaultsound');
+ 
+		var indexnum = $(player).data('indexnum');
+	     $(player).jPlayer({
+	         ready: function() {
+	             $(player).jPlayer("setMedia", {
+	                  mp3: sound
+	             });
+	         },
+	         preload:"none",
+	         loop: false,
+	         swfPath: "/js/Jplayer.swf",
+	         supplied: "mp3",
+	         cssSelectorAncestor: "#jp_container_"+indexnum
+	     });
+}
 function download(path) 
 {
     var ifrm = document.getElementById("frame");
