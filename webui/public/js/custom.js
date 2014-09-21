@@ -654,7 +654,7 @@ $(function(){
  	 	                  mp3: sound
  	 	             });
  	 	         },
- 	 	         preload:"none",
+ 	 	   //      preload:"none",
  	 	         loop: false,
  	 	         swfPath: "/js/Jplayer.swf",
  	 	         supplied: "mp3",
