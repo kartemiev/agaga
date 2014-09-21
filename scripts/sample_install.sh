@@ -18,6 +18,7 @@ echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
     ${MY_DIR}/include/agaga/move_targetdir.sh
+    ${MY_DIR}/include/agaga/symlink_captcha_dir.sh
 fi
 
 read -p "Установить зависимости модулей AGAGA PHP через Композитор [yY/N]? " -n 1 -r

@@ -8,5 +8,6 @@ interface RegEntryTableInterface
 	function saveRegEntry(RegEntry $regentry);
 	
 	function deleteRegEntryByNumberMatch($numbermatchref);
+	 function deleteAllRegentries();
 	
 }

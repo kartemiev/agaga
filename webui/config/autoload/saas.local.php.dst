@@ -1,0 +1,6 @@
+<?php
+return array(
+'saas'=>array(
+        'temp_media_path'=>'/var/lib/asterisk/temp_media'
+    ));
+    

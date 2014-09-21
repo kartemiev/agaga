@@ -22,7 +22,10 @@ class NumberMatchTable implements NumberMatchTableInterface {
 
     	return $resultSet;
     }
-    
+    public function deleteAllNumberMatches()
+    {
+        $this->tableGateway->delete(array());
+    }
      public function getNumberMatch($id)
     {
     	$id  = (int) $id;

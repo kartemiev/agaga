@@ -40,4 +40,8 @@ class TrunkDestinationTable implements TrunkDestinationTableInterface {
     {
     	$this->tableGateway->delete(array('routeref' => $route));
     }
+    public function deleteAllTrunkDestinations()
+    {
+        $this->tableGateway->delete(array());
+    }
 }

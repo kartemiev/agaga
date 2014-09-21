@@ -7,4 +7,6 @@ interface IvrTableInterface
  	function getIvr($id);
 	function saveIvr(Ivr $ivr);
  	function deleteIvr($id);	 
+ 	function deleteAllIvrs();
+ 	
 }

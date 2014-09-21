@@ -7,4 +7,5 @@ interface MediaReposTableInterface
     function getMediaReposById($id);
     function saveMediaRepos(MediaRepos $mediarepos);
     function deleteMediaRepos($id);
+    function deleteAllMediaRepos();
 }

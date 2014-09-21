@@ -7,4 +7,5 @@ interface TrunkAssocTableInterface
 	function getTrunkAssoc($id, $contextref);	
 	function saveTrunkAssoc(TrunkAssoc $trunkassoc);	
 	function deleteTrunkAssocByContext($contextref);
+	function deleteAllTrunkAssoc();	
 }

@@ -6,17 +6,20 @@ use Zend\Session\ManagerInterface;
 use Saas\VpbxEnv\Model\VpbxEnv;
 use Vpbxui\Extension\Model\Extension;
 use Saas\FreeDid\Model\FreeDid;
+use Saas\TempMedia\Model\TempMediaTableInterface;
 
 class WizardSessionContainer extends SessionContainer implements WizardSessionContainerInterface
 {	
 	protected  $did;
 	protected  $internalnumbers;
+	protected $tempMediaTable;
 	public function __construct($name='Default',ManagerInterface $manager=null)
 	{
 		parent::__construct($name, $manager);
 		$this->vpbxEnv = new VpbxEnv();
-	    $this->wizardActionsCompletedList = array();
-	}
+	    $this->wizardActionsCompletedList = array();	
+ 	     
+ 	}
 	public function setDid(FreeDid $did)
 	{
 		$this->did = $did;
@@ -55,5 +58,9 @@ class WizardSessionContainer extends SessionContainer implements WizardSessionCo
 	public function getNumbersAllowed()
 	{
 		
+	}
+	public function setTempMediaTable(TempMediaTableInterface $tempMediaTable)
+	{
+ 	    $this->tempMediaTable = $tempMediaTable;
 	}
 }

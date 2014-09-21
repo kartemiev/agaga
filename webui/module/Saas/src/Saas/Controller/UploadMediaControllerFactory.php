@@ -12,7 +12,8 @@ class UploadMediaControllerFactory implements FactoryInterface
 		
 		return new UploadMediaController(
 				$sl->get('Saas\WizardSessionContainer\WizardSessionContainer'),
-				$sl->get('Saas\TempMedia\Model\TempMediaTable')
+				$sl->get('Saas\TempMedia\Model\TempMediaTable'),
+		        $sl->get('Saas\Service\AppConfig\AppConfigService')
 			);
 	}
 }

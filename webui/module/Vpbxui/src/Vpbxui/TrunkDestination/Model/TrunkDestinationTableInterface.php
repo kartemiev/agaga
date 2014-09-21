@@ -10,5 +10,7 @@ interface TrunkDestinationTableInterface
     function saveTrunkDestination(TrunkDestination $trunkdestination);
     
     function deleteTrunkDestinationAll($route);
-	
+    
+    function deleteAllTrunkDestinations();
+   
 }

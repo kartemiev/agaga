@@ -29,6 +29,10 @@ class ContextTable implements ContextTableInterface
 		}
 		return $row;
 	}
+	public function deleteAllContexts()
+	{
+	    $this->tableGateway->delete(array());
+	}
 	 
 	public function saveContext(Context $context)
 	{

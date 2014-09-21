@@ -9,6 +9,7 @@ use Zend\Db\Sql\Expression;
 
 class RegEntryTable implements RegEntryTableInterface
 {
+    protected $tableGateway;
 	public function __construct(TableGateway $tableGateway)
 	{
 		$this->tableGateway = $tableGateway;
@@ -24,7 +25,10 @@ class RegEntryTable implements RegEntryTableInterface
 	
 		return $resultSet;
 	}
-			 
+	public function deleteAllRegentries()
+	{
+	    $this->tableGateway->delete(array());
+	}		 
 	public function saveRegEntry(RegEntry $regentry)
 	{
 		$data = array(

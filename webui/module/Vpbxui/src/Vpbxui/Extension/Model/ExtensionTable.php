@@ -26,7 +26,10 @@ class ExtensionTable implements ExtensionTableInterface {
  		
     	return $resultSet;
     }
-    
+    public function deleteAllExtensions()
+    {
+        $this->tableGateway->delete(array('peertype'=>'EXTENSION'));        
+    }
     public function fetchDistinctExtensions($limit)
     {
         $resultSet = $this->tableGateway->select(function (Select $select) {

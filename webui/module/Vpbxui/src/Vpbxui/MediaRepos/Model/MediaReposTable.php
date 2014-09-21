@@ -38,7 +38,10 @@ class MediaReposTable implements  MediaReposTableInterface
      	return $row;
     }
     
-   
+   public function deleteAllMediaRepos()
+   {
+       $this->tableGateway->delete(array());
+   }
     
     public function saveMediaRepos(MediaRepos $mediarepos)
     {        

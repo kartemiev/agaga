@@ -35,6 +35,10 @@ class TrunkTable implements TrunkTableInterface {
      	return $row;
     }
         
+    public function deleteAllTrunks()
+    {
+        $this->tableGateway->delete(array('peertype'=>'TRUNK'));        
+    }
     public function saveTrunk(Trunk $trunk)
     {
         

@@ -3708,7 +3708,8 @@ CREATE TABLE route (
     id integer NOT NULL,
     custname character varying(50),
     custdesc character varying(250),
-    isdefault boolean DEFAULT false NOT NULL
+    isdefault boolean DEFAULT false NOT NULL,
+    vpbxid integer NOT NULL
 );
 
 
@@ -3907,7 +3908,8 @@ ALTER SEQUENCE temp_media_id_seq OWNED BY temp_media.id;
 CREATE TABLE trunkassoc (
     id integer NOT NULL,
     trunkref integer,
-    contextref integer
+    contextref integer,
+    vpbxid integer NOT NULL
 );
 
 
@@ -3942,7 +3944,8 @@ CREATE TABLE trunkdestinations (
     id integer NOT NULL,
     trunkref integer,
     numbermatchref integer,
-    routeref integer
+    routeref integer,
+    vpbxid integer NOT NULL
 );
 
 
@@ -4968,6 +4971,15 @@ SELECT pg_catalog.setval('conference_serial', 118, true);
 
 COPY context (id, custname, custdesc, contexttype, internalref, ivrref, funcref, vpbxid) FROM stdin;
 4	test8		EXTENSION	151	2	1	1
+13	основной	основной	IVR	\N	\N	\N	44
+14	основной	основной	IVR	\N	\N	\N	44
+15	основной	основной	IVR	\N	\N	\N	44
+16	основной	основной	IVR	\N	\N	\N	44
+17	основной	основной	IVR	\N	\N	\N	44
+18	основной	основной	IVR	\N	\N	\N	44
+19	основной	основной	IVR	\N	\N	\N	44
+20	основной	основной	IVR	\N	\N	\N	44
+21	основной	основной	IVR	\N	\N	\N	44
 \.
 
 
@@ -4975,7 +4987,7 @@ COPY context (id, custname, custdesc, contexttype, internalref, ivrref, funcref,
 -- Name: context_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('context_id_seq', 12, true);
+SELECT pg_catalog.setval('context_id_seq', 21, true);
 
 
 --
@@ -35471,6 +35483,20 @@ COPY extensiongroups (id, name, transfer, statuschange, incoming, memberofcallce
 9	test111	allowed	allowed	allowed	\N	allowed	allowed		ACTIVE	UNDEFINED	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		NUMBER	NUMBER	NUMBER	NUMBER	0	1	undefined	undefined
 4	новая	allowed	allowed	allowed	\N	allowed	allowed	333	ACTIVE	SUSPENDED	UNDEFINED		UNDEFINED		UNDEFINED	\N	ACTIVATED		NUMBER	NUMBER	NUMBER	VOICEMAIL	20	1	undefined	undefined
 1	тест	allowed	allowed	forbidden	true	forbidden	allowed		ACTIVE	UNDEFINED	UNDEFINED		UNDEFINED		UNDEFINED	\N	ACTIVATED		NUMBER	NUMBER	NUMBER	VOICEMAIL	20	1	undefined	undefined
+10	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
+11	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
+12	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
+13	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
+14	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
+15	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
+16	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
+17	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
+18	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
+19	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
+20	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
+21	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
+22	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
+23	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
 \.
 
 
@@ -35478,7 +35504,7 @@ COPY extensiongroups (id, name, transfer, statuschange, incoming, memberofcallce
 -- Name: extensiongroups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('extensiongroups_id_seq', 9, true);
+SELECT pg_catalog.setval('extensiongroups_id_seq', 23, true);
 
 
 --
@@ -35606,6 +35632,15 @@ SELECT pg_catalog.setval('functions_id_seq', 1, true);
 
 COPY ivr (id, custname, custdesc, vpbxid) FROM stdin;
 2	Приветствие НУЦ		1
+3	основной	основной	44
+4	основной	основной	44
+5	основной	основной	44
+6	основной	основной	44
+7	основной	основной	44
+8	основной	основной	44
+9	основной	основной	44
+10	основной	основной	44
+11	основной	основной	44
 \.
 
 
@@ -35613,7 +35648,7 @@ COPY ivr (id, custname, custdesc, vpbxid) FROM stdin;
 -- Name: ivr_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('ivr_id_seq', 2, true);
+SELECT pg_catalog.setval('ivr_id_seq', 11, true);
 
 
 --
@@ -35657,6 +35692,10 @@ COPY number_match (id, custname, custdesc, vpbxid) FROM stdin;
 22	Скайп алиасы		1
 1	Только Москва		1
 21	любой номер (catchall)		1
+23	любой номер (catchall)	\N	44
+24	любой номер (catchall)	\N	44
+25	любой номер (catchall)	\N	44
+26	любой номер (catchall)	\N	44
 \.
 
 
@@ -35664,7 +35703,7 @@ COPY number_match (id, custname, custdesc, vpbxid) FROM stdin;
 -- Name: number_match_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('number_match_id_seq', 22, true);
+SELECT pg_catalog.setval('number_match_id_seq', 26, true);
 
 
 --
@@ -35822,6 +35861,9 @@ COPY pbx_settings (vpbxid, callcentre_status_override, vmtimeout, greeting, gree
 39	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
 40	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
 41	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+42	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+43	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
+44	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
 \.
 
 
@@ -35829,7 +35871,7 @@ COPY pbx_settings (vpbxid, callcentre_status_override, vmtimeout, greeting, gree
 -- Name: pbx_settings_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('pbx_settings_seq', 41, true);
+SELECT pg_catalog.setval('pbx_settings_seq', 44, true);
 
 
 --
@@ -35873,6 +35915,10 @@ COPY regentries (id, numbermatchref, regexpression) FROM stdin;
 12	1	/^7495[0-9]{7}$/
 13	1	/^7499[0-9]{7}$/
 14	21	/[\\d]{7,15}/
+15	1	/[\\d]{7,15}/
+16	1	/[\\d]{7,15}/
+17	1	/[\\d]{7,15}/
+18	1	/[\\d]{7,15}/
 \.
 
 
@@ -35880,15 +35926,18 @@ COPY regentries (id, numbermatchref, regexpression) FROM stdin;
 -- Name: regentries_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('regentries_id_seq', 14, true);
+SELECT pg_catalog.setval('regentries_id_seq', 18, true);
 
 
 --
 -- Data for Name: route; Type: TABLE DATA; Schema: public; Owner: agaga
 --
 
-COPY route (id, custname, custdesc, isdefault) FROM stdin;
-10	ТФОП 4997777777		t
+COPY route (id, custname, custdesc, isdefault, vpbxid) FROM stdin;
+10	ТФОП 4997777777		t	1
+30	ТФОП 4997536772		t	44
+31	ТФОП 4997536772		t	44
+32	ТФОП 4997536772		t	44
 \.
 
 
@@ -35896,7 +35945,7 @@ COPY route (id, custname, custdesc, isdefault) FROM stdin;
 -- Name: route_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('route_id_seq', 28, true);
+SELECT pg_catalog.setval('route_id_seq', 32, true);
 
 
 --
@@ -36327,6 +36376,9 @@ COPY sip (id, context, callingpres, deny, permit, secret, md5secret, remotesecre
 203	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	s0Lz5djN	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	64	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	105	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:13:03.598057		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	\N
 177	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	YdmOIdwp	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	38	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N		тест	t	t	\N	phone	\N	\N	\N	f	103	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-18 06:18:22.733153		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
 200	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	g84RgIJf	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	61	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	100	operator	ABSENT	disabled	9	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:03:23.049404		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
+244	vpbx_trunks	allowed	\N	\N	\N	\N	\N	udp	serv-02	force_rport,comedia	peer	\N	\N	\N	\N	\N	\N	\N	\N	\N	103	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N	5060	\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N	\N	\N	t	t	\N	phone	\N	\N	\N	f	\N	regular	ABSENT	disabled	0	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-17 23:15:46.158416		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		TRUNK	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	44
+245	vpbx_dialout	allowed	\N	\N	\N	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N	\N	\N	\N	\N	\N	port,invite	\N	104	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	\N	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		900440302	3334	\N	t	t	\N	phone	\N	\N	\N	f	302	regular	ABSENT	disabled	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	undefined	2014-09-17 23:15:46.17766		1_mohtone	1_mohtone	\N	UNDEFINED	\N	UNDEFINED	\N	UNDEFINED	\N	UNDEFINED	\N	\N		EXTENSION	\N	\N	\N	\N	\N	\N	44
+246	vpbx_dialout	allowed	\N	\N	\N	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N	\N	\N	\N	\N	\N	port,invite	\N	105	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	\N	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		900440305	3333	\N	t	t	\N	phone	\N	\N	\N	f	305	operator	ABSENT	disabled	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	undefined	2014-09-17 23:15:46.182545		1_mohtone	1_mohtone	\N	UNDEFINED	\N	UNDEFINED	\N	UNDEFINED	\N	UNDEFINED	\N	\N		EXTENSION	\N	\N	\N	\N	\N	\N	44
 \.
 
 
@@ -36341,14 +36393,14 @@ SELECT pg_catalog.setval('sip_devices_id_seq', 1, false);
 -- Name: sip_mailbox; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('sip_mailbox', 83, true);
+SELECT pg_catalog.setval('sip_mailbox', 105, true);
 
 
 --
 -- Name: sip_serial; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('sip_serial', 224, true);
+SELECT pg_catalog.setval('sip_serial', 246, true);
 
 
 --
@@ -36458,8 +36510,9 @@ SELECT pg_catalog.setval('temp_media_id_seq', 85, true);
 -- Data for Name: trunkassoc; Type: TABLE DATA; Schema: public; Owner: agaga
 --
 
-COPY trunkassoc (id, trunkref, contextref) FROM stdin;
-33	197	4
+COPY trunkassoc (id, trunkref, contextref, vpbxid) FROM stdin;
+33	197	4	1
+41	244	21	44
 \.
 
 
@@ -36467,18 +36520,20 @@ COPY trunkassoc (id, trunkref, contextref) FROM stdin;
 -- Name: trunkassoc_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('trunkassoc_id_seq', 33, true);
+SELECT pg_catalog.setval('trunkassoc_id_seq', 41, true);
 
 
 --
 -- Data for Name: trunkdestinations; Type: TABLE DATA; Schema: public; Owner: agaga
 --
 
-COPY trunkdestinations (id, trunkref, numbermatchref, routeref) FROM stdin;
-1	\N	\N	\N
-2	197	\N	\N
-37	197	21	10
-38	197	22	10
+COPY trunkdestinations (id, trunkref, numbermatchref, routeref, vpbxid) FROM stdin;
+1	\N	\N	\N	1
+2	197	\N	\N	1
+37	197	21	10	1
+38	197	22	10	1
+39	\N	1	31	44
+40	244	1	32	44
 \.
 
 
@@ -36486,7 +36541,7 @@ COPY trunkdestinations (id, trunkref, numbermatchref, routeref) FROM stdin;
 -- Name: trunkdestinations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('trunkdestinations_id_seq', 38, true);
+SELECT pg_catalog.setval('trunkdestinations_id_seq', 40, true);
 
 
 --
@@ -36500,22 +36555,24 @@ COPY "user" (user_id, username, email, display_name, password, state, role, vpbx
 25	\N	lboikov@agaga.ru	lboikov	$2y$04$PG0EhAjTEXm/q6Tq7Qdb/O882zMQMIe/Gcan8M1FRVLEibW4UuTYm	\N	admin	1	25
 29	\N	kartemiev1@gmail.com	kartemiev1@gmail.com	$2y$04$TmUb4ZwzuZzdZPJWGQ9SBunJtx/vyNZmNqxTf.WP8fI/yVO1T9I0G	\N	admin	\N	29
 30	\N	kartemiev2@gmail.com	kartemiev2@gmail.com	$2y$04$suCiF0bahAGLSPTPNSMbd.gUzf0yS8.r44r0Jvg4s3MGxZsbl5auW	\N	admin	\N	30
+45	\N	kartemiev111@gmail.com	Vasya	$2y$04$bu6Q8wXgYjtv84esT1pTVuE0dZNVbjmpaws.FfM3wKn3a/ax44EAK	\N	admin	\N	45
+47	\N	kartemiev333433@gmail.com	Peter Ivanoff	$2y$04$RPATvO0YhJ.GXSOve5T8huEB6xiCJ9ZU/imUOd6RSDzKUPfa6rSEy	\N	admin	\N	47
+85	\N	kartemiev3444@gmail.com	Peter Ivanoff	$2y$04$GPQtu/Ak8gXvkJ6keXqqeuMHWlA.VjsXELW.NJP2s2nDEXn4getsm	\N	admin	30	85
+87	\N	kartemiev3344@gmail.com	kjjdjkd	$2y$04$wQIJj1.C5BgtrTUfYOTwNOENFCGr0SVKrcAlAXBcTMfLEe95FiuGi	\N	admin	31	87
+89	\N	kartemiev888@gmail.com	Вася Пупкин	$2y$04$EBm2ZhTKLTmmZHzlDJMtquP5R0NbfVlPMgTL0RNK4Q99K7NZ4hVui	\N	admin	32	89
+91	\N	kartemiev344333@gmail.com	Peter Ivanoff	$2y$04$OaSb43mD0HsOD6KrtW9wte2tvcTtXxjmUdOQQImF7wOTbFkAwwQNO	\N	admin	33	91
+93	\N	kartemiev444999@gmail.com	Peter Ivanoff	$2y$04$Lww3vgOMJ1.avRQ/QwvM4uQNKod3UWlVJPZHm3SKpM01xc9qUJyvG	\N	admin	34	93
+95	\N	kartemiev444111@gmail.com	Peter Ivanoff	$2y$04$ch7aTprLjCkfmPpsTm9Oo.5MUlTxluJph0DMi9ufdrviUzTGSd3ce	\N	admin	35	95
+97	\N	kartemiev3334422@gmail.com	Peter Ivanoff	$2y$04$w04FfHpBPym4468KGWEsOOv85Q9rpuBgesVXX3huacdn4QNmSSeeu	\N	admin	36	97
+99	\N	kartemiev88899@gmail.com	Peter Ivanoff	$2y$04$VbqR92bOg1tRJYiFoKTF.O/qEXpHH9sGvW10JmBV2/pkL5zpiBsm2	\N	admin	37	99
+101	\N	kartemiev133333@gmail.com	Peter Ivanoff	$2y$04$yHT7yQF6X8Unw/6gvkls5uKKZ7leWyeAa05Gi5hDHDGUJN4lmkeLW	\N	admin	38	101
+179	\N	kartemiev44444@gmail.com	Peter Ivanoff	$2y$04$HvRTSq0JHUgFRae43CY3auUfL0bZfyYKDwbrBtaoVP2.5QP7yscSy	\N	admin	42	179
 31	\N	kartemiev3@gmail.com	kartemiev3@gmail.com	$2y$04$8lgNxqYarNtUuspQsA9kMOxERgcfymtFG7PusAtlWDJEkoE6POObO	\N	admin	\N	31
 32	\N	kartemiev22@gmail.com	kartemiev22@gmail.com	$2y$04$pUCF94gmm7cJ99OrVJ5yq.1FhlgyK21SedyDzfuGbaxTw.r/glB1a	\N	admin	\N	32
 33	\N	kartemiev33@gmail.com	kartemiev33@gmail.com	$2y$04$KKNBjpMpE4L8fwkZbyUZzeziEQvWzZGcQo.HR.nntQvnlfPitkkEG	\N	admin	\N	33
 34	\N	kartemiev44@gmail.com	kartemiev44@gmail.com	$2y$04$Gz0e0lAIFBuxGkFpsAMgiO94RvikIXo2abU6KvsrasRbHnb2fuq1e	\N	admin	\N	34
-110	test	test	test		\N	admin	1	110
-35	\N	kartemiev88@gmail.com	kartemiev88@gmail.com	$2y$04$H6ilvkH7/mrjx1oXk2jTv.32oKmvf6nMfhfk0DV5npR2r5rhonb2a	\N	admin	\N	35
-36	\N	kartemiev222@gmail.com	kartemiev222@gmail.com	$2y$04$2.1IAXMp13uqxqVx8leNDOjGtQ95gZKQkWRtXV5O/12mTinbQTHyq	\N	admin	\N	36
-37	\N	kartemiev4444@gmail.com	kartemiev4444@gmail.com	$2y$04$atiUxdx28Mjqjsa8dtTGIuSFdonuNCMilYQkebJAWoTadA5nuHhSi	\N	admin	\N	37
-38	\N	kartemiev3333@gmail.com	kartemiev3333@gmail.com	$2y$04$rok0Ml4i48VUOxgSiLMxU.eRBM6alVbedPYD0rhnCPAEV2dc2OBCe	\N	admin	\N	38
-39	\N	kartemiev999@gmail.com	kartemiev999@gmail.com	$2y$04$eqtFZ5z/nlFdfjgZYcq73eTMqj4/BOLk0wh7hBhoZ0kQUu8UeJxGC	\N	admin	\N	39
-40	\N	kartemiev1111@gmail.com	kartemiev1111@gmail.com	$2y$04$VkS9DsZSQiC1w.fktLzlyubVQTuBzSaePq3AC2buzdxQ0uBKDvw16	\N	admin	\N	40
-41	\N	kartemiev9991@gmail.com	kartemiev9991@gmail.com	$2y$04$gJfrIBnBxyMlLu2LWr.sKeJdb4aVEggrl74Gc7Us/dNX.claBJvMy	\N	admin	\N	41
-42	\N	kartemiev9992@gmail.com	kartemiev9992@gmail.com	$2y$04$qQoj81t1plcy6kfO./87o.dD9pPa7wCpA5aKVzRuhKSJC4MXslgHS	\N	admin	\N	42
-43	\N	kartemiev9993@gmail.com	kartemiev9993@gmail.com	$2y$04$M75XLhKPu4TSuvkbeTkcYeBuOo65yPl6eP2VcrSSb/U0d.vsjI4Pe	\N	admin	12	43
-45	\N	kartemiev111@gmail.com	Vasya	$2y$04$bu6Q8wXgYjtv84esT1pTVuE0dZNVbjmpaws.FfM3wKn3a/ax44EAK	\N	admin	\N	45
-47	\N	kartemiev333433@gmail.com	Peter Ivanoff	$2y$04$RPATvO0YhJ.GXSOve5T8huEB6xiCJ9ZU/imUOd6RSDzKUPfa6rSEy	\N	admin	\N	47
+181	\N	kartemiev333111@gmail.com	Peter Ivanoff	$2y$04$78xbnwsbWLwxUUpnQgr1l.PhfkSr64FYSVTBQw.1IaWyeRxtp3/n6	\N	admin	43	181
+183	\N	777_bun111@inbox.ru	Вася Пупкин	$2y$04$cchiVSpfG5UENAVw1yLTkOkPHHZkxfo5BMa8uuByL0gISvLKc3DZW	\N	admin	44	183
 49	\N	kartemiev333444@gmail.com	Peter Ivanoff	$2y$04$xBXunkcI6JsUgs2yBQSk0up8pCdrr1pRkmq8I.DfGSwCNA58lcfOO	\N	admin	\N	49
 51	\N	kartemiev33322@gmail.com	Peter Ivanoff	$2y$04$HZup6JsPxb0AbQap.MfNw.zi4H1CxfSzJ3U5ZebE5VqZObLPkgZqa	\N	admin	\N	51
 53	\N	kartemiev33333@gmail.com	Вася Пупкин	$2y$04$HgjIZtDABm8xB3B6d3Ym1.xrPdbrBOMNVxgy/laKbODphPgqIej1y	\N	admin	\N	53
@@ -36534,15 +36591,16 @@ COPY "user" (user_id, username, email, display_name, password, state, role, vpbx
 79	\N	kartemiev300113@gmail.com	Peter Ivanoff	$2y$04$dmAXsEYCCGbVbFTEMBluyenHRcpDhFYmXL.HsvKh4YJ7YPm66pzNG	\N	admin	27	79
 81	\N	kartemiev33443113@gmail.com	Peter Ivanoff	$2y$04$.HJQ3fZR6LpFLiaVgS3LkuYyGpaqHgfTKn63lF539GUbL12J4qjym	\N	admin	28	81
 83	\N	kartemiev@gmail3.com	Vasya	$2y$04$N7RzEYPhVkAH7kqhxlnOXeFQE1i5QvosCduVAvCt3oin4C92wgRM.	\N	admin	29	83
-85	\N	kartemiev3444@gmail.com	Peter Ivanoff	$2y$04$GPQtu/Ak8gXvkJ6keXqqeuMHWlA.VjsXELW.NJP2s2nDEXn4getsm	\N	admin	30	85
-87	\N	kartemiev3344@gmail.com	kjjdjkd	$2y$04$wQIJj1.C5BgtrTUfYOTwNOENFCGr0SVKrcAlAXBcTMfLEe95FiuGi	\N	admin	31	87
-89	\N	kartemiev888@gmail.com	Вася Пупкин	$2y$04$EBm2ZhTKLTmmZHzlDJMtquP5R0NbfVlPMgTL0RNK4Q99K7NZ4hVui	\N	admin	32	89
-91	\N	kartemiev344333@gmail.com	Peter Ivanoff	$2y$04$OaSb43mD0HsOD6KrtW9wte2tvcTtXxjmUdOQQImF7wOTbFkAwwQNO	\N	admin	33	91
-93	\N	kartemiev444999@gmail.com	Peter Ivanoff	$2y$04$Lww3vgOMJ1.avRQ/QwvM4uQNKod3UWlVJPZHm3SKpM01xc9qUJyvG	\N	admin	34	93
-95	\N	kartemiev444111@gmail.com	Peter Ivanoff	$2y$04$ch7aTprLjCkfmPpsTm9Oo.5MUlTxluJph0DMi9ufdrviUzTGSd3ce	\N	admin	35	95
-97	\N	kartemiev3334422@gmail.com	Peter Ivanoff	$2y$04$w04FfHpBPym4468KGWEsOOv85Q9rpuBgesVXX3huacdn4QNmSSeeu	\N	admin	36	97
-99	\N	kartemiev88899@gmail.com	Peter Ivanoff	$2y$04$VbqR92bOg1tRJYiFoKTF.O/qEXpHH9sGvW10JmBV2/pkL5zpiBsm2	\N	admin	37	99
-101	\N	kartemiev133333@gmail.com	Peter Ivanoff	$2y$04$yHT7yQF6X8Unw/6gvkls5uKKZ7leWyeAa05Gi5hDHDGUJN4lmkeLW	\N	admin	38	101
+110	test	test	test		\N	admin	1	110
+35	\N	kartemiev88@gmail.com	kartemiev88@gmail.com	$2y$04$H6ilvkH7/mrjx1oXk2jTv.32oKmvf6nMfhfk0DV5npR2r5rhonb2a	\N	admin	\N	35
+36	\N	kartemiev222@gmail.com	kartemiev222@gmail.com	$2y$04$2.1IAXMp13uqxqVx8leNDOjGtQ95gZKQkWRtXV5O/12mTinbQTHyq	\N	admin	\N	36
+37	\N	kartemiev4444@gmail.com	kartemiev4444@gmail.com	$2y$04$atiUxdx28Mjqjsa8dtTGIuSFdonuNCMilYQkebJAWoTadA5nuHhSi	\N	admin	\N	37
+38	\N	kartemiev3333@gmail.com	kartemiev3333@gmail.com	$2y$04$rok0Ml4i48VUOxgSiLMxU.eRBM6alVbedPYD0rhnCPAEV2dc2OBCe	\N	admin	\N	38
+39	\N	kartemiev999@gmail.com	kartemiev999@gmail.com	$2y$04$eqtFZ5z/nlFdfjgZYcq73eTMqj4/BOLk0wh7hBhoZ0kQUu8UeJxGC	\N	admin	\N	39
+40	\N	kartemiev1111@gmail.com	kartemiev1111@gmail.com	$2y$04$VkS9DsZSQiC1w.fktLzlyubVQTuBzSaePq3AC2buzdxQ0uBKDvw16	\N	admin	\N	40
+41	\N	kartemiev9991@gmail.com	kartemiev9991@gmail.com	$2y$04$gJfrIBnBxyMlLu2LWr.sKeJdb4aVEggrl74Gc7Us/dNX.claBJvMy	\N	admin	\N	41
+42	\N	kartemiev9992@gmail.com	kartemiev9992@gmail.com	$2y$04$qQoj81t1plcy6kfO./87o.dD9pPa7wCpA5aKVzRuhKSJC4MXslgHS	\N	admin	\N	42
+43	\N	kartemiev9993@gmail.com	kartemiev9993@gmail.com	$2y$04$M75XLhKPu4TSuvkbeTkcYeBuOo65yPl6eP2VcrSSb/U0d.vsjI4Pe	\N	admin	12	43
 \.
 
 
@@ -36560,7 +36618,7 @@ admin	0	\N	администратор
 -- Name: user_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
 --
 
-SELECT pg_catalog.setval('user_user_id_seq', 177, true);
+SELECT pg_catalog.setval('user_user_id_seq', 183, true);
 
 
 --
@@ -37366,6 +37424,14 @@ ALTER TABLE ONLY regentries
 
 
 --
+-- Name: route_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY route
+    ADD CONSTRAINT route_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
+
+
+--
 -- Name: schedule_replacements_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
 --
 
@@ -37430,6 +37496,14 @@ ALTER TABLE ONLY skype_aliases
 
 
 --
+-- Name: trunkassoc_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY trunkassoc
+    ADD CONSTRAINT trunkassoc_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
+
+
+--
 -- Name: trunkdestinations_numbermatchref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
 --
 
@@ -37451,6 +37525,14 @@ ALTER TABLE ONLY trunkdestinations
 
 ALTER TABLE ONLY trunkdestinations
     ADD CONSTRAINT trunkdestinations_trunkref_fkey FOREIGN KEY (trunkref) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: trunkdestinations_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY trunkdestinations
+    ADD CONSTRAINT trunkdestinations_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
 
 
 --

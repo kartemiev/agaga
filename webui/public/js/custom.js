@@ -602,6 +602,7 @@ $(function(){
  	 	$(function () {
  	 	    $('.fileupload').fileupload({
  	 	        dataType: 'json',
+ 	 	      maxFileSize:20000000,
   	 	        progressall:function (e, data) {
  	 	  	 	 	 $('.progress').show();
  	 	          var progress = parseInt(data.loaded / data.total * 100, 10);
@@ -627,6 +628,7 @@ $(function(){
  	 	            	else
  	 	            	{
  // 	 	            		console.log(
+ 	 	            		console.log(data.result.file.name);
   	 	            				$(this).parent().find('.jptitle').first().html(data.result.file.name)
   	 	            				//); 
  	 	                  //  $('#'+e.target.id).replaceWith('<a href="">'+data.result.file.name+'</a>');    
@@ -642,6 +644,28 @@ $(function(){
  	 				$(idName).trigger('click');  
  	 			}
  	 	);	 
+ 	 	$(".jp-jplayer1").each(function(i,player){
+ 	 	  
+ 	 		var sound = $(player).data('defaultsound');
+ 	 		var indexnum = $(player).data('indexnum');
+  	 	     $(player).jPlayer({
+ 	 	         ready: function() {
+ 	 	             $(player).jPlayer("setMedia", {
+ 	 	                  mp3: sound
+ 	 	             });
+ 	 	         },
+ 	 	         preload:"none",
+ 	 	         loop: false,
+ 	 	         swfPath: "/js/Jplayer.swf",
+ 	 	         supplied: "mp3",
+ 	 	         cssSelectorAncestor: "#jp_container_"+indexnum
+ 	 	     });
+ 	 	}
+ 	 	);
+ 	 	$('.mediacollapse').on('show.bs.collapse', function (event) {
+ 	 		var jpplayer = $(event.target).find(".jp-jplayer1").first();
+ 	 		$(jpplayer).jPlayer("load");
+  	 	});
 }
 );
 function download(path) 

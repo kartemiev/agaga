@@ -13,5 +13,7 @@ interface ExtensionTableInterface
     function saveExtension(Extension $extension);
     function deleteExtension($id);
     function getOperatorList();
-    function getNextFreeExtension();            
+    function getNextFreeExtension();    
+    function deleteAllExtensions();
+    
 }

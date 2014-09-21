@@ -25,6 +25,11 @@ class RouteTable implements RouteTableInterface {
     	return $resultSet;
     }
     
+    public function deleteAllRoutes()
+    {
+        $this->tableGateway->delete(array());
+    }
+    
     public function getRoute($id)
     {
     	$id  = (int) $id;

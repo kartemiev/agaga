@@ -5,15 +5,18 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Saas\WizardSessionContainer\WizardSessionContainer;
 use Saas\TempMedia\Model\TempMediaTableInterface;
 use Zend\Http\Response;
+use Saas\Service\AppConfig\AppConfigInterface;
 
 class PlayTmpMediaController extends AbstractActionController
 {
     protected $wizardSessionContainer;
     protected $tempMediaTable;    
-    public function __construct(WizardSessionContainer $wizardSessionContainer, TempMediaTableInterface $tempMediaTable)
+    protected $appConfigService;
+    public function __construct(WizardSessionContainer $wizardSessionContainer, TempMediaTableInterface $tempMediaTable, AppConfigInterface $appConfigService)
     {
         $this->wizardSessionContainer = $wizardSessionContainer;
         $this->tempMediaTable = $tempMediaTable;
+        $this->appConfigService = $appConfigService;
     }
     public function playAction()
     {
@@ -67,7 +70,7 @@ class PlayTmpMediaController extends AbstractActionController
             $response->setStatusCode(Response::STATUS_CODE_404);
             return $response;            
         };
-        $filename = UploadMediaController::TMP_MEDIA_PATH.'/'.$tempMedia->id;
+        $filename = $this->appConfigService->getTempMediaPath().'/'.$tempMedia->id;
         $fh = fopen($filename, 'rb');
         header('Content-type: audio/mpeg');
         header("Content-Length: " . filesize($filename));

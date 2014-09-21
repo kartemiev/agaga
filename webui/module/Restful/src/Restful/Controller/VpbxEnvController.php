@@ -121,7 +121,7 @@ class VpbxEnvController extends AbstractRestfulController
 	    $mediaStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_media']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_media']:false;
 	    if (!$mediaStageCompleted)
 	    {
-	        
+	       $this->mediaReposTable->deleteAllMediaRepos();
 	       $media = $this->wizardSessionContainer->media;
 	       $hydrator = new ObjectProperty();
 	       $mediaTypeMapperNamingStrategy = new MediaTypeMapperNamingStrategy();
@@ -156,7 +156,7 @@ class VpbxEnvController extends AbstractRestfulController
 	}
 	protected function processVpbxEnv()
 	{
-	    $callCentreStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_vpbx_env']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_vpbx_env']:false;
+	    $vpbxEnvStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_vpbx_env']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_vpbx_env']:false;
 	    if (!$vpbxEnvStageCompleted)
 	    {
 	       $vpbxEnv = $this->wizardSessionContainer->vpbxEnv;
@@ -179,7 +179,7 @@ class VpbxEnvController extends AbstractRestfulController
 
 	    if (!$processTrunksAndContextStageCompleted)
 	    {
-	    
+	       $this->trunkTable->deleteAllTrunks();
 	       $vpbxEnv = $this->vpbxEnv;
 	       $trunk = new Trunk();
 	
@@ -193,11 +193,15 @@ class VpbxEnvController extends AbstractRestfulController
 	       $trunkId = $this->trunkTable->saveTrunk($trunk);
 	       $this->trunkId  = $trunkId;
 
+	       $this->ivrTable->deleteAllIvrs();
+	       
 	       $ivr = new Ivr();
 	       $ivr->custname = 'основной';
 	       $ivr->custdesc = 'основной';
 	       $ivrId = $this->ivrTable->saveIvr($ivr);
 	    
+	       $this->contextTable->deleteAllContexts();
+	       
 	       $context = clone $this->context;
 	       $data = array(
 	        'custname' => 'основной',
@@ -208,6 +212,8 @@ class VpbxEnvController extends AbstractRestfulController
 	       $context->exchangeArray($data);
 	       $contextId = $this->contextTable->saveContext($context);
 	
+	       $this->trunkAssocTable->deleteAllTrunkAssoc();
+	       
 	       $trunkAssoc = new TrunkAssoc();
 	       $data = array(
 	        'trunkref'=>$trunkId,
@@ -231,6 +237,8 @@ class VpbxEnvController extends AbstractRestfulController
 	       {
 	           return;
 	       }
+	       $this->extensionGroupTable->deleteAllExtensionGroups();
+	       
 	       $extensionGroupTable = $this->extensionGroupTable;
 	       $extensionGroup = new ExtensionGroup();
 	       $extensionGroup->name = 'обычные';
@@ -247,7 +255,8 @@ class VpbxEnvController extends AbstractRestfulController
 	       $extensionGroup->extensionrecord = 'active';
 	       $operatorExtensionGroupId = $extensionGroupTable->saveExtensionGroup($extensionGroup);
 	
-	    	
+	       $this->extensionTable->deleteAllExtensions();
+	       
 	       foreach ($internalnumbers as $internalnumber)
 	       {
 	        $extension = clone $this->extension;
@@ -286,10 +295,15 @@ class VpbxEnvController extends AbstractRestfulController
 	
 	       $didDigigts = ($vpbxEnv && $did)?$did->digits:'';
 	
+	       $this->numberMatchTable->deleteAllNumberMatches();
+	       
 	       $numberMatch = new NumberMatch();
 	       $numberMatch->custname = 'любой номер (catchall)';
 	       $numberMatchId = $this->numberMatchTable->saveNumberMatch($numberMatch);
 	
+	       
+	       $this->regEntryTable->deleteAllRegentries();
+	       
 	       $regEntry = new RegEntry();
 	       $data = array(
 	           'numbermatchref'=>$numberMatchId,
@@ -298,12 +312,15 @@ class VpbxEnvController extends AbstractRestfulController
 	       $regEntry->exchangeArray($data);
 	       $regEntryId = $this->regEntryTable->saveRegEntry($regEntry);
 	
+	       $this->routeTable->deleteAllRoutes();
+	       
 	       $route = new Route();
 	       $route->custname = 'ТФОП '.$didDigigts;
 	       $route->custdesc = '';
 	       $route->isdefault = true;
 	       $routeId = $this->routeTable->saveRoute($route);
 	
+           $this->trunkDestinationTable->deleteAllTrunkDestinations();	       
 	       $trunkDestination = new TrunkDestination();
 	       $data = array(
 	           'numbermatchref'=>$numberMatchId,
@@ -320,7 +337,7 @@ class VpbxEnvController extends AbstractRestfulController
 	protected function processCallCentre()
 	{
 	    $callCentreStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_callcentre']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_callcentre']:false;
-	    if (!$routeStageCompleted)
+	    if (!$callCentreStageCompleted)
 	    {
 	       $callcentreSchedule = new CallCentreSchedule();
 	       $callcentreSchedule->exchangeArray(array());

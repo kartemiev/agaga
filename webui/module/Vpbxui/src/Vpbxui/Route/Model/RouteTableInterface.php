@@ -9,5 +9,6 @@ interface RouteTableInterface
 	function saveRoute(Route $route);
 	function deleteRoute($id);
     function updateDefaultFileldsResetDefault();
-	
+    function deleteAllRoutes();
+    
 }

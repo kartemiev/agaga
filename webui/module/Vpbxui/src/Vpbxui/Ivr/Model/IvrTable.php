@@ -17,7 +17,10 @@ class IvrTable implements IvrTableInterface
 		$resultSet = $this->tableGateway->select();
 		return $resultSet;
 	}
-	
+	public function deleteAllIvrs()
+	{
+	    $this->tableGateway->delete(array());
+	}
 	public function getIvr($id)
 	{
 		$id  = (int) $id;

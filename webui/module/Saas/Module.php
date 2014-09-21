@@ -52,7 +52,8 @@ class Module
         		'Saas\VpbxEnv\Model\VpbxEnvTableGateway'=> 'Saas\VpbxEnv\Model\VpbxEnvTableGatewayFactory',
         		'Saas\WizardSessionContainer\WizardSessionContainer' =>'Saas\WizardSessionContainer\WizardSessionContainerFactory',
         		'Saas\TempMedia\Model\TempMediaTable'=>'Saas\TempMedia\Model\TempMediaTableFactory',
-        		'Saas\TempMedia\Model\TempMediaTableGateway'=>'Saas\TempMedia\Model\TempMediaTableGatewayFactory'
+        		'Saas\TempMedia\Model\TempMediaTableGateway'=>'Saas\TempMedia\Model\TempMediaTableGatewayFactory',
+                'Saas\Service\AppConfig\AppConfigService'=>'Saas\Service\AppConfig\AppConfigServiceFactory'
            ),
 	    );
     }

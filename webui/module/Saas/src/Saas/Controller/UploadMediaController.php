@@ -9,20 +9,22 @@ use Zend\Session\Container as SessionContainer;
 use Saas\TempMedia\Model\TempMediaTableInterface;
 use Saas\TempMedia\Model\TempMedia;
 use PAGI\CallSpool\Impl\rename;
+use Saas\Service\AppConfig\AppConfigInterface;
 
 class UploadMediaController extends AbstractActionController
 {
 	protected $wizardSessionContainer;
 	protected $tempMediaTable;
-	const  TMP_MEDIA_PATH = '/tmp';
-	public function __construct(SessionContainer $wizardSessionContainer, TempMediaTableInterface $tempMediaTable)
+	protected $appConfig;
+ 	public function __construct(SessionContainer $wizardSessionContainer, TempMediaTableInterface $tempMediaTable, AppConfigInterface $appConfig)
 	{
 		$this->wizardSessionContainer = $wizardSessionContainer;
 		$this->tempMediaTable = $tempMediaTable;
+		$this->appConfig = $appConfig;
 	}
 	public function indexAction()
 	{
-		$form = new TempMediaForm();
+ 		$form = new TempMediaForm();
 		
 		$wizardSessionContainer = $this->wizardSessionContainer;
 		$tempMediaTable = $this->tempMediaTable;
@@ -53,7 +55,7 @@ class UploadMediaController extends AbstractActionController
 			);
 			$tempMedia->mediatype = $mediatypeMapper[$name];		
 			$id = $tempMediaTable->saveTempMedia($tempMedia);
-			rename($filedata['tmp_name'],self::TMP_MEDIA_PATH.'/'.$id);	
+			rename($filedata['tmp_name'],$this->appConfig->getTempMediaPath().'/'.$id);	
 			$tempMedia->id = $id;			
 			$wizardSessionContainer->media[$name] = $tempMedia;
 			 

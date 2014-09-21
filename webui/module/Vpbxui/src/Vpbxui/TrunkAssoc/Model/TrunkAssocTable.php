@@ -8,6 +8,7 @@ use Zend\Db\Sql\Select;
  
 class TrunkAssocTable implements TrunkAssocTableInterface
 {
+    protected $tableGateway;
 	public function __construct(TableGateway $tableGateway)
 	{
 		$this->tableGateway = $tableGateway;
@@ -23,7 +24,10 @@ class TrunkAssocTable implements TrunkAssocTableInterface
 	
 		return $resultSet;
 	}
-		
+	public function deleteAllTrunkAssoc()
+	{
+	    $this->tableGateway->delete(array());
+	}	
 	public function getTrunkAssoc($id, $contextref)
 	{
 		$id  = (int) $id;

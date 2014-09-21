@@ -7,4 +7,5 @@ interface ContextTableInterface
 	public function getContext($id);
 	public function saveContext(Context $context);
 	public function deleteContext($id);
+	public function deleteAllContexts();	
 }

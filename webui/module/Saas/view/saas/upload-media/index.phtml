@@ -20,7 +20,7 @@ echo $this->headLink()->prependStylesheet($this->basePath() . '/skin/jplayer.blu
         </a>
       </h4>
     </div>
-    <div id="collapseOne" class="panel-collapse collapse">
+    <div id="collapseOne" class="panel-collapse collapse mediacollapse">
       <div class="panel-body">
    <?php echo $this->partial('temp-media.phtml',array('defaultSound'=>$this->url('playtmpmedia',array('action'=>'play','id'=>$media['wtgreeting']->id)), 'media'=>$media['wtgreeting'],'uploadLinkLabel'=>'рабочего дня - используется в рабочее время','indexNum'=>1, 'dataUploadInputName'=>'wtgreeting'))?>
       </div>
@@ -34,7 +34,7 @@ echo $this->headLink()->prependStylesheet($this->basePath() . '/skin/jplayer.blu
         </a>
       </h4>
     </div>
-    <div id="collapseFour" class="panel-collapse collapse">
+    <div id="collapseFour" class="panel-collapse collapse mediacollapse">
       <div class="panel-body">
    <?php echo $this->partial('temp-media.phtml',array('defaultSound'=>$this->url('playtmpmedia',array('action'=>'play','id'=>$media['wegreeting']->id)), 'media'=>$media['wegreeting'], 'uploadLinkLabel'=>'нерабочего дня - используется во внерабочее время','indexNum'=>2, 'dataUploadInputName'=>'wegreeting'))?>
       </div>
@@ -48,7 +48,7 @@ echo $this->headLink()->prependStylesheet($this->basePath() . '/skin/jplayer.blu
         </a>
       </h4>
     </div>
-    <div id="collapseTwo" class="panel-collapse collapse">
+    <div id="collapseTwo" class="panel-collapse collapse mediacollapse">
       <div class="panel-body">
       <?php echo $this->partial('temp-media.phtml',array('defaultSound'=>$this->url('playtmpmedia',array('action'=>'play','id'=>$media['ringingbacktone']->id)),'media'=>$media['ringingbacktone'], 'uploadLinkLabel'=>'вызова - используется вместо сигнала КПВ при входящих вызовах','indexNum'=>3, 'dataUploadInputName'=>'ringingbacktone'))?>
       </div>
@@ -64,7 +64,7 @@ echo $this->headLink()->prependStylesheet($this->basePath() . '/skin/jplayer.blu
         </a>
       </h4>
     </div>
-    <div id="collapseThree" class="panel-collapse collapse">
+    <div id="collapseThree" class="panel-collapse collapse mediacollapse">
       <div class="panel-body">
         <?php echo $this->partial('temp-media.phtml',array('defaultSound'=>$this->url('playtmpmedia',array('action'=>'play','id'=>$media['musiconhold']->id)), 'media'=>$media['musiconhold'], 'uploadLinkLabel'=>'на удержание - используется при использовании услуги удержания вызова','indexNum'=>4, 'dataUploadInputName'=>'musiconhold'))?>      </div>
     </div>
@@ -97,29 +97,4 @@ echo $this->headLink()->prependStylesheet($this->basePath() . '/skin/jplayer.blu
         </div>
     </div>
     </div>
-     <script>
- 
-$(function(){
-$(".jp-jplayer1").each(function(i,player){
   
-	var sound = $(player).data('defaultsound');
-	var indexnum = $(player).data('indexnum');
-	console.log(indexnum);
-     $(player).jPlayer({
-         ready: function() {
-             $(player).jPlayer("setMedia", {
-                 title:"Стандартное приветствие",                 
-                 mp3: sound
-             });
-         },
-         loop: false,
-         swfPath: "/js/Jplayer.swf",
-         title:"Стандартное приветствие",                          
-         supplied: "mp3",
-         cssSelectorAncestor: "#jp_container_"+indexnum
-     });
-}
-); 
-});
-
- </script>

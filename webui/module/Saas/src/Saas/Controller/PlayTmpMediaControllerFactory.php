@@ -11,7 +11,8 @@ class PlayTmpMediaControllerFactory implements FactoryInterface
         $sl  = (method_exists($serviceLocator, 'getServiceLocator'))?$serviceLocator->getServiceLocator():$serviceLocator;
         return new PlayTmpMediaController(
                 $sl->get('Saas\WizardSessionContainer\WizardSessionContainer'),
-                $sl->get('Saas\TempMedia\Model\TempMediaTable')
+                $sl->get('Saas\TempMedia\Model\TempMediaTable'),
+                $sl->get('Saas\Service\AppConfig\AppConfigService')
             );
     }
 }

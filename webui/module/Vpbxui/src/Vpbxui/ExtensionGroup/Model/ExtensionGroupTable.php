@@ -42,7 +42,10 @@ class ExtensionGroupTable {
      	return $row;
     }
     
-   
+   public function deleteAllExtensionGroups()
+   {
+       $this->tableGateway->delete(array());
+   }
     
     public function saveExtensionGroup(ExtensionGroup $extensionGroup)
     {
