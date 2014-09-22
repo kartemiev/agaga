@@ -631,7 +631,12 @@ $(function(){
  	 	                    var indexnum =  $(player).data('indexnum');
 
  	 	            		$(player).jPlayer("destroy");
- 	 	                    $(player).data('defaultsound','/playtmpmedia/'+data.result.file.id);
+ 	 	            		
+ 	 	            		var defaultsound = $(player).data('defaultsound');
+ 	 	            		var myRegexp = /^(.+)\/([\d]{1,10})$/g;
+ 	 	            		var match = myRegexp.exec(defaultsound);
+ 	 	            		
+ 	 	                    $(player).data('defaultsound',match[1]+'/'+data.result.file.id);
   	 	                    $(player).data('indexnum',indexnum);
  
  	 	       	 			bootstrapJplayer1(player);
@@ -663,7 +668,31 @@ $(function(){
  	 		var jpplayer = $(event.target).find(".jp-jplayer1").first();
  	 		$(jpplayer).jPlayer("load");
   	 	});
-}
+ 	 	$('.mediaResetToDefault').click(
+ 	 	function(e){
+ 	 	 	$.ajax($(e.target).data('url'),{type:'PUT',  contentType: "application/json; charset=utf-8", dataType:'json',data:JSON.stringify({"default":true}),
+ 	 	 		success:function(response){
+	            	var player = $(e.target).closest('.jpcontainer').first().children('.jp-jplayer1').first();
+	            	var indexnum =  $(player).data('indexnum');
+
+	            		$(player).jPlayer("destroy");
+	            		
+	            		var defaultsound = $(player).data('defaultsound');
+	            		var myRegexp = /^(.+)\/([\d]{1,10})$/g;
+	            		var match = myRegexp.exec(defaultsound);
+	            		
+	                    $(player).data('defaultsound',match[1]+'/'+response.result.id);
+	                    $(player).data('indexnum',indexnum);
+	 	       	 			bootstrapJplayer1(player);
+ 	 	                    $(e.target).parent().find('a').text(response.result.custname);
+
+ 	 	 		}
+ 	 	 	});	
+
+ 	 		}		
+ 	 	);
+ 	 	
+  }
 );
 function bootstrapJplayer1(player)
 {

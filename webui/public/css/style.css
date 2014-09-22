@@ -430,6 +430,11 @@ ul.nobullets
  {
 	cursor: pointer; cursor: hand;
  }
+.mediaResetToDefault
+{
+	cursor: pointer; cursor: hand;
+ }
+ 
 .underlinedul>li
  {
 	text-decoration:underline;

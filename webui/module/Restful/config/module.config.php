@@ -21,7 +21,20 @@ return array(
 														),
 												),
 												'may_terminate' => true,
-										),		 
+										),	
+								    'mediadefault' => array(
+								        'type'    => 'segment',
+								        'options' => array(
+								            'route'    => '/wizard/media/:id/default',
+								            'constraints' => array(
+								                'id' => '[a-z]*',
+								            ),
+								            'defaults' => array(
+								                'controller' => 'Restful\Controller\WizardMediaDefault',
+								            ),
+								        ),
+								        'may_terminate' => true,
+								    ),
 								    'vpbxenv' => array(
 								        'type'    => 'segment',
 								        'options' => array(

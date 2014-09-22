@@ -51,7 +51,8 @@ class Module
          return array(
         'factories'=> array(
             'Restful\Controller\WizardFreeDid'=>'Restful\Controller\WizardFreeDidControllerFactory',
-            'Restful\Controller\VpbxEnv' => 'Restful\Controller\VpbxEnvControllerFactory'
+            'Restful\Controller\VpbxEnv' => 'Restful\Controller\VpbxEnvControllerFactory',
+            'Restful\Controller\WizardMediaDefault'=>'Restful\Controller\WizardMediaDefaultControllerFactory'
             ),
      );
     }

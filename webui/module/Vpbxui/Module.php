@@ -22,7 +22,7 @@ use Zend\Validator\NotEmpty;
 
 class Module
 {
-    protected $whitelist = array('zfcuser/login','home','vpbxui/registerpbx','createconference','wizard','pickdid','createinternal','internalapi','overview','api/freedid', 'playtmpmedia');
+    protected $whitelist = array('zfcuser/login','home','vpbxui/registerpbx','createconference','wizard','pickdid','createinternal','internalapi','overview','api/freedid', 'playtmpmedia','api/mediadefault');
     public function onBootstrap(MvcEvent $e)
     {                    
         $sm = $e->getApplication()->getServiceManager();

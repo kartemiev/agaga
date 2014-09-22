@@ -34,7 +34,9 @@
       
          <a href="#" class="uploadMediaDialog" data-formname="<?php echo $this->dataUploadInputName?>"><?php echo $media->custname?></a>
  <input class="fileupload hiddeninput" accept="audio/mp3" type="file" data-url="" name="<?php echo $this->dataUploadInputName?>" id="<?php echo $this->dataUploadInputName?>">
-         <ul class="jptitle">
+  <span class="icon-remove mediaResetToDefault" data-url="<?php echo $this->url('api/mediadefault',array('id'=>$this->dataUploadInputName))?>" title="заменить на файл по умолчанию"></span>
+ 
+          <ul class="jptitle">
       
            </ul>
       </div>

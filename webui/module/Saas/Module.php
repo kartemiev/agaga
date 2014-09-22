@@ -69,8 +69,8 @@ class Module
         		'Saas\Controller\Overview'=> 'Saas\Controller\OverviewControllerFactory',
         		'Saas\Controller\InternalApi' => 'Saas\Controller\InternalApiControllerFactory',
                 'Saas\Controller\CreateVpbxEnv' => 'Saas\Controller\CreateVpbxEnvControllerFactory',
-                'Saas\Controller\PlayTmpMedia' => 'Saas\Controller\PlayTmpMediaControllerFactory'
-            ),
+                'Saas\Controller\PlayTmpMedia' => 'Saas\Controller\PlayTmpMediaControllerFactory',
+             ),
      );
     }
      

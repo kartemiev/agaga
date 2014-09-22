@@ -334,9 +334,9 @@ return array(
                         'Saas\Controller\InternalApi',
                         'Restful\Controller\WizardFreeDid',
                         'Saas\Controller\PlayTmpMedia',
-                        'Saas\Controller\Captcha'                    		
-                    		
-                    ),
+                        'Saas\Controller\Captcha',
+                        'Restful\Controller\WizardMediaDefault'                    		
+                     ),
                      'roles' => array('guest')
                 ),
              ),
@@ -348,6 +348,8 @@ return array(
                 
             	array('route' => 'vpbxui/registerpbx', 'roles' => array('guest')),
                 array('route' => 'api/freedid', 'roles' => array('guest')),
+                array('route' => 'api/mediadefault', 'roles' => array('guest')),
+
                 array('route' => 'api/vpbxenv', 'roles' => array('admin')),
                 
                 array('route' => 'createconference', 'roles' => array('guest')),    
