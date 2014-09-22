@@ -275,7 +275,7 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
         $mediaStack['ringingbacktone'] = $media;
         
         
- 		$this->mockedWizardSessionContainer['media'] = $mediaStack;
+ 		$this->mockedWizardSessionContainer->media = $mediaStack;
 		
  		
         $mediaRepos = new MediaRepos();

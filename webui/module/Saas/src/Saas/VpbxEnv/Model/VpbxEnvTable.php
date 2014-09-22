@@ -24,11 +24,10 @@ class VpbxEnvTable implements VpbxEnvTableInterface
 				'vpbx_name' => $vpbxenv->vpbx_name,
 				'vpbx_description' => $vpbxenv->vpbx_description,
 				'vpbx_remotevpbxid' => $vpbxenv->vpbx_remotevpbxid,
-		 
-				'outgoingtrunk_did' => $vpbxenv->outgoingtrunk_did				
+ 				'outgoingtrunk_did' => $vpbxenv->outgoingtrunk_did				
  		);
 		
-		$id = isset($vpbxenv->id)?(int)$vpbxenv->id:null;
+		$id = isset($vpbxenv->id)?(int)$vpbxenv->id:0;
 		if ($id == 0) {
  			$entity = $this->apiGateway->create($data);
 			$return = $entity->id;
