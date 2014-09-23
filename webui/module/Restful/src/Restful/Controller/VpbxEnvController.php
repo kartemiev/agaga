@@ -41,7 +41,7 @@ use Zend\Math\Rand;
 
 class VpbxEnvController extends AbstractRestfulController
 {
-    const SIP_SECRET_RANDOM_CHARSET = '_&$#@abcdefghijklmnopqrstuvwxyz1234567890';
+    const SIP_SECRET_RANDOM_CHARSET = '&$#@abcdefghijklmnopqrstuvwxyz1234567890';
     private $wizardSessionContainer;
     private $generalSettingsTable;
     private $extensionTable;
