@@ -24,7 +24,8 @@ class VpbxEnvTable implements VpbxEnvTableInterface
 				'vpbx_name' => $vpbxenv->vpbx_name,
 				'vpbx_description' => $vpbxenv->vpbx_description,
 				'vpbx_remotevpbxid' => $vpbxenv->vpbx_remotevpbxid,
- 				'outgoingtrunk_did' => $vpbxenv->outgoingtrunk_did				
+ 				'outgoingtrunk_did' => $vpbxenv->outgoingtrunk_did,
+		        'limitplan'=>$vpbxenv->limitplan				
  		);
 		
 		$id = isset($vpbxenv->id)?(int)$vpbxenv->id:0;

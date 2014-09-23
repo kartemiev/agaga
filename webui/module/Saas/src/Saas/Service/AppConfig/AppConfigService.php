@@ -23,7 +23,4 @@ class AppConfigService extends AbstractOptions implements AppConfigInterface
     {
         $this->tempMediaPath = $tempMediaPath;
     }
-
-   
- 
 }

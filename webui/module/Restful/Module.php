@@ -42,8 +42,9 @@ class Module
     public function getServiceConfig()
     {
         return array(
-        'factories' => array(
-           ),
+            'factories' => array(
+                'Restful\Service\AppConfig\AppConfigService' => 'Restful\Service\AppConfig\AppConfigServiceFactory'
+            ),
 	    );
     }
     public function getControllerConfig()

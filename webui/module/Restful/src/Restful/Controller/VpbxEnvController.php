@@ -36,6 +36,7 @@ use Saas\WizardSessionContainer\WizardSessionContainerInterface;
 use Saas\Controller\UploadMediaController;
 use Saas\WizardSessionContainer\MediaTypeMapperNamingStrategy;
 use Zend\View\Model\JsonModel;
+use Restful\Service\AppConfig\AppConfigInterface;
 
 class VpbxEnvController extends AbstractRestfulController
 {
@@ -61,6 +62,7 @@ class VpbxEnvController extends AbstractRestfulController
     protected $trunkDestinationTable;
     protected $trunkId;
     protected $callCentreScheduleTable;
+    protected $appConfig;
 	public function __construct(
 			WizardSessionContainerInterface $wizardSessionContainer, 
 			ExtensionTableInterface $extensionTable, 
@@ -80,7 +82,8 @@ class VpbxEnvController extends AbstractRestfulController
 			RegEntryTableInterface $regEntryTable,
 			NumberMatchTableInterface $numberMatchTable,
 			TrunkDestinationTableInterface $trunkDestinationTable,
-			CallCentreScheduleTableInterface $callCentreScheduleTable
+			CallCentreScheduleTableInterface $callCentreScheduleTable,
+	       AppConfigInterface $appConfig
 	)
 	{
 		$this->wizardSessionContainer = $wizardSessionContainer;
@@ -102,6 +105,7 @@ class VpbxEnvController extends AbstractRestfulController
 		$this->trunkDestinationTable = $trunkDestinationTable;
 		$this->callCentreScheduleTable = $callCentreScheduleTable;
 		$this->context = $context;
+		$this->appConfig = $appConfig;
 	}
 	public function create($data)
 	{
@@ -163,6 +167,7 @@ class VpbxEnvController extends AbstractRestfulController
 	       $vpbxEnv->vpbx_name = 'виртульная АТС для тестов';
 	       $vpbxEnv->vpbx_description = 'виртульная АТС для тестов';
 	       $vpbxEnv->vpbx_remotevpbxid = (string)$this->getVpbxId();
+	       $vpbxEnv->limitplan = $this->appConfig->getLimitPlan();
 	       $did = $this->wizardSessionContainer->did;
 	       $vpbxEnv->outgoingtrunk_did = $did->id;
  	      if ($vpbxEnv)

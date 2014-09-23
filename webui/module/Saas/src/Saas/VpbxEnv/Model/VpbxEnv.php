@@ -52,6 +52,14 @@ class VpbxEnv
 	
 	
 	/**
+	 * @var integer
+	 * @Form\Filter({"name"="Int"})
+	 * @Form\Validator({"name":"NotEmpty", "options":{"message":"поле limitplan должно присуствовать","break_chain_on_failure":"true"}})
+	 */
+	
+	public $limitplan;
+	
+	/**
 	 * @Annotation\Exclude()
 	 */
 	public $sip_id;
