@@ -37,9 +37,11 @@ use Zend\View\Model\JsonModel;
 use Restful\Service\AppConfig\AppConfigInterface as RestfulConfigInterface;
 use Saas\Service\AppConfig\AppConfigInterface as SaasConfigInterface;
 use Vpbxui\Controller\MediaReposController;
+use Zend\Math\Rand;
 
 class VpbxEnvController extends AbstractRestfulController
 {
+    const SIP_SECRET_RANDOM_CHARSET = '_&$#@abcdefghijklmnopqrstuvwxyz1234567890';
     private $wizardSessionContainer;
     private $generalSettingsTable;
     private $extensionTable;
@@ -148,7 +150,7 @@ class VpbxEnvController extends AbstractRestfulController
 	            $mediaRepos->vpbxid = $this->vpbxId;
 	            $mediaRepos->extension =  pathinfo($mediaRepos->custname, PATHINFO_EXTENSION);;
 	            $id = $this->mediaReposTable->saveMediaRepos($mediaRepos);
-	            rename($this->saasAppConfig->getTempMediaPath().'/'.$tmpMedia->id, MediaReposController::VPBX_MEDIAREPOSDIR.'/'.$id);
+	            copy($this->saasAppConfig->getTempMediaPath().'/'.$tmpMedia->id, MediaReposController::VPBX_MEDIAREPOSDIR.'/'.$id);
 	            if (!$mediaTypeMapperNamingStrategy->hydrate($type))
 	            {
 	                continue;
@@ -166,6 +168,7 @@ class VpbxEnvController extends AbstractRestfulController
 	protected function processVpbxEnv()
 	{
 	    $vpbxEnvStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_vpbx_env']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_vpbx_env']:false;
+	    $this->vpbxEnv = $this->wizardSessionContainer->vpbxEnv;
 	    if (!$vpbxEnvStageCompleted)
 	    {
 	       $vpbxEnv = $this->wizardSessionContainer->vpbxEnv;
@@ -180,6 +183,7 @@ class VpbxEnvController extends AbstractRestfulController
 	           $this->vpbxEnv = $this->vpbxEnvTable->saveVpbxEnv($vpbxEnv);
 	       }
 	       $this->wizardSessionContainer->wizardActionsCompletedList['process_vpbx_env'] = true;
+	       $this->wizardSessionContainer->vpbxEnv = $this->vpbxEnv;
 	    } 
 	    return $this;
 	}
@@ -277,6 +281,8 @@ class VpbxEnvController extends AbstractRestfulController
             $extension->diversion_noanswer_status = 'UNDEFINED';       
             $extension->diversion_unavail_status = 'UNDEFINED';     
 	        $extension->email ='';	         
+	        $secret = Rand::getString(8, self::SIP_SECRET_RANDOM_CHARSET, true);
+	        $extension->secret = $secret;
  	        switch ($extension->extensiontype)
 	        {
 	            case 'operator':
