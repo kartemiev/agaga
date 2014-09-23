@@ -28,7 +28,7 @@ class VpbxEnvControllerFactory implements FactoryInterface
 				$sl->get('Vpbxui\NumberMatch\Model\NumberMatchTable'),
 				$sl->get('Vpbxui\TrunkDestination\Model\TrunkDestinationTable'),
 				$sl->get('Vpbxui\CallCentreSchedule\Model\CallCentreScheduleTable'),
-		        $sl->get('Saas\Service\AppConfig\AppConfigService')
+		        $sl->get('Restful\Service\AppConfig\AppConfigService')
 		);
     }
 }
