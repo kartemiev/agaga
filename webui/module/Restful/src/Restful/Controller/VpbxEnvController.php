@@ -8,7 +8,6 @@ use Vpbxui\MediaRepos\Model\MediaReposTableInterface;
 use Vpbxui\GeneralSettings\Model\GeneralSettingsTable;
 use Vpbxui\MediaRepos\Model\MediaRepos;
 use Zend\Stdlib\Hydrator\ObjectProperty;
-use Vpbxui\Controller\MediaReposController;
 use Vpbxui\Service\VpbxidProvider\VpbxidProviderInterface;
 use Vpbxui\Trunk\Model\Trunk;
 use Vpbxui\Trunk\Model\TrunkTableInterface;
@@ -33,10 +32,11 @@ use Vpbxui\CallCentreSchedule\Model\CallCentreScheduleTableInterface;
 use Vpbxui\CallCentreSchedule\Model\CallCentreSchedule;
 use Vpbxui\Extension\Model\Extension;
 use Saas\WizardSessionContainer\WizardSessionContainerInterface;
-use Saas\Controller\UploadMediaController;
 use Saas\WizardSessionContainer\MediaTypeMapperNamingStrategy;
 use Zend\View\Model\JsonModel;
-use Restful\Service\AppConfig\AppConfigInterface;
+use Restful\Service\AppConfig\AppConfigInterface as RestfulConfigInterface;
+use Saas\Service\AppConfig\AppConfigInterface as SaasConfigInterface;
+use Vpbxui\Controller\MediaReposController;
 
 class VpbxEnvController extends AbstractRestfulController
 {
@@ -62,7 +62,8 @@ class VpbxEnvController extends AbstractRestfulController
     protected $trunkDestinationTable;
     protected $trunkId;
     protected $callCentreScheduleTable;
-    protected $appConfig;
+    protected $restfulAppConfig;
+    protected $saasAppConfig;
 	public function __construct(
 			WizardSessionContainerInterface $wizardSessionContainer, 
 			ExtensionTableInterface $extensionTable, 
@@ -83,7 +84,9 @@ class VpbxEnvController extends AbstractRestfulController
 			NumberMatchTableInterface $numberMatchTable,
 			TrunkDestinationTableInterface $trunkDestinationTable,
 			CallCentreScheduleTableInterface $callCentreScheduleTable,
-	       AppConfigInterface $appConfig
+	       RestfulConfigInterface $restfulAppConfig,
+	       SaasConfigInterface $saasAppConfig
+	       
 	)
 	{
 		$this->wizardSessionContainer = $wizardSessionContainer;
@@ -105,7 +108,8 @@ class VpbxEnvController extends AbstractRestfulController
 		$this->trunkDestinationTable = $trunkDestinationTable;
 		$this->callCentreScheduleTable = $callCentreScheduleTable;
 		$this->context = $context;
-		$this->appConfig = $appConfig;
+		$this->restfulAppConfig = $restfulAppConfig;
+		$this->saasAppConfig = $saasAppConfig;
 	}
 	public function create($data)
 	{
@@ -144,7 +148,7 @@ class VpbxEnvController extends AbstractRestfulController
 	            $mediaRepos->vpbxid = $this->vpbxId;
 	            $mediaRepos->extension =  pathinfo($mediaRepos->custname, PATHINFO_EXTENSION);;
 	            $id = $this->mediaReposTable->saveMediaRepos($mediaRepos);
-	            rename(UploadMediaController::TMP_MEDIA_PATH.'/'.$tmpMedia->id, MediaReposController::VPBX_MEDIAREPOSDIR.'/'.$id);
+	            rename($this->saasAppConfig->getTempMediaPath().'/'.$tmpMedia->id, MediaReposController::VPBX_MEDIAREPOSDIR.'/'.$id);
 	            if (!$mediaTypeMapperNamingStrategy->hydrate($type))
 	            {
 	                continue;
@@ -168,7 +172,7 @@ class VpbxEnvController extends AbstractRestfulController
 	       $vpbxEnv->vpbx_name = 'виртульная АТС для тестов';
 	       $vpbxEnv->vpbx_description = 'виртульная АТС для тестов';
 	       $vpbxEnv->vpbx_remotevpbxid = (string)$this->getVpbxId();
-	       $vpbxEnv->limitplan = $this->appConfig->getLimitPlan();
+	       $vpbxEnv->limitplan = $this->restfulAppConfig->getLimitPlan();
 	       $did = $this->wizardSessionContainer->did;
 	       $vpbxEnv->outgoingtrunk_did = $did->id;
  	      if ($vpbxEnv)
