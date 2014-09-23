@@ -142,6 +142,7 @@ class VpbxEnvController extends AbstractRestfulController
 	            $hydrator->hydrate($data, $mediaRepos);
 	            $mediaRepos->mediatype = 'ANYMEDIA';
 	            $mediaRepos->vpbxid = $this->vpbxId;
+	            $mediaRepos->extension =  pathinfo($mediaRepos->custname, PATHINFO_EXTENSION);;
 	            $id = $this->mediaReposTable->saveMediaRepos($mediaRepos);
 	            rename(UploadMediaController::TMP_MEDIA_PATH.'/'.$tmpMedia->id, MediaReposController::VPBX_MEDIAREPOSDIR.'/'.$id);
 	            if (!$mediaTypeMapperNamingStrategy->hydrate($type))
