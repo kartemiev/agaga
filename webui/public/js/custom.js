@@ -600,6 +600,7 @@ $(function(){
  	 	}
 
  	 	$(function () {
+ 	 		if($('.fileupload').exists()){
  	 	    $('.fileupload').fileupload({
  	 	        dataType: 'json',
  	 	      maxFileSize:20000000,
@@ -651,6 +652,7 @@ $(function(){
  	 	            	}
  	 	        }
  	 	    });
+ 	 		}
  	 	});
   	 	
  	 	$('.uploadMediaDialog').click(
