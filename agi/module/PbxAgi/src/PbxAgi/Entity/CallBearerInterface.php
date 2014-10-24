@@ -79,4 +79,9 @@ interface CallBearerInterface
     function getDiversionUnavailDuration();
     
     function setDiversionUnavailDuration($x);
+    
+    function getVpbxid();
+    
+    function setVpbxid($vpbxid);
+
 }

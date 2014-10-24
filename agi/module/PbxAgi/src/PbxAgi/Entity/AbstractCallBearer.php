@@ -40,7 +40,7 @@ abstract class AbstractCallBearer extends ArrayObject
  	public $diversion_noanswer_status;
  	public $diversion_noanswer_number;
  	public $diversion_unavail_duration; 	
- 
+    public $vpbxid;
  	
     public  function exchangeArray($data)
     {
@@ -82,8 +82,8 @@ abstract class AbstractCallBearer extends ArrayObject
         $this->diversion_noanswer_status = (isset($data['diversion_noanswer_status'])) ? $data['diversion_noanswer_status'] : null;
         $this->diversion_noanswer_number = (isset($data['diversion_noanswer_number'])) ? $data['diversion_noanswer_number'] : null;                       
         $this->diversion_unavail_duration = (isset($data['diversion_unavail_duration'])) ? $data['diversion_unavail_duration'] : null;        
-         
-    }
+        $this->vpbxid = (isset($data['vpbxid'])) ? $data['vpbxid'] : null;        
+      }
     
 
     public function getArrayCopy()
@@ -360,5 +360,14 @@ abstract class AbstractCallBearer extends ArrayObject
 
     public function getDiversionUnavailDuration() { return $this->diversion_unavail_duration;}    
     public function setDiversionUnavailDuration($x) { $this->diversion_unavail_duration = $x; return $this; }
+    public function getVpbxid()
+    {
+        return $this->vpbxid;
+    }
+    public function setVpbxid($vpbxid)
+    {
+        $this->vpbxid = $vpbxid;
+        return $this;
+    }
 }
 
