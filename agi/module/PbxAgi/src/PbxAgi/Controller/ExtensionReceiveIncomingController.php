@@ -48,6 +48,8 @@ class ExtensionReceiveIncomingController extends AbstractActionController {
         $extension = $this->agi->getVariable('EXTEN');        	 
         $this->init();
         $this->PrepareCallControllerPlugin()->setCallDestinator($extension);
+        var_dump($this->call->getCallOwner()->getVpbxid());
+        
          $extensionRecord =  $this->extensionTable->getExtension($extension);
          if ($extensionRecord)
         {
@@ -79,7 +81,6 @@ class ExtensionReceiveIncomingController extends AbstractActionController {
         
         if ($this->appConfig->getMohInternalState())
         {
-          var_dump($this->call->getCallOwner()->getVpbxid());
 		  $dialOptions->getRingingMoh()
 					->enable()
 					->setMohClass(
