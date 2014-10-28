@@ -19,7 +19,7 @@ class PeerTableGatewayFactory implements FactoryInterface
         $resultSetPrototype->setArrayObjectPrototype(new Extension());
         $featureSet = new FeatureSet();
         $featureSet->addFeature($serviceLocator->get('PbxAgi\Service\VpbxidProvider\VpbxidFeature'));
-        return new TableGateway('sip', $dbAdapter, null, $resultSetPrototype);
+        return new TableGateway('sip', $dbAdapter, $featureSet, $resultSetPrototype);
                 
     }
 }
