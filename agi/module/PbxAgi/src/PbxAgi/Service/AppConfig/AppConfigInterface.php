@@ -1,6 +1,9 @@
 <?php
 namespace PbxAgi\Service\AppConfig;
 
+use PbxAgi\GeneralSettings\Model\GeneralSettingsTable;
+use PbxAgi\Service\VpbxidProvider\VpbxidProviderInterface;
+
 interface AppConfigInterface
 {
      const CONF_IS_PROTECTED_TRUE = 1;
@@ -79,6 +82,10 @@ interface AppConfigInterface
     
     const DB_CONFERENCE_JOIN_ACL_INTERNALONLY = 'INTERNALONLY';
     
+    
+    function setGeneralSettingsTable(GeneralSettingsTable $generalSettingsTable);
+
+    function setVpbxidProvider(VpbxidProviderInterface $vpbxidProvider);    
     
     function getSipExtensionContextName();
     
@@ -318,13 +325,10 @@ interface AppConfigInterface
     function getShortDialNumDstInvalid();
     
     function setShortDialNumDstInvalid($shortDialNumDstInvalid);
-    
-    
+       
      
     function getGeneralSettings();
-        
-    function setGeneralSettings($generalSettings);
-    
+            
     function getIncomingPstnMenuInputTotalMaxOfftime();
     
     function setIncomingPstnMenuInputTotalMaxOfftime($incomingPstnMenuInputTotalMaxOfftime);

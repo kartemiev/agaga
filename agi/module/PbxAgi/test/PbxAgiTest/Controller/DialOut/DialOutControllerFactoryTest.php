@@ -11,8 +11,8 @@ class DialOutControllerFactoryTest extends PHPUnit_Framework_TestCase
     public function setUp()
     {
         $serviceManager = Bootstrap::getServiceManager();         
-        $serviceManager->setAllowOverride(true);         
-         
+        $serviceManager->setAllowOverride(true);
+                          
         $factory = new DialOutControllerFactory();
                 
         $this->dialOutController = $factory->createService($serviceManager);        

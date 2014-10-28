@@ -14,8 +14,11 @@ class AppConfigServiceFactory implements FactoryInterface
         $config = (isset($config['pbxagi'])) ? $config['pbxagi'] : null;
         $instance = new AppConfigService($config);
         $generalSettingsTable = $serviceLocator->get('PbxAgi\GeneralSettings\Model\GeneralSettingsTable');          
-        $generalSettings = $generalSettingsTable->getSettings(AppConfigInterface::VPBX_ID);
-        $instance->setGeneralSettings($generalSettings);
+        $vpbxidProvider = $serviceLocator->get('PbxAgi\Service\VpbxidProvider\VpbxidProvider');
+//        $generalSettings = $generalSettingsTable->getSettings(AppConfigInterface::VPBX_ID);
+//        $instance->setGeneralSettings($generalSettings);
+        $instance->setGeneralSettingsTable($generalSettingsTable);
+        $instance->setVpbxidProvider($vpbxidProvider);
         return $instance;
     }
 }

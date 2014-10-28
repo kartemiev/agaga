@@ -3,6 +3,8 @@ namespace PbxAgi\Service\AppConfig;
 
 use PbxAgi\Service\AppConfig\AppConfigInterface;
 use Zend\Stdlib\AbstractOptions;
+use PbxAgi\GeneralSettings\Model\GeneralSettingsTable;
+use PbxAgi\Service\VpbxidProvider\VpbxidProviderInterface;
 
 class AppConfigService extends AbstractOptions implements AppConfigInterface
 {
@@ -105,9 +107,24 @@ class AppConfigService extends AbstractOptions implements AppConfigInterface
     
     protected $alarmWrongTimeFormat;
     protected $alarmPlayContextName;
+    protected $vpbxidProvider;
      /**
 	 * @return the $functionDisabledNotice
 	 */
+    
+    protected $generalSettingsTable;
+    
+    public function setGeneralSettingsTable(GeneralSettingsTable $generalSettingsTable)
+    {
+        $this->generalSettingsTable = $generalSettingsTable;
+        return $this;
+    }
+    public function setVpbxidProvider(VpbxidProviderInterface $vpbxidProvider)
+    {
+        $this->vpbxidProvider = $vpbxidProvider;
+        return $this;  
+    }
+    
 	public function getFunctionDisabledNotice() {
 		return $this->functionDisabledNotice;
 	}
@@ -363,7 +380,7 @@ class AppConfigService extends AbstractOptions implements AppConfigInterface
     public function getOffTimeGreeting() {
         if (!isset($this->offTimeGreeting))
         {
-             $generalSettings = $this->generalSettings;        
+             $generalSettings = $this->getGeneralSettings();        
             $mediaReposPath = $generalSettings->mediarepospath;
             $id = $generalSettings->greetingofftime;
             $mediaFileName = "{$mediaReposPath}/{$id}/{$id}"; 
@@ -730,15 +747,16 @@ class AppConfigService extends AbstractOptions implements AppConfigInterface
     {
         $this->shortDialNumDstInvalid = $shortDialNumDstInvalid;
     }
+   
   	public function getGeneralSettings()
     {
+        if (!isset($this->generalSettings))
+        {
+            $this->generalSettings = $this->generalSettingsTable->getSettings($this->vpbxidProvider->getVpbxId());
+        }
         return $this->generalSettings;
     }
 
-	public function setGeneralSettings($generalSettings)
-    {
-        $this->generalSettings = $generalSettings;
-    }
 	public function getIncomingPstnMenuInputTotalMaxOfftime()
     {
         if (!isset($this->incomingPstnMenuInputTotalMaxOfftime))
