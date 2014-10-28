@@ -28,10 +28,7 @@ class VpbxidProvider implements VpbxidProviderInterface
 	}
 	public function getVpbxId()
 	{
-		if (!$this->vpbxid)
-		{
-			$this->vpbxid = ($this->call->getCallOriginator())?$this->call->getCallOriginator()->getVpbxid():null;
-		}
+	    $this->vpbxid = ($this->call->getCallOriginator())?$this->call->getCallOriginator()->getVpbxid():null;
 		return $this->vpbxid;
 	}	
 	public function isSuperuser()

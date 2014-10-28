@@ -35,6 +35,7 @@ class Extension implements ExtensionInterface
     public $diversion_noanswer_landingtype;
     public $diversion_unavail_landingtype;
     public $diversion_noanswer_duration;
+    public $vpbxid;
     public function exchangeArray($data)
     {
     	$this->id = (isset($data['id'])) ? $data['id'] : null;
@@ -67,6 +68,8 @@ class Extension implements ExtensionInterface
      	$this->diversion_noanswer_landingtype = (isset($data['diversion_noanswer_landingtype'])) ? $data['diversion_noanswer_landingtype'] : null;
      	$this->diversion_unavail_landingtype = (isset($data['diversion_unavail_landingtype'])) ? $data['diversion_unavail_landingtype'] : null;
      	$this->diversion_noanswer_duration =  (isset($data['diversion_noanswer_duration'])) ? $data['diversion_noanswer_duration'] : null;
+     	$this->vpbxid =  (isset($data['vpbxid'])) ? $data['vpbxid'] : null;
+     	
      }
     
      public function getArrayCopy()
@@ -344,4 +347,14 @@ public function setExtensionrecord($extensionrecord)
 	$this->extensionrecord = $extensionrecord;
 	return $this;
 }
+public function getVpbxid()
+{
+    return $this->vpbxid;
+}
+public function setVpbxid($vpbxid)
+{
+    $this->vpbxid = $vpbxid;
+    return $this;
+}
+
  }

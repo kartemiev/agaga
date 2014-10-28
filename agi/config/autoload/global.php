@@ -2,7 +2,7 @@
 return array(
     'db' => array(
         'driver' => 'Pdo',
-        'dsn' => 'pgsql:dbname=nucrf'
+        'dsn' => 'pgsql:dbname=agaga'
     ),
     'service_manager' => array(
         'factories' => array(

@@ -95,4 +95,8 @@ interface ExtensionInterface
     
     function getDiversionNoanswerDuration();
     
+    function getVpbxid();
+    
+    function setVpbxid($vpbxid);
+    
 }
