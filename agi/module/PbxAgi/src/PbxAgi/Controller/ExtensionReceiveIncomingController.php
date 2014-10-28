@@ -81,7 +81,10 @@ class ExtensionReceiveIncomingController extends AbstractActionController {
         {
 		  $dialOptions->getRingingMoh()
 					->enable()
-					->setMohClass(AppConfigService::RINGBACK_MOH_CLASS);
+					->setMohClass(
+					    $this->appConfig
+					         ->getGeneralSettings()->ringingtone.'_ringingtone'					         
+					    );
         }
           
              $extensionType = $extensionRecord->getExtensiontype();
