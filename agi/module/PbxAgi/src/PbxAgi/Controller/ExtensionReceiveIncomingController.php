@@ -79,6 +79,7 @@ class ExtensionReceiveIncomingController extends AbstractActionController {
         
         if ($this->appConfig->getMohInternalState())
         {
+          var_dump($this->call->getCallOwner()->getVpbxid());
 		  $dialOptions->getRingingMoh()
 					->enable()
 					->setMohClass(
