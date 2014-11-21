@@ -335,6 +335,7 @@ return array(
                         'Restful\Controller\WizardFreeDid',
                         'Saas\Controller\PlayTmpMedia',
                         'Saas\Controller\Captcha',
+                        'Saas\Controller\NumberAllowed',
                         'Restful\Controller\WizardMediaDefault'                    		
                      ),
                      'roles' => array('guest')
@@ -345,6 +346,7 @@ return array(
             'BjyAuthorize\Guard\Route' => array(
                 array('route' => 'zfcuser/login', 'roles' => array('guest')),
                 array('route' => 'playtmpmedia', 'roles' => array('guest')),
+                array('route' => 'numberallowed', 'roles' => array('guest')),
                 
             	array('route' => 'vpbxui/registerpbx', 'roles' => array('guest')),
                 array('route' => 'api/freedid', 'roles' => array('guest')),

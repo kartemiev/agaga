@@ -2,6 +2,6 @@
 namespace Saas\NumberAllowed\Model;
 
 use Zend\Stdlib\ArrayObject;
-class NumbersAllowed extends ArrayObject
+class NumberAllowed extends ArrayObject
 {
 }

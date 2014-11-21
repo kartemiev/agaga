@@ -13,9 +13,12 @@ echo $this->headScript()
 </div>
 <div class="wizdataintnum" data-url="<?php echo $this->url('internalapi')?>">
 
- <?php echo $this->form($this->numbersallowedform);?>
- 
- <p>Внутренние номера обычных сотрудников: </p>
+<div class="submitable">
+<?php echo $this->form()->openTag($this->numbersallowedform);?>
+<?php echo $this->form($this->numbersallowedform);?>
+<?php echo $this->form()->closeTag();?>
+</div>
+<p>Внутренние номера обычных сотрудников: </p>
 <?php echo $this->form($this->regularinternallistform);?>
 <p>Внутренние номера операторов колл-центра:</p> 
 <?php echo $this->form($this->ccoperatorlistform);?>

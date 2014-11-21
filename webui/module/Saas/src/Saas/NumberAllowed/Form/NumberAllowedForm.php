@@ -9,7 +9,10 @@ class NumberAllowedForm extends Form
 	{
 		parent::__construct('numbersallowed');
    		$this->setAttribute('id', 'numbersallowed');
-		
+   		$this->setAttribute('method', 'put');
+   		$this->setAttribute('enctype', 'application/json');
+   		 
+     	$this->setName('numbersallowed');	
  		$this->setUseInputFilterDefaults(false);
 	
  		     $checkbox = $this->add(array(

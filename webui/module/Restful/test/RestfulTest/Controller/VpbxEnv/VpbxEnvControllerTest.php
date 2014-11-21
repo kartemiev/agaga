@@ -33,6 +33,8 @@ use Vpbxui\RegEntry\Model\RegEntry;
 use Vpbxui\Route\Model\Route;
 use Vpbxui\TrunkDestination\Model\TrunkDestination;
 use Vpbxui\CallCentreSchedule\Model\CallCentreSchedule;
+use Saas\NumberAllowed\Model\NumberAllowed;
+use Saas\NumberAllowed\Model\NumberRange;
 
  
 
@@ -63,6 +65,7 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
 	private $mockedTrunkDestinationTable;
 	private $mockedCallCentreScheduleTable;
 	private $mockedGeneralSettings;
+	private $mockedNumberRangeTable;
 	private $mockedDbAdapter;
 	private $context;
 	public static $functions;
@@ -184,6 +187,13 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
 		$serviceManager->setService('Vpbxui\CallCentreSchedule\Model\CallCentreScheduleTable', $this->mockedCallCentreScheduleTable);	
 				
         $this->context = $serviceManager->get('Vpbxui\Context\Model\Context');
+        
+        $this->mockedNumberRangeTable   = $this->getMockBuilder('Saas\NumberAllowed\Model\NumberRangeTable')
+                                                ->disableOriginalConstructor()
+                                                ->getMock();
+        $serviceManager->setService('Saas\NumberAllowed\Model\NumberRangeTable', $this->mockedNumberRangeTable);
+        
+        
 		
 		$this->controller = $factory->createService($serviceManager);
 		
@@ -220,7 +230,8 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
 		$vpbxEnv->exchangeArray(array(
 		    'vpbx_name' => 'виртульная АТС для тестов',
 		    'vpbx_description' => 'виртульная АТС для тестов',
-		    'vpbx_remotevpbxid'=>1		    
+		    'vpbx_remotevpbxid'=>'1',
+		    'limitplan'=>824		    
 		));
 		$vpbxEnvResult = clone $vpbxEnv;
 		$vpbxEnvResult->sip_id = 22;
@@ -247,6 +258,7 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
         $media->custdesc = '';
         $media->filesize = 123322;
         $media->contenttype = 'application/mp3';
+        $media->accesslevel = 'session';
         $mediaStack['wtgreeting'] = $media;
         
         $media = new TempMedia();
@@ -255,6 +267,7 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
         $media->custdesc = '';
         $media->filesize = 123322;
         $media->contenttype = 'application/mp3';
+        $media->accesslevel = 'session';        
         $mediaStack['wegreeting'] = $media;
         
         $media = new TempMedia();
@@ -263,6 +276,7 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
         $media->custdesc = '';
         $media->filesize = 123322;
         $media->contenttype = 'application/mp3';
+        $media->accesslevel = 'session';        
         $mediaStack['musiconhold'] = $media;
         
         
@@ -272,6 +286,7 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
         $media->custdesc = '';
         $media->filesize = 123322;
         $media->contenttype = 'application/mp3';
+        $media->accesslevel = 'session';        
         $mediaStack['ringingbacktone'] = $media;
         
         
@@ -294,14 +309,14 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
  			
  		
   		$mediaRepos = new MediaRepos();
- 		$mediaRepos->custname = 'test_weekend_greeting.mp3';
+ 		$mediaRepos->custname = 'test_worktime_greeting.mp3';
  		$mediaRepos->contenttype = 'application/mp3';
  		$mediaRepos->custdesc = '';
  		$mediaRepos->mediatype = 'ANYMEDIA';
  		$mediaRepos->filesize = 123322;
  		$mediaRepos->vpbxid = 1;
- 		
-  		  		
+ 		$mediaRepos->extension = 'mp3';
+   		  		
  			
  		$this->mockedMediaReposTable->expects($this->at(1))
  		->method('saveMediaRepos')
@@ -489,6 +504,30 @@ class VpbxEnvControllerTest extends \PHPUnit_Framework_TestCase
 	                                        ->with($callCentreSchedule)
 	                                        ->will($this->returnValue(null));
 	     
+	    $numberAllowed = new NumberAllowed();
+	    $numberAllowed[] = '300';
+	    $numberAllowed[] = '700';
+	    $this->mockedWizardSessionContainer->numberAllowed = $numberAllowed;
+	    
+	    $numberRange1 = new NumberRange();
+	    $numberRange1->value = '300';
+	    
+	    $this->mockedNumberRangeTable->expects($this->at(0))
+	                                 ->method('saveNumberRange')
+	                                 ->with($numberRange1)
+	                                 ->will($this->returnValue(1));
+	     
+
+	    $numberRange2 = new NumberRange();
+	    $numberRange2->value = '700';
+	     
+	    $this->mockedNumberRangeTable->expects($this->at(1))
+	                                 ->method('saveNumberRange')
+	                                 ->with($numberRange2)
+	                                 ->will($this->returnValue(2));
+	    
+	     
+	    
 	    
 		$result   = $this->controller->dispatch($this->request);
 		$response = $this->controller->getResponse();

@@ -94,6 +94,20 @@ return array(
         					
         				'may_terminate' => true,
         		),
+            'numberallowed' => array(
+                'type'    => 'segment',
+                'options' => array(
+                    'route'    => '/numberallowed[/:id]',
+                    'constraints' => array(
+                        'id' => '[0-9]*',
+                    ),
+                    'defaults' => array(
+                        'controller' => 'Saas\Controller\NumberAllowed',
+                    ),
+            
+                ),                 
+                'may_terminate' => true,
+            ),
             'playtmpmedia' => array(
                 'type'    => 'segment',
                 'options' => array(

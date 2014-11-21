@@ -89,7 +89,9 @@ class VpbxEnv
 		$this->sip_id = (isset($data['sip_id']))? $data['sip_id']:null;		
 		$this->sip_name = (isset($data['sip_name']))? $data['sip_name']:null;
 		$this->sip_secret = (isset($data['sip_secret']))? $data['sip_secret']:null;
-	}
+		$this->limitplan = (isset($data['limitplan']))? $data['limitplan']:null;
+		
+ 	}
 	public function getArrayCopy()
 	{
 		return get_object_vars($this);

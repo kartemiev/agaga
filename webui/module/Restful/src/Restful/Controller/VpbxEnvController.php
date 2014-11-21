@@ -38,6 +38,8 @@ use Restful\Service\AppConfig\AppConfigInterface as RestfulConfigInterface;
 use Saas\Service\AppConfig\AppConfigInterface as SaasConfigInterface;
 use Vpbxui\Controller\MediaReposController;
 use Zend\Math\Rand;
+use Saas\NumberAllowed\Model\NumberRangeTable;
+use Saas\NumberAllowed\Model\NumberRange;
 
 class VpbxEnvController extends AbstractRestfulController
 {
@@ -66,6 +68,7 @@ class VpbxEnvController extends AbstractRestfulController
     protected $callCentreScheduleTable;
     protected $restfulAppConfig;
     protected $saasAppConfig;
+    protected $numberRangeTable;
 	public function __construct(
 			WizardSessionContainerInterface $wizardSessionContainer, 
 			ExtensionTableInterface $extensionTable, 
@@ -87,8 +90,8 @@ class VpbxEnvController extends AbstractRestfulController
 			TrunkDestinationTableInterface $trunkDestinationTable,
 			CallCentreScheduleTableInterface $callCentreScheduleTable,
 	       RestfulConfigInterface $restfulAppConfig,
-	       SaasConfigInterface $saasAppConfig
-	       
+	       SaasConfigInterface $saasAppConfig,
+	       NumberRangeTable $numberRangeTable	       
 	)
 	{
 		$this->wizardSessionContainer = $wizardSessionContainer;
@@ -112,14 +115,16 @@ class VpbxEnvController extends AbstractRestfulController
 		$this->context = $context;
 		$this->restfulAppConfig = $restfulAppConfig;
 		$this->saasAppConfig = $saasAppConfig;
+		$this->numberRangeTable = $numberRangeTable;
 	}
 	public function create($data)
 	{
 	    $this->processVpbxEnv();
 	    $this->processMedia(); 	    
 	    $this->processTrunksAndContext();     
-	    $this->processInternal();	    
-	    $this->processRoute();
+	    $this->processInternal();
+	    $this->processNumberRange();
+ 	    $this->processRoute();
 	    $this->processCallCentre();
 	    $this->markCompletedWizardActionsCompleted();
 	    $this->getResponse()->setStatusCode(201);
@@ -301,6 +306,22 @@ class VpbxEnvController extends AbstractRestfulController
 	    }
 	    return $this;
 	}
+	protected function processNumberRange()
+	{
+	    $numberRangeStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_number_range']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_number_range']:false;
+	    if (!$numberRangeStageCompleted)
+	    {
+	        $numberRanges = $this->wizardSessionContainer->numberAllowed;
+	        $numberRangeTable = $this->numberRangeTable;
+	        foreach ($numberRanges as $range)
+	        {
+	            $numberRange = new NumberRange();
+	            $numberRange->value = $range;
+	            $numberRangeTable->saveNumberRange($numberRange);	            
+	        }
+	        $this->wizardSessionContainer->wizardActionsCompletedList['process_number_range'] = true;	         
+	    }
+ 	}
 	protected function processRoute()
 	{
 	    $routeStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_route']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_route']:false;

@@ -53,7 +53,9 @@ class Module
         		'Saas\WizardSessionContainer\WizardSessionContainer' =>'Saas\WizardSessionContainer\WizardSessionContainerFactory',
         		'Saas\TempMedia\Model\TempMediaTable'=>'Saas\TempMedia\Model\TempMediaTableFactory',
         		'Saas\TempMedia\Model\TempMediaTableGateway'=>'Saas\TempMedia\Model\TempMediaTableGatewayFactory',
-                'Saas\Service\AppConfig\AppConfigService'=>'Saas\Service\AppConfig\AppConfigServiceFactory'
+                'Saas\Service\AppConfig\AppConfigService'=>'Saas\Service\AppConfig\AppConfigServiceFactory',
+                'Saas\NumberAllowed\Model\NumberRangeTable'=>'Saas\NumberAllowed\Model\NumberRangeTableFactory',
+                'Saas\NumberAllowed\Model\NumberRangeTableGateway'=>'Saas\NumberAllowed\Model\NumberRangeTableGatewayFactory'
            ),
 	    );
     }
@@ -70,6 +72,7 @@ class Module
         		'Saas\Controller\InternalApi' => 'Saas\Controller\InternalApiControllerFactory',
                 'Saas\Controller\CreateVpbxEnv' => 'Saas\Controller\CreateVpbxEnvControllerFactory',
                 'Saas\Controller\PlayTmpMedia' => 'Saas\Controller\PlayTmpMediaControllerFactory',
+                'Saas\Controller\NumberAllowed' => 'Saas\Controller\NumberAllowedControllerFactory'
              ),
      );
     }

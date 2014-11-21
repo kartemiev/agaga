@@ -8,14 +8,14 @@ use Zend\InputFilter\InputFilterInterface;        // <-- Add this import
 
 class NumberRange implements InputFilterAwareInterface
 {
+    public $id;
 	public $value;
-	public $text;
-	protected $inputFilter;                       // <-- Add this variable
+	protected $inputFilter;     
 	
    public function exchangeArray($data)
     {
-        $this->value     = (isset($data['value'])) ? $data['value'] : null;            
-        $this->text     = (isset($data['text'])) ? $data['text'] : null;
+        $this->id     = (isset($data['id'])) ? $data['id'] : null;            
+        $this->value     = (isset($data['value'])) ? $data['value'] : null;
         
     }
     public function getArrayCopy()
@@ -51,12 +51,12 @@ class NumberRange implements InputFilterAwareInterface
             				),
             		),
             )));
-
+/*
             $inputFilter->add($factory->createInput(array(
-            		'name'     => 'text',            	 
+            		'name'     => 'id',            	 
             		'required' => false,
             )));
-            
+  */          
             
           		$this->inputFilter = $inputFilter;
         }

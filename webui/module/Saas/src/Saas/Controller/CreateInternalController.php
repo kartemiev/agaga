@@ -6,9 +6,15 @@ use Zend\View\Model\ViewModel;
 use Saas\CreateInternal\Form\CreateInternalForm;
 use Saas\NumberAllowed\Form\NumberAllowedForm;
 use Saas\CreateInternal\Model\CreateInternalInputFilterFactory;
+use Saas\WizardSessionContainer\WizardSessionContainer as SessionContainer;
 
 class CreateInternalController extends AbstractActionController
 {
+    private $wizardSessionContainer;
+    public function __construct(SessionContainer $wizardSessionContainer)
+    {
+        $this->wizardSessionContainer = $wizardSessionContainer;
+    }
 	public function indexAction()
 	{
 		$regularinternallistForm = new CreateInternalForm();
@@ -19,7 +25,10 @@ class CreateInternalController extends AbstractActionController
 		$ccoperatorlistForm->get('number')->setAttribute('id', 'ccoperatorselect');
 		
 		$numbersAllowedForm = new NumberAllowedForm();		
-		$numbersAllowedForm->get('chk_group')->setValue("300");
+		$url = $this->url()->fromRoute('numberallowed');		
+		$numbersAllowedForm->setAttribute('action', $url);		
+		$chkGroupElement = $numbersAllowedForm->get('chk_group');
+ 		$chkGroupElement->setValue($this->wizardSessionContainer->numberAllowed->getArrayCopy());
 		
  		return new ViewModel(
  				array(

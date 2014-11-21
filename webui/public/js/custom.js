@@ -693,6 +693,22 @@ $(function(){
 
  	 		}		
  	 	);
+ 	 	$('.submitable>form input').change(
+ 	 		function(event){
+  	 			var form = $(event.target).closest('form');
+  	 			var url = form.attr('action');
+ 	 			var method = form.attr('method');
+ 	 			var enctype = form.attr('enctype');
+ 	 			var data = [];
+ 	 		 	$.each(form.serializeArray(),function(i,v){
+ 	 		 		data.push(v.value);	  		
+ 	 		 	});
+ 	 			$.ajax(
+ 	 					url,{type:method,  contentType: enctype, dataType:'json', data:JSON.stringify(data)}	
+ 	 			);
+ 	 		}		
+ 	 	
+ 	 	);
  	 	
   }
 );
