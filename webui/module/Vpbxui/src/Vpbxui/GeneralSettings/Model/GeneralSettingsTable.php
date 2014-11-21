@@ -12,9 +12,9 @@ class GeneralSettingsTable {
     	$this->tableGateway = $tableGateway;
     }
        
-    public function getSettings($virtualpbxid)
+    public function getSettings()
     {
-     	$rowset = $this->tableGateway->select(array('vpbxid' => $virtualpbxid));
+     	$rowset = $this->tableGateway->select();
     	$row = $rowset->current();
     	if (!$row) {
     		throw new \Exception("Could not find row");
@@ -51,8 +51,7 @@ class GeneralSettingsTable {
     		$data['mohinternal']=$settings->mohinternal;
     	}
     	
-    	$virtualpbxid = (int)$settings->vpbxid;
-        $this->tableGateway->update($data, array('vpbxid' => $virtualpbxid));
+         $this->tableGateway->update($data);
     }
     
     

@@ -6,7 +6,6 @@ use Vpbxui\GeneralSettings\Model\GeneralSettingsTable;
 use Vpbxui\GeneralSettings\Model\GeneralSettings;
 class GeneralSettingsController extends AbstractActionController
 {
-    const VIRTUAL_VPBX_ID = 1;
     protected $generalSettingsTable;
     public function __construct(GeneralSettingsTable $generalSettingsTable)
     {
@@ -26,14 +25,13 @@ class GeneralSettingsController extends AbstractActionController
             
         if ($form->isValid()) {
             $generalSettings->exchangeArray($form->getData());
-            $generalSettings->vpbxid = self::VIRTUAL_VPBX_ID;
             $this->generalSettingsTable->saveSettings($generalSettings);            
             $this->flashMessenger()->addMessage('Настройки сохранены');             
             return $this->redirect()->toRoute('vpbxui/settings/general');
         }
     } else 
     {
-        $generalSettings = $this->generalSettingsTable->getSettings(self::VIRTUAL_VPBX_ID);
+        $generalSettings = $this->generalSettingsTable->getSettings();
         $form->bind($generalSettings);
     }
     $vmtimeoutElement = $form->get('vmtimeout');
