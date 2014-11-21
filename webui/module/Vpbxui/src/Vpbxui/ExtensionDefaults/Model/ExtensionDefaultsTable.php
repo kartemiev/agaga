@@ -13,13 +13,12 @@ class ExtensionDefaultsTable {
     	$this->tableGateway = $tableGateway;
     }
          
-    public function getExtensionDefaults($vpbxid)
+    public function getExtensionDefaults()
     {
-    	$vpbxid  = (int) $vpbxid;
-    	$rowset = $this->tableGateway->select(array('vpbxid' => $vpbxid));
+     	$rowset = $this->tableGateway->select();
     	$row = $rowset->current();
     	if (!$row) {
-    		throw new \Exception("Could not find row $vpbxid");
+    		throw new \Exception("Could not find row");
     	}
      	return $row;
     }
@@ -49,11 +48,10 @@ class ExtensionDefaultsTable {
     		'diversion_noanswer_landingtype' => $extensionDefaultsGroup->diversion_noanswer_landingtype,
     		'diversion_noanswer_duration' => $extensionDefaultsGroup->diversion_noanswer_duration,    			     			     			    			
     	);
-    	$vpbxid = (int)$extensionDefaultsGroup->vpbxid;
-    		if ($this->getExtensionDefaults($vpbxid)) {
-    			$this->tableGateway->update($data, array('vpbxid' => $vpbxid));
+     		if ($this->getExtensionDefaults()) {
+    			$this->tableGateway->update($data);
     		} else {
-    			throw new \Exception('Form vpbxid does not exist');
+    			throw new \Exception('Form does not exist');
     	}
     }     
 }

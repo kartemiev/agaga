@@ -40,6 +40,8 @@ use Vpbxui\Controller\MediaReposController;
 use Zend\Math\Rand;
 use Saas\NumberAllowed\Model\NumberRangeTable;
 use Saas\NumberAllowed\Model\NumberRange;
+use Vpbxui\ExtensionDefaults\Model\ExtensionDefaultsTable;
+use Vpbxui\ExtensionDefaults\Model\ExtensionDefaults;
 
 class VpbxEnvController extends AbstractRestfulController
 {
@@ -69,6 +71,7 @@ class VpbxEnvController extends AbstractRestfulController
     protected $restfulAppConfig;
     protected $saasAppConfig;
     protected $numberRangeTable;
+    protected $extensionDefaultsTable;
 	public function __construct(
 			WizardSessionContainerInterface $wizardSessionContainer, 
 			ExtensionTableInterface $extensionTable, 
@@ -91,7 +94,8 @@ class VpbxEnvController extends AbstractRestfulController
 			CallCentreScheduleTableInterface $callCentreScheduleTable,
 	       RestfulConfigInterface $restfulAppConfig,
 	       SaasConfigInterface $saasAppConfig,
-	       NumberRangeTable $numberRangeTable	       
+	       NumberRangeTable $numberRangeTable,
+	       ExtensionDefaultsTable $extensionDefaultsTable	       
 	)
 	{
 		$this->wizardSessionContainer = $wizardSessionContainer;
@@ -116,6 +120,7 @@ class VpbxEnvController extends AbstractRestfulController
 		$this->restfulAppConfig = $restfulAppConfig;
 		$this->saasAppConfig = $saasAppConfig;
 		$this->numberRangeTable = $numberRangeTable;
+		$this->extensionDefaultsTable = $extensionDefaultsTable;
 	}
 	public function create($data)
 	{
@@ -124,6 +129,7 @@ class VpbxEnvController extends AbstractRestfulController
 	    $this->processTrunksAndContext();     
 	    $this->processInternal();
 	    $this->processNumberRange();
+	    $this->processExtensionDefaults();
  	    $this->processRoute();
 	    $this->processCallCentre();
 	    $this->markCompletedWizardActionsCompleted();
@@ -320,6 +326,17 @@ class VpbxEnvController extends AbstractRestfulController
 	            $numberRangeTable->saveNumberRange($numberRange);	            
 	        }
 	        $this->wizardSessionContainer->wizardActionsCompletedList['process_number_range'] = true;	         
+	    }
+ 	}
+ 	
+ 	protected function processExtensionDefaults()
+ 	{
+ 	    $extensionDefaultsCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_extension_defaults']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_extension_defaults']:false;
+	    if (!$extensionDefaultsCompleted)
+	    {
+	        $extensionDefaults = new ExtensionDefaults();	        
+	        $this->extensionDefaultsTable->saveExtensionDefaults($extensionDefaults);
+	        $this->wizardSessionContainer->wizardActionsCompletedList['process_extension_defaults'] = true;
 	    }
  	}
 	protected function processRoute()
