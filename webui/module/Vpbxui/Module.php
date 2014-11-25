@@ -198,7 +198,7 @@ class Module
             'Vpbxui\Extension\Model\ExtensionTable' =>  'Vpbxui\Extension\Model\ExtensionTableFactory',
             'Vpbxui\Status\Model\AmiGateway' => 'Vpbxui\Service\AmiClientServiceFactory', 
             'Vpbxui\Status\Model\StatusCommand' => 'Vpbxui\Status\Model\StatusCommandFactory',                    
-            'ExtensionTableGateway' => 'Vpbxui\Extension\Model\ExtensionTableGatewayFactory',
+            'Vpbxui\Extension\Model\ExtensionTableGateway' => 'Vpbxui\Extension\Model\ExtensionTableGatewayFactory',
             'Vpbxui\Cdr\Model\CdrTable' => 'Vpbxui\Cdr\Model\CdrTableFactory',
             'Vpbxui\Cdr\Model\CdrTableGateway' => 'Vpbxui\Cdr\Model\CdrTableGatewayFactory',
             'Vpbxui\Prune\Model\PruneCommand'=>'Vpbxui\Prune\Model\PruneCommandFactory',
@@ -304,7 +304,11 @@ class Module
         	'Vpbxui\Service\VpbxidProvider\VpbxidProvider' => 'Vpbxui\Service\VpbxidProvider\VpbxidProviderFactory',
             'Vpbxui\FeatureTest\Model\FeatureTestTable'=>'Vpbxui\FeatureTest\Model\FeatureTestTableFactory',
             'Vpbxui\FeatureTest\Model\FeatureTestTableGateway'=>'Vpbxui\FeatureTest\Model\FeatureTestTableGatewayFactory',
-            'Vpbxui\Service\VpbxidProvider\VpbxidFeature'=>'Vpbxui\Service\VpbxidProvider\VpbxidFeatureFactory'       		
+            'Vpbxui\Service\VpbxidProvider\VpbxidFeature'=>'Vpbxui\Service\VpbxidProvider\VpbxidFeatureFactory',
+            'Vpbxui\NumberAllowed\Model\NumberRangeTable'=>'Vpbxui\NumberAllowed\Model\NumberRangeTableFactory',
+            'Vpbxui\NumberAllowed\Model\NumberRangeTableGateway'=>'Vpbxui\NumberAllowed\Model\NumberRangeTableGatewayFactory',
+            'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTable'=>'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTableFactory',
+            'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTableGateway'=>'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTableGatewayFactory'            
            ),
         'shared'=>array(
         		'navigation'=>'false',
@@ -320,7 +324,6 @@ class Module
          return array(
          'invokables' => array(
             'Vpbxui\Controller\Index' => 'Vpbxui\Controller\IndexController',
-            'Vpbxui\Controller\Internal' => 'Vpbxui\Controller\InternalController',
             'Vpbxui\Controller\Callcentre' => 'Vpbxui\Controller\CallcentreController',
             'Vpbxui\Controller\Operator' => 'Vpbxui\Controller\OperatorController',
             'Vpbxui\Controller\Cdr' => 'Vpbxui\Controller\CdrController',        
@@ -349,6 +352,7 @@ class Module
          	'Vpbxui\Controller\CallCentreSettings' => 'Vpbxui\Controller\CallCentreSettingsController'
             ),
         'factories'=> array(
+            'Vpbxui\Controller\Internal' => 'Vpbxui\Controller\InternalControllerFactory',            
         	'Vpbxui\Controller\Monitoring'=>'Vpbxui\Controller\MonitoringControllerFactory',        		
             'Vpbxui\Controller\StatController' => 'Vpbxui\Controller\StatControllerFactory',
             'Vpbxui\Controller\UserController'=>'Vpbxui\Controller\UserControllerFactory', 
@@ -357,7 +361,9 @@ class Module
             'Vpbxui\Controller\ConferenceBooking' => 'Vpbxui\Controller\ConferenceBookingControllerFactory',
         	'Vpbxui\Controller\CallCentreSchedule' => 'Vpbxui\Controller\CallCentreScheduleControllerFactory',
         	'Vpbxui\Controller\AuthCode' =>	 'Vpbxui\Controller\AuthCodeControllerFactory',
-        	'Vpbxui\Controller\RegisterPbx' => 'Vpbxui\Controller\RegisterPbxControllerFactory'
+        	'Vpbxui\Controller\RegisterPbx' => 'Vpbxui\Controller\RegisterPbxControllerFactory',
+            'Vpbxui\Controller\NumberAllowed' => 'Vpbxui\Controller\NumberAllowedControllerFactory',
+            'Vpbxui\Controller\DefaultDenyPermit'=>'Vpbxui\Controller\DefaultDenyPermitControllerFactory'
             ),
      );
     }

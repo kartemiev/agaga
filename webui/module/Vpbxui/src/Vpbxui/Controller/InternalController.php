@@ -13,13 +13,19 @@ use Vpbxui\Extension\Model\ExtensionTableInterface;
 use Zend\View\Model\JsonModel;
 use Vpbxui\CallDestination\Model\CallDestination;
 use Zend\Mvc\MvcEvent;
-
-/**
- * InternalController
- * 
- * @author
- * @version 
- */
+use Vpbxui\ExtensionGroup\Model\ExtensionGroupTable;
+use Vpbxui\ExtensionProfile\Model\ExtensionProfileTable;
+use Vpbxui\Extension\Model\ExtensionProfilePicker;
+use Zend\Navigation\Navigation;
+use Vpbxui\Prune\Model\PruneCommand;
+use Vpbxui\Service\PasswordGen\PasswordGen;
+use Vpbxui\FreeExtension\Model\FreeExtensionTable;
+use Vpbxui\Extension\Form\ExtensionForm;  
+use Vpbxui\CallDestination\Model\CallDestinationTable;
+use Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTable;
+use Vpbxui\Extension\Model\Extension;
+use Vpbxui\Extension\Form\ExtensionProfilePickerForm;
+ 
 class InternalController extends AbstractActionController  {
     protected $extensionTable;
     protected $extensionGroupTable;
@@ -30,16 +36,54 @@ class InternalController extends AbstractActionController  {
     protected $passwordGen;
     protected $freeExtensionTable;
     protected $extensionForm;
-    const SIP_NEWEXTEN_DEFAULT_DENY = '0.0.0.0/0.0.0.0';
-    const SIP_NEWEXTEN_DEFAULT_PERMIT = '192.168.6.0/255.255.255.0';
+    private $extension;
+    private $extensionProfilePicker;
+    private $extensionProfilePickerForm;
+    private $navigation;
+    private $pruneCommand;
+    private $callDestinationTable;
+    private $defaultDenyPermitTable;
     const SIP_DEFAULT_NUM_LINES = 30;
-         public function indexAction()
+    public function __construct(
+        ExtensionTableInterface $extensionTable,   
+        ExtensionGroupTable $extensionGroupTable, 
+        ExtensionProfileTable $extensionProfileTable, 
+        OperatorStatusLogTableInterface $operatorStatusLogTable,
+        Extension $extension,
+        ExtensionProfilePicker $extensionProfilePicker,
+        Navigation $navigation,
+        PruneCommand $pruneCommand,
+        PasswordGen $passwordGen,
+        FreeExtensionTable $freeExtensionTable,
+        ExtensionForm $extensionForm,
+        CallDestinationTable $callDestinationTable,
+        DefaultDenyPermitTable $defaultDenyPermitTable,
+        ExtensionProfilePickerForm $extensionProfilePickerForm
+        )
+    {
+        $this->extensionTable = $extensionTable;
+        $this->extensionGroupTable = $extensionGroupTable;
+        $this->extensionProfileTable = $extensionProfileTable;
+        $this->operatorStatusLogTable = $operatorStatusLogTable;
+        $this->extension = $extension;
+        $this->extensionProfilePicker = $extensionProfilePicker;
+        $this->extensionProfilePickerForm = $extensionProfilePickerForm;
+        $this->navigation = $navigation;
+        $this->pruneCommand = $pruneCommand;
+        $this->passwordGen = $passwordGen;
+        $this->freeExtensionTable = $freeExtensionTable;
+        $this->extensionForm = $extensionForm;
+        $this->callDestinationTable = $callDestinationTable;
+        $this->defaultDenyPermitTable = $defaultDenyPermitTable;
+        $this->extensionProfilePickerForm = $extensionProfilePickerForm;
+    }
+    public function indexAction()
     {
         $select = new Select();
         $select->order('extension ASC');
 
-        $extensions =  $this->getExtensionTable()->fetchAll($select); 
-        $extensionGroups = $this->getExtensionGroupTable()->fetchAll();
+        $extensions =  $this->extensionTable->fetchAll($select); 
+        $extensionGroups = $this->extensionGroupTable->fetchAll();
         $extensionGroupsArray = array();
         foreach ($extensionGroups as $extensionGroup)
         {
@@ -56,8 +100,7 @@ class InternalController extends AbstractActionController  {
     
    public function addAction()
     {        
-        $sm = (method_exists($this->serviceLocator, 'getServiceLocator'))?$this->serviceLocator->getServiceLocator():$this->serviceLocator;
-        $form = $this->getExtensionForm();
+        $form = $this->extensionForm;
         $form->get('actions')
         ->get('submit')
         ->setLabel('Добавить');
@@ -65,14 +108,13 @@ class InternalController extends AbstractActionController  {
         
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $sm = $this->serviceLocator;
-            $extension = $sm->get('Vpbxui\Extension\Model\Extension');
+            $extension = $this->$extension;
             $form->setInputFilter($extension->getInputFilter());
             $form->setData($request->getPost());            
             if ($form->isValid()) {
                $extension->exchangeArray($form->getData());          
 			
-                $id = (int)$this->getExtensionTable()->saveExtension($extension);  
+                $id = (int)$this->extensionTable->saveExtension($extension);  
                 
                 $this->saveCallDestinations($id, $form);
                
@@ -92,7 +134,7 @@ class InternalController extends AbstractActionController  {
                 $this->redirect()->toRoute('vpbxui/internal', array('action' => 'profile'));
             }
             $profile = (int)$profile;
-            $extensionProfileTable = $this->getExtensionProfileTable();
+            $extensionProfileTable = $this->extensionProfileTable;
             $extensionProfile = $extensionProfileTable->getExtensionProfile($profile);
             unset($extensionProfile->id);
             $form->bind($extensionProfile);
@@ -110,19 +152,17 @@ class InternalController extends AbstractActionController  {
     
     public function profileAction()
     {
-        $sm = (method_exists($this->serviceLocator, 'getServiceLocator'))?$this->serviceLocator->getServiceLocator():$this->serviceLocator;
-        $form = $sm->get('Vpbxui\Extension\Form\ExtensionProfilePickerForm');
-
+        $form = $this->extensionProfilePickerForm;
         $request = $this->getRequest();
         if ($request->isPost()) {
             $sm = $this->serviceLocator;
-            $extensionprofile = $sm->get('Vpbxui\Extension\Model\ExtensionProfilePicker');
+            $extensionprofile = $this->extensionProfilePicker;
             $form->setInputFilter($extensionprofile->getInputFilter());
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
                $extensionprofile->exchangeArray($form->getData());
-               $extensionProfileTable = $this->getExtensionProfileTable();
+               $extensionProfileTable = $this->extensionProfileTable;
                $extensionProfileRecord = $extensionProfileTable->getExtensionProfile($extensionprofile->profile);
                $profileName = $extensionProfileRecord->profilename;
                if (0==!$extensionProfileRecord->id){
@@ -143,14 +183,14 @@ class InternalController extends AbstractActionController  {
                 'action' => 'add'
             ));
         }
-        $extension = $this->getExtensionTable()->getExtension($id);
+        $extension = $this->extensionTable->getExtension($id);
 
-        $navigation = $this->getServiceLocator()->get('Navigation');
+//        $navigation = $this->getServiceLocator()->get('Navigation');
+        $navigation = $this->navigation;
         $page = $navigation->findBy('id', 'internal'.($extension->id));
         $page->setActive();
         
-        $sm = $this->getServiceLocator();
-        $form = $this->getExtensionForm();
+        $form = $this->extensionForm;
         
         $form->bind($extension);
          $form->get('actions')
@@ -175,7 +215,7 @@ class InternalController extends AbstractActionController  {
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $this->getExtensionTable()->saveExtension($form->getData());
+                $this->extensionTable->saveExtension($form->getData());
                 $this->saveCallDestinations($id, $form);
                 $peerName = $form->getData()->name;
                  $this->prunePeer($peerName);
@@ -209,8 +249,8 @@ class InternalController extends AbstractActionController  {
     
     		if ($del == 'Да') {
     			$id = (int) $request->getPost('id');
-    			$extension = $this->getExtensionTable()->getExtension($id);    			 
-    			$this->getExtensionTable()->deleteExtension($id);
+    			$extension = $this->extensionTable->getExtension($id);    			 
+    			$this->extensionTable->deleteExtension($id);
                          $peerName = $extension->name;
                          if (ExtensionTableInterface::EXTENSION_TYPE_OPERATOR == $extension->extensiontype)
                          {
@@ -225,16 +265,9 @@ class InternalController extends AbstractActionController  {
     
     	return array(
     			'id'    => $id,
-    			'extension' => $this->getExtensionTable()->getExtension($id)
+    			'extension' => $this->extensionTable->getExtension($id)
     	);
     }
-	public function getExtensionTable() {
-	    if (!$this->extensionTable) {
-	    	$sm = $this->getServiceLocator();
-	    	$this->extensionTable = $sm->get('Vpbxui\Extension\Model\ExtensionTable');
-	    }
-		return $this->extensionTable;
-	}
 	
     public function addQueryParam($queryParam) {
         $this->query[] = $queryParam;
@@ -254,103 +287,44 @@ class InternalController extends AbstractActionController  {
     }
     protected function prunePeer($peername)
     {
-        $serviceLocator = $this->getServiceLocator();
-        $sl = (method_exists($serviceLocator, 'getServiceLocator'))?
-                $serviceLocator->getServiceLocator(): $serviceLocator;
-        $pruneCommand = $sl->get('Vpbxui\Prune\Model\PruneCommand');
-        $pruneCommand->prunePeer($peername);
+        $this->pruneCommand->prunePeer($peername);
         return $this;
-    }
-    protected function getExtensionGroupTable()
-    {
-        if (!$this->extensionGroupTable) {
-            $sm = $this->getServiceLocator();
-            $this->extensionGroupTable = $sm->get('Vpbxui\ExtensionGroup\Model\ExtensionGroupTable');
-        }
-        return $this->extensionGroupTable;        
-        
-    }
-    protected function getExtensionProfileTable()
-    {
-        if (!$this->extensionProfileTable) {
-            $sm = $this->getServiceLocator();
-            $this->extensionProfileTable = $sm->get('Vpbxui\ExtensionProfile\Model\ExtensionProfileTable');
-        }
-        return $this->extensionProfileTable;
-    
     }
     protected function addOperatorStatusLogEntry($extension, $operatorstatus)
     {
         $logEntry = new OperatorStatusLogEntry();
         $logEntry->extension = $extension;
         $logEntry->operatorstatus = $operatorstatus;
-        $operatorStatusLogTable = $this->getOperatorStatusLogTable();
+        $operatorStatusLogTable = $this->operatorStatusLogTable;
         $operatorStatusLogTable->addEntry($logEntry);        
-    }
-    protected function getOperatorStatusLogTable()
-    {
-        if (!$this->operatorStatusLogTable)
-        {
-            $sm = $this->getServiceLocator();
-            $this->operatorStatusLogTable = $sm->get('Vpbxui\OperatorStatusLog\Model\OperatorStatusLogTable');
-        }
-        return $this->operatorStatusLogTable;
-    }
-    protected function getPasswordGen()
-    {
-        if (!$this->passwordGen)
-        {
-            $sm = $this->getServiceLocator();
-            $this->passwordGen = $sm->get('Vpbxui\Service\PasswordGen\PasswordGen');
-        }
-        return $this->passwordGen;
-    }
-    protected function getFreeExtensionTable()
-    {
-        if (!$this->freeExtensionTable)
-        {
-            $sm = $this->getServiceLocator();
-            $this->freeExtensionTable = $sm->get('Vpbxui\FreeExtension\Model\FreeExtensionTable');
-        }
-        return $this->freeExtensionTable;
     }
     protected function extensionAddSetDefaultFormValues($form)
     {
         $name = $form->get('name');
-        $freeExtensionTable = $this->getFreeExtensionTable();
-        $nextFreeExtensions = $freeExtensionTable->fetchAll();
+        $nextFreeExtensions = $this->freeExtensionTable->fetchAll();
         $nextFreeExtension = $nextFreeExtensions->current()->ext;
         $name->setValue($nextFreeExtension);
         
         $secret = $form->get('secret');
-        $passwordGen = $this->getPasswordGen();
-        $password = $passwordGen();
+        $password = $this->passwordGen->__invoke();
         $secret->setValue($password);
         $permit = $form->get('permit');
         $deny = $form->get('deny');
-        $permit->setValue(self::SIP_NEWEXTEN_DEFAULT_PERMIT);
-        $deny->setValue(self::SIP_NEWEXTEN_DEFAULT_DENY);
+        $defaultDenyPermit = $this->defaultDenyPermitTable->getDefaultDenyPermit();
+        $permit->setValue($defaultDenyPermit->permit);
+        $deny->setValue($defaultDenyPermit->deny);
     }
     public function generateAction()
     {
         return new JsonModel(
             array(
-                'pwd'=>$this->getPasswordGen()->__invoke()                
+                'pwd'=>$this->passwordGen->__invoke()                
         )
             );       
     }
-    protected function getExtensionForm()
-    {
-        if (!$this->extensionForm)
-        {
-            $this->extensionForm = $this->getServiceLocator()
-            							->get('Vpbxui\Extension\Form\ExtensionForm');
-        }
-        return $this->extensionForm;
-    }
     protected function populateCallDestinationFieldset($id)
     {
-    	$form = $this->getExtensionForm();
+    	$form = $this->extensionForm;
     	$numbers = $form->get('numbers');
     	$callDestinations = $form->callDestinationTable
     	->fetchAll(array('peerid' => $id));
@@ -386,8 +360,7 @@ class InternalController extends AbstractActionController  {
     	{
     		$numbers = $formdata->numbers;
     	}     
-      	$callDestinationTable = $this->getServiceLocator()->get('Vpbxui\CallDestination\Model\CallDestinationTable');
-    	$callDestinationTable->deleteCallDestinations($id);
+    	$this->callDestinationTable->deleteCallDestinations($id);
     	if ($numbers)
     	{
     		foreach ($numbers as $number)

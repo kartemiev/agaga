@@ -274,6 +274,34 @@ return array(
                            'may_terminate' => true,
                            'child_routes' => array(
 
+                                
+                               'numberallowed' => array(
+                           		'type' => 'Segment',
+                           				 
+                           		'options' => array(
+                           				'route' => '/numberallowed',
+                           					'defaults' => array(
+                           						'controller' => 'Vpbxui\Controller\NumberAllowed',
+                           						'action' => 'index',
+                           					),
+                           				),
+                           				'may_terminate'=>true
+                           		),    
+                               'defaultdenypermit' => array(
+                                   'type' => 'Segment',
+                               
+                                   'options' => array(
+                                       'route' => '/defaultdenypermit[/:action]',
+                                       'constraints' => array(
+                                           'action' => '[a-zA-Z][a-zA-Z0-9_-]*'
+                                        ),
+                                       'defaults' => array(
+                                           'controller' => 'Vpbxui\Controller\DefaultDenyPermit',
+                                           'action' => 'index',
+                                       ),
+                                   ),
+                                   'may_terminate'=>true
+                               ),
                            'extensiondefaults' => array(
                            		'type' => 'Segment',
                            				 

@@ -31,8 +31,7 @@ class ExtensionDefaultsController extends AbstractActionController {
 
             if ($form->isValid()) {
             	$formdata = $form->getData();
-            	$formdata->vpbxid = self::VPBX_NUMBER;
-                $this->getExtensionDefaultsTable()->saveExtensionDefaults($formdata);
+                 $this->getExtensionDefaultsTable()->saveExtensionDefaults($formdata);
                 $this->flashMessenger()->addMessage('Настройки успешно сохранены');                  
                 return $this->redirect()->toRoute('vpbxui/settings/extensiondefaults');
             }

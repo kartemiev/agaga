@@ -17,13 +17,13 @@ class PruneCommand {
     
     public function prunePeer($peerName)
     {
-        try{
-        $a = $this->amiGateway;
-	$a->open();       
-        $response = $a->send(new CommandAction("sip prune realtime {$peerName}"));
-        $a->Close();
-       
-        }  catch (ClientException $e){}
+       try{
+            $a = $this->amiGateway;
+	        $a->open();       
+            $response = $a->send(new CommandAction("sip prune realtime {$peerName}"));
+            $a->Close();
+        }  catch (ClientException $e){            
+        }
         	return $response;
     }
 }

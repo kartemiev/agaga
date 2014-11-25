@@ -15,5 +15,4 @@ interface ExtensionTableInterface
     function getOperatorList();
     function getNextFreeExtension();    
     function deleteAllExtensions();
-    
 }

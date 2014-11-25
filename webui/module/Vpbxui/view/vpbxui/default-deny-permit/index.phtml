@@ -1,0 +1,14 @@
+<?php
+ 
+$title = 'безопасность SIP';
+
+$this->headTitle($title);
+ 
+
+$form = $this->form;
+
+$form->prepare();
+
+echo $this->form()->openTag($form);
+echo $this->formcollection($form);
+echo $this->form()->closeTag();

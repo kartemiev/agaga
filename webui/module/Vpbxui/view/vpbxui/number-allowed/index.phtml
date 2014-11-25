@@ -1,0 +1,21 @@
+<?php
+ 
+$title = 'допустимый диапазон внутренних номеров';
+
+$this->headTitle($title);
+ 
+
+$form = $this->form;
+
+$form->prepare();
+
+echo $this->form()->openTag($form);
+echo $this->form_row($form->get('chk_group'));
+?>
+<div class="row-fluid">
+<div class="span6 offset10"><?php
+echo $this->form_row($form->get('submit'));
+?></div></div><?php
+
+
+echo $this->form()->closeTag();

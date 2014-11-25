@@ -662,6 +662,24 @@ return array(
                 		'controller' => 'Vpbxui\Controller\GeneralSettings',
                 		'action'  => 'index',
                 		'pages'=>array(
+                		    array(
+                		        'label' => 'диапазон внутренних номеров',
+                		        'title'=>'нумерация',
+                		        'route' => 'vpbxui/settings/numberallowed',
+                		        'privilege' => 'index',
+                		        'resource'   => 'mvc:settingsnumberallowed.vpbxui', // resource
+                		        'controller' => 'Vpbxui\Controller\NumberAllowed',
+                		        'action'  => 'index'                		    
+                		    ),
+                		    array(
+                		        'label' => 'безопасность SIP',
+                		        'title'=>'безопасность SIP',
+                		        'route' => 'vpbxui/settings/defaultdenypermit',
+                		        'privilege' => 'index',
+                		        'resource'   => 'mvc:settingsdenypermit.vpbxui', // resource
+                		        'controller' => 'Vpbxui\Controller\DefaultDenyPermit',
+                		        'action'  => 'index'
+                		    ),
                 				array(
                 						'label' => 'медиа файлы',
                 						'title'=>'медиа файлы',

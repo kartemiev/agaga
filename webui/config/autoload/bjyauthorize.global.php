@@ -70,8 +70,9 @@ return array(
             	'mvc:settingscallcentre.vpbxui',
             	'mvc:callcentreschedule.vpbxui',		  
             	'mvc:asterreboot.vpbxui',     
-            	'mvc:registerpbx.vpbxui'
-            		
+            	'mvc:registerpbx.vpbxui',
+                'mvc:settingsnumberallowed.vpbxui',
+                'mvc:settingsdenypermit.vpbxui'
             ),
         ),
 
@@ -174,6 +175,13 @@ return array(
                     array(array('admin'),
                         'mvc:settingsmedia.vpbxui',
                     ),
+                    array(array('admin'),
+                         'mvc:settingsnumberallowed.vpbxui',
+                    ),
+                    array(array('admin'),
+                        'mvc:settingsdenypermit.vpbxui',
+                    ),
+        
                 		array(array('admin'),
                 				'mvc:settingscallcentre.vpbxui',
                 		),
@@ -257,12 +265,15 @@ return array(
                     	'Vpbxui\Controller\Route', 
                     	'Vpbxui\Controller\NumberMatch',                   		
                         'Vpbxui\Controller\GeneralSettings',
+                        'Vpbxui\Controller\NumberAllowed',
                         'Vpbxui\Controller\Offday', 
                     	'Vpbxui\Controller\ExtensionDefaults',                  		         
                     	'Vpbxui\Controller\FaxUser',	       
                     	'Vpbxui\Controller\CallCentreSettings',
                     	'Vpbxui\Controller\CallCentreSchedule',
                     	'Vpbxui\Controller\AuthCode',
+                        'Vpbxui\Controller\NumberAllowed',
+                        'Vpbxui\Controller\DefaultDenyPermit',                        
                         'zfcuseradmin',
                         'zfcuser',
                         'Saas\Controller\CreateVpbxEnv',
@@ -391,6 +402,9 @@ return array(
                 array('route' => 'vpbxui/settings/offdays', 'roles' => array('admin')),
                 array('route' => 'vpbxui/settings/general', 'roles' => array('admin')),
                 array('route' => 'vpbxui/settings/media', 'roles' => array('admin')),
+                array('route' => 'vpbxui/settings/numberallowed', 'roles' => array('admin')),
+                array('route' => 'vpbxui/settings/defaultdenypermit', 'roles' => array('admin')),
+                
                 array('route' => 'vpbxui/settings/extensiondefaults', 'roles' => array('admin')),                
             	array('route' => 'vpbxui/settings/faxuser', 'roles' => array('admin')),
 

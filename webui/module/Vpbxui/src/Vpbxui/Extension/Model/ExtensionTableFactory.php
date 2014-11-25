@@ -9,7 +9,7 @@ class ExtensionTableFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $tableGateway = $serviceLocator->get('ExtensionTableGateway');
+        $tableGateway = $serviceLocator->get('Vpbxui\Extension\Model\ExtensionTableGateway');
          return new ExtensionTable(
         			$tableGateway
 				);
