@@ -21,12 +21,14 @@ class OverviewController extends AbstractActionController
 		$vpbxEnv = (isset($wizardSessionContainer->vpbxEnv))?$wizardSessionContainer->vpbxEnv:null;	
 		$media = (isset($wizardSessionContainer->media))?$wizardSessionContainer->media:null;
 		$did = $wizardSessionContainer->did;	
+		$numberAllowed = $wizardSessionContainer->numberAllowed;
    		return new ViewModel(
 				array(
 						'internalnumbers'=>$internalnumbers,
 						'vpbxEnv'=>$vpbxEnv,
 						'media'=>$media,
-						'did'=>$did
+						'did'=>$did,
+				        'numberallowed'=>$numberAllowed
 				)
 		);
 	 

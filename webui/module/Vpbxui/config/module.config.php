@@ -790,7 +790,7 @@ return array(
         	'cdrCallDirection' => 'Vpbxui\View\Helper\CdrCallDirection',
         	'cdrCallDateFormat' => 	'Vpbxui\View\Helper\CdrCallDateFormat',
         	'channelStateDebrief' => 'Vpbxui\View\Helper\ChannelStateDebrief',
-        	'cdrDstNumReplacementSpecialCase' => 'Vpbxui\View\Helper\CdrDstNumReplacementSpecialCase'
+        	'cdrDstNumReplacementSpecialCase' => 'Vpbxui\View\Helper\CdrDstNumReplacementSpecialCase',
         ),
     ),
 );

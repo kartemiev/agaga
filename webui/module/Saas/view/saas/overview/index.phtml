@@ -23,6 +23,11 @@
 		<td class="content">&nbsp;</td>
  	<td class="content">
  	<ul class="nobullets">
+    <?php foreach ($numberallowed as $range):?> 	
+    <li>
+        <?php echo $this->ExtensionRangeFormat($range);?>
+    </li> 
+     <?php endforeach;?>
   <?php foreach ($internalnumbers as $key=>$internalnumber):?>
   <li>
 		[<?php echo $internalnumber->extension?>] <?php echo $internalnumber->custname?> (<?php echo $this->ExtensionTypeDebrief($internalnumber->extensiontype)?>)
