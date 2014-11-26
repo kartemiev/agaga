@@ -31,7 +31,8 @@ class VpbxEnvControllerFactory implements FactoryInterface
 		        $sl->get('Restful\Service\AppConfig\AppConfigService'),
 		        $sl->get('Saas\Service\AppConfig\AppConfigService'),
 		        $sl->get('Saas\NumberAllowed\Model\NumberRangeTable'),
-		        $sl->get('Vpbxui\ExtensionDefaults\Model\ExtensionDefaultsTable')		    
+		        $sl->get('Vpbxui\ExtensionDefaults\Model\ExtensionDefaultsTable'),
+		        $sl->get('Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTable')		    
 		);
     }
 }

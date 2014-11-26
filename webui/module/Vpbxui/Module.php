@@ -308,8 +308,49 @@ class Module
             'Vpbxui\NumberAllowed\Model\NumberRangeTable'=>'Vpbxui\NumberAllowed\Model\NumberRangeTableFactory',
             'Vpbxui\NumberAllowed\Model\NumberRangeTableGateway'=>'Vpbxui\NumberAllowed\Model\NumberRangeTableGatewayFactory',
             'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTable'=>'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTableFactory',
-            'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTableGateway'=>'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTableGatewayFactory'            
+            'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTableGateway'=>'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTableGatewayFactory',
+            'LazyServiceFactory' => 'Zend\ServiceManager\Proxy\LazyServiceFactoryFactory',            
            ),
+            
+            'delegators' => array(
+                'Vpbxui\Extension\Model\Extension' => array(
+                    'LazyServiceFactory'
+                ),
+                'Vpbxui\Extension\Model\ExtensionTable' => array(
+                    'LazyServiceFactory'
+                ),
+                'Vpbxui\ExtensionGroup\Model\ExtensionGroupTable' => array(
+                    'LazyServiceFactory'
+                ),
+                'Vpbxui\ExtensionProfile\Model\ExtensionProfileTable' => array(
+                    'LazyServiceFactory'
+                ),
+                'Vpbxui\OperatorStatusLog\Model\OperatorStatusLogTable' => array(
+                    'LazyServiceFactory'
+                ),
+                'Vpbxui\Service\PasswordGen\PasswordGen' => array(
+                    'LazyServiceFactory'
+                ),
+                'Vpbxui\FreeExtension\Model\FreeExtensionTable' => array(
+                    'LazyServiceFactory'
+                ),
+                'Vpbxui\Extension\Form\ExtensionForm' => array(
+                    'LazyServiceFactory'
+                ),
+                'Vpbxui\Extension\Model\ExtensionProfilePicker' => array(
+                    'LazyServiceFactory'                    
+                ),
+                'Vpbxui\Prune\Model\PruneCommand' => array(
+                    'LazyServiceFactory'
+                ),
+                'Vpbxui\FreeExtension\Model\FreeExtensionTable' => array(
+                    'LazyServiceFactory'
+                ),
+                'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTable' => array(
+                    'LazyServiceFactory'
+                )
+            ),
+             
         'shared'=>array(
         		'navigation'=>'false',
         		'Vpbxui\Context\Model\Context' => false

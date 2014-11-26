@@ -7,6 +7,7 @@ use Saas\VpbxEnv\Model\VpbxEnv;
 use Vpbxui\Extension\Model\Extension;
 use Saas\FreeDid\Model\FreeDid;
 use Saas\TempMedia\Model\TempMediaTableInterface;
+use Saas\NumberAllowed\Model\NumberAllowed;
 
 class WizardSessionContainer extends SessionContainer implements WizardSessionContainerInterface
 {	
@@ -18,7 +19,10 @@ class WizardSessionContainer extends SessionContainer implements WizardSessionCo
 		parent::__construct($name, $manager);
 		$this->vpbxEnv = new VpbxEnv();
 	    $this->wizardActionsCompletedList = array();	
- 	     
+	    if (!$this->numberAllowed)
+	    {
+	       $this->numberAllowed = new NumberAllowed();
+	    }
  	}
 	public function setDid(FreeDid $did)
 	{

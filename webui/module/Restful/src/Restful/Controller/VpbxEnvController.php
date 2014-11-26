@@ -42,6 +42,8 @@ use Saas\NumberAllowed\Model\NumberRangeTable;
 use Saas\NumberAllowed\Model\NumberRange;
 use Vpbxui\ExtensionDefaults\Model\ExtensionDefaultsTable;
 use Vpbxui\ExtensionDefaults\Model\ExtensionDefaults;
+use Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTable;
+use Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermit;
 
 class VpbxEnvController extends AbstractRestfulController
 {
@@ -72,6 +74,7 @@ class VpbxEnvController extends AbstractRestfulController
     protected $saasAppConfig;
     protected $numberRangeTable;
     protected $extensionDefaultsTable;
+    protected $defaultDenyPermitTable;
 	public function __construct(
 			WizardSessionContainerInterface $wizardSessionContainer, 
 			ExtensionTableInterface $extensionTable, 
@@ -95,7 +98,8 @@ class VpbxEnvController extends AbstractRestfulController
 	       RestfulConfigInterface $restfulAppConfig,
 	       SaasConfigInterface $saasAppConfig,
 	       NumberRangeTable $numberRangeTable,
-	       ExtensionDefaultsTable $extensionDefaultsTable	       
+	       ExtensionDefaultsTable $extensionDefaultsTable,
+	       DefaultDenyPermitTable $defaultDenyPermitTable	       
 	)
 	{
 		$this->wizardSessionContainer = $wizardSessionContainer;
@@ -121,12 +125,14 @@ class VpbxEnvController extends AbstractRestfulController
 		$this->saasAppConfig = $saasAppConfig;
 		$this->numberRangeTable = $numberRangeTable;
 		$this->extensionDefaultsTable = $extensionDefaultsTable;
+		$this->defaultDenyPermitTable = $defaultDenyPermitTable;
 	}
 	public function create($data)
 	{
 	    $this->processVpbxEnv();
 	    $this->processMedia(); 	    
 	    $this->processTrunksAndContext();     
+	    $this->processDefaultDenyPermit();
 	    $this->processInternal();
 	    $this->processNumberRange();
 	    $this->processExtensionDefaults();
@@ -399,7 +405,16 @@ class VpbxEnvController extends AbstractRestfulController
 	       $this->wizardSessionContainer->wizardActionsCompletedList['process_callcentre'] = true;	       
 	    }
 	}
-	
+	protected function processDefaultDenyPermit()
+	{
+	    $defaultDenyPermitStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_defaultdenypermit']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_defaultdenypermit']:false;
+	    if (!$defaultDenyPermitStageCompleted)
+	    {
+	        $defaultDenyPermit = new DefaultDenyPermit();
+	        $this->defaultDenyPermitTable->saveDefautDenyPermit($defaultDenyPermit);	         
+	        $this->wizardSessionContainer->wizardActionsCompletedList['process_defaultdenypermit'] = true;
+	    }
+	}
 	protected function markCompletedWizardActionsCompleted()
 	{
 	    $this->wizardSessionContainer->completed = true;
