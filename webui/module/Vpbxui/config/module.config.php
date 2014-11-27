@@ -700,6 +700,8 @@ return array(
                 ),
             ),
         ),
+    
+    
     'lazy_services' => array(
         'class_map' => array(
             'Vpbxui\Extension\Model\Extension' => 'Vpbxui\Extension\Model\Extension',
@@ -717,6 +719,7 @@ return array(
             'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTable' => 'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTable',
             'Vpbxui\Extension\Form\ExtensionProfilePickerForm' => 'Vpbxui\Extension\Form\ExtensionProfilePickerForm'
         ),
+         
         
         // directory where proxy classes will be written - default to system_get_tmp_dir()
         'proxies_target_dir' => null,

@@ -16,8 +16,7 @@ $form->setAttribute('method', 'post');
 <?php echo $this->form()->openTag($form) ?>
     <dl class="zend_form">
         <?php echo $this->formElementErrors($form->get('identity')) ?>
-
-        <dt><?php echo $this->formLabel($form->get('identity')) ?></dt>
+         <dt><?php echo $this->formLabel($form->get('identity')) ?></dt>
         <dd><?php echo $this->formInput($form->get('identity')) ?></dd>
         <dt><?php echo $this->formLabel($form->get('credential')) ?></dt>
         <dd><?php echo $this->formInput($form->get('credential')) ?></dd>

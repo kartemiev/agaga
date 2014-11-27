@@ -46,7 +46,35 @@ class Module
         	$form->get('identity')->setLabel('адрес электронной почты');
         	$form->get('credential')->setLabel('пароль');
         	$form->get('submit')->setlabel('вход');
+        
           });
+           
+               $events->attach('ZfcUser\Controller\UserController','dispatch', function($e) use ($events) {
+
+                 $sm  = $e->getTarget()->getServiceLocator();  
+                 $handler = $events->attach('Zend\View\View','renderer', function($e) use ($sm) {
+
+                        $translator = $sm->get('translator');
+                       $params = $e->getParams();
+                       $model = $params['model'];
+                       $loginForm = $model->getVariable('loginForm');
+
+                       $translator->addTranslationFile("phparray",
+                           './module/Vpbxui/language/lang.array.ru_RU.php'
+                       );
+                        if ($loginForm)
+                       {
+                            $messages = $loginForm->get('identity')->getMessages();
+                            foreach ($messages as $key=>$message)
+                            {
+                                $messages[$key] = $translator->translate($message);
+                            }
+                            $messages = $loginForm->get('identity')->setMessages($messages);                                                        
+                       }
+                    });
+                        return $e;
+               });
+                    
            $events->attach('ZfcUserAdmin\Form\CreateUser','init', function($e) {
             	$form = $e->getTarget();
             	$form->get('display_name')->setLabel('Имя пользователя');
@@ -138,6 +166,7 @@ class Module
             
             	return $response;
             }, -100);
+      
     }
   
      public function setVariableToLayout($event)

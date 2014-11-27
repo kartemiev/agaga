@@ -1,7 +1,7 @@
 <?php
 return array(
     'modules' => array(
-    	'ZfcBase',
+     	'ZfcBase',
         'ZfcUser',
 		'ZfcAdmin',
 		'ZfcUserAdmin',
@@ -11,7 +11,8 @@ return array(
     	'Saas',
         'Restful',    		
         'ReverseForm',
-        'DOMPDFModule'        
+        'DOMPDFModule',   
+         
      ),
 
     'module_listener_options' => array(
