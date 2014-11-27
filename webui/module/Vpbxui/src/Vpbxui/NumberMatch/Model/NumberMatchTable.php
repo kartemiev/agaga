@@ -13,7 +13,7 @@ class NumberMatchTable implements NumberMatchTableInterface {
     	$this->tableGateway = $tableGateway;
     }
     
-    public function fetchAll($select, $filter=null,$orderseq=null)
+    public function fetchAll($filter=null,$orderseq=null)
     {
     	$resultSet = $this->tableGateway->select(function (Select $select) use ($filter,$orderseq){
             $select->where($filter);

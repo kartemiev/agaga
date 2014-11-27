@@ -16,7 +16,8 @@ class SkypeAliasTableGatewayFactory implements FactoryInterface
 		$resultSetPrototype = new ResultSet();
 		$skypeAlias = $serviceLocator->get('Vpbxui\SkypeAlias\Model\SkypeAlias');
  		$resultSetPrototype->setArrayObjectPrototype($skypeAlias);	 
- 		$featureSet = new FeatureSet($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));
+ 		$featureSet = new FeatureSet();
+ 		$featureSet->addFeature($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));
 		return new TableGateway('skype_aliases', $dbAdapter, $featureSet, $resultSetPrototype);
 	}
 }

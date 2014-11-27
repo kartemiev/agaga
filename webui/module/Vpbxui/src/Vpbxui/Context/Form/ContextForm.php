@@ -141,8 +141,20 @@ class ContextForm extends Form
 						'id' => 'submitbutton',
 				),
 		));
+		$this->excludeExtensionTypeContextWhenNoExtensionsPresent();
+
 	}
-	
+	private function excludeExtensionTypeContextWhenNoExtensionsPresent()
+	{
+	    $extensions = $this->extensionTable->fetchAll();
+	    if (count($extensions)<1)
+	    {
+ 	        $element =  $this->get('contexttype');
+	        $valueOptions = $element->getValueOptions();	
+	        unset($valueOptions['EXTENSION']);        
+            $element->setValueOptions($valueOptions);
+ 	    }
+	}
 	protected function getInputListOptions($table, $textFieldName)
 	{
 		$result = array();
@@ -150,6 +162,10 @@ class ContextForm extends Form
 		foreach ($entries as $entry)
 		{
 			$result[$entry->id] = $entry->$textFieldName;
+		}
+		if (empty($result))
+		{
+		    $result = array(''=>'');
 		}
 		return $result;		
 	} 

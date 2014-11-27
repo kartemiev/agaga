@@ -389,8 +389,7 @@ class Module
          	'Vpbxui\Controller\Route' => 'Vpbxui\Controller\RouteController',
          	'Vpbxui\Controller\NumberMatch' => 'Vpbxui\Controller\NumberMatchController',
          	'Vpbxui\Controller\ExtensionDefaults'=>	'Vpbxui\Controller\ExtensionDefaultsController',
-         	'Vpbxui\Controller\FaxUser'=> 'Vpbxui\Controller\FaxUserControllerFactory',
-         	'Vpbxui\Controller\CallCentreSettings' => 'Vpbxui\Controller\CallCentreSettingsController'
+          	'Vpbxui\Controller\CallCentreSettings' => 'Vpbxui\Controller\CallCentreSettingsController'
             ),
         'factories'=> array(
             'Vpbxui\Controller\Internal' => 'Vpbxui\Controller\InternalControllerFactory',            
@@ -404,7 +403,9 @@ class Module
         	'Vpbxui\Controller\AuthCode' =>	 'Vpbxui\Controller\AuthCodeControllerFactory',
         	'Vpbxui\Controller\RegisterPbx' => 'Vpbxui\Controller\RegisterPbxControllerFactory',
             'Vpbxui\Controller\NumberAllowed' => 'Vpbxui\Controller\NumberAllowedControllerFactory',
-            'Vpbxui\Controller\DefaultDenyPermit'=>'Vpbxui\Controller\DefaultDenyPermitControllerFactory'
+            'Vpbxui\Controller\DefaultDenyPermit'=>'Vpbxui\Controller\DefaultDenyPermitControllerFactory',
+        	'Vpbxui\Controller\FaxUser'=> 'Vpbxui\Controller\FaxUserControllerFactory',
+            
             ),
      );
     }
