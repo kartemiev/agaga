@@ -9,8 +9,7 @@ class TimeSpotTableFactory implements FactoryInterface
 {     
         public function createService(ServiceLocatorInterface $serviceLocator) {
              return new TimeSpotTable(
-             		$serviceLocator->get('Vpbxui\CallCentreSchedule\Model\TimeSpotTableGateway'),
-             		$serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidProvider')
+             		$serviceLocator->get('Vpbxui\CallCentreSchedule\Model\TimeSpotTableGateway')
 			);
         }     
 }

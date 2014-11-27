@@ -15,7 +15,8 @@ class MonitoringControllerFactory implements FactoryInterface
 			$sl->get('Vpbxui\Restart\Model\RestartCommand'),
 			$sl->get('Vpbxui\CallCentreStatus\Model\CallCentreStatusTable'),
 			$sl->get('Vpbxui\PbxSettings\Model\PbxSettingsTable'),
-			$sl->get('Vpbxui\Extension\Model\ExtensionTable')		
+			$sl->get('Vpbxui\Extension\Model\ExtensionTable'),
+		    $sl->get('Vpbxui\Service\VpbxidProvider\VpbxidProvider')		
 		);
 	}
 }

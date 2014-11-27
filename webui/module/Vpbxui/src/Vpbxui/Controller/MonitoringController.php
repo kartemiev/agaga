@@ -10,6 +10,7 @@ use Vpbxui\Restart\Model\RestartCommand;
 use Vpbxui\CallCentreStatus\Model\CallCentreStatusTableInterface;
 use Vpbxui\PbxSettings\Model\PbxSettingsTableInterface;
 use Vpbxui\Extension\Model\ExtensionTableInterface;
+use Vpbxui\Service\VpbxidProvider\VpbxidProvider;
 
 class MonitoringController  extends AbstractActionController {    
     protected $statusTable;
@@ -17,12 +18,14 @@ class MonitoringController  extends AbstractActionController {
     protected $callCentreStatusTable;
     protected $pbxSettingsTable;
     protected $extensionTable;
+    protected $vpbxidProvider;
     public function __construct(
     		StatusCommand $statusCommand, 
     		RestartCommand $restartCommand,
 			CallCentreStatusTableInterface $callCentreStatusTable,
     		PbxSettingsTableInterface $pbxSettingsTable,
-    		ExtensionTableInterface $extensionTable
+    		ExtensionTableInterface $extensionTable,
+            VpbxidProvider $vpbxidProvider
 			)
     {
     	$this->statusTable = $statusCommand;
@@ -30,6 +33,7 @@ class MonitoringController  extends AbstractActionController {
     	$this->callCentreStatusTable = $callCentreStatusTable;
     	$this->pbxSettingsTable = $pbxSettingsTable;
     	$this->extensionTable = $extensionTable;
+    	$this->vpbxidProvider = $vpbxidProvider;
     }
     public function indexAction()
     {
@@ -41,18 +45,17 @@ class MonitoringController  extends AbstractActionController {
                $this->flashMessenger()->addErrorMessage('ошибка подключения к Астериск');
           }
          $extensions = $this->extensionTable->fetchAll();
-            
-         foreach ($statuses as $key=>$status)
+          foreach ($statuses as $key=>$status)
          {
-             foreach ($extensions as $extension)
-             {
-                  if ($status['objectname']==$extension->name)
+              foreach ($extensions as $extension)
+             {                  
+                   if ($status['objectname']==$extension->name)
                  {
                      $statuses[$key]['fromdb'] = $extension;
                  }
              }
          }
-          $viewHelperManager =  $this->getServiceLocator()
+           $viewHelperManager =  $this->getServiceLocator()
     								 ->get('viewhelpermanager');
               $viewHelperManager->get('HeadScript')
                  				->appendFile('/js/jquery.jplayer.min')
@@ -89,17 +92,17 @@ class MonitoringController  extends AbstractActionController {
     
     public function triggercallcentreAction()
     {
-        $pbxSettingsTable = $this->pbxSettingsTable;
-        $ccIncomingStatus= $pbxSettingsTable->fetchAll()
-                                    ->current()
-                                    ->callcentre_status_override;
+        $newState = $this->params('state');
          
          $ccIncomingStatus = array('enable'=>'FORCE_ENABLED',
                                     'disable'=>'FORCE_DISABLED',
-                                    'default'=>'default');         
-        $pbxSettings = new PbxSettings();
-        $pbxSettings->callcentre_status_override = $ccIncomingStatus[$newState];
-        $pbxSettingsTable->savePbxSettings($pbxSettings);
+                                    'default'=>'default');   
+        $vpbxId = $this->vpbxidProvider->getVpbxId();
+        
+        $pbxSettings = $this->pbxSettingsTable->getPbxSettings((int)$vpbxId);
+        $pbxSettings->callcentre_status_override = $ccIncomingStatus[$newState];        
+         
+        $pbxSettings->save();       
         return $this->redirect()->toRoute('vpbxui/callcentre/monitoring');
     }     
 }

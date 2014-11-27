@@ -400,7 +400,6 @@ class VpbxEnvController extends AbstractRestfulController
 	    if (!$callCentreStageCompleted)
 	    {
 	       $callcentreSchedule = new CallCentreSchedule();
-	       $callcentreSchedule->exchangeArray(array());
 	       $this->callCentreScheduleTable->saveCallCentreSchedule($callcentreSchedule);
 	       $this->wizardSessionContainer->wizardActionsCompletedList['process_callcentre'] = true;	       
 	    }

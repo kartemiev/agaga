@@ -27,10 +27,9 @@ class PbxSettingsTable implements PbxSettingsTableInterface
     {
     	$vpbxid  = (int) $vpbxid;
     	
-    	$sql = $this->tableGateway->getSql();
-    	$select = $sql->select();
-    	$select->limit(1);
-     	$rowset = $this->tableGateway->selectWith($select);
+        
+    	
+     	$rowset = $this->tableGateway->select(array('vpbxid'=>$vpbxid));
 
      	$row = $rowset->current();
     	if (!$row) {
