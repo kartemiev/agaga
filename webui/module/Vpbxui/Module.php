@@ -338,6 +338,8 @@ class Module
             'Vpbxui\NumberAllowed\Model\NumberRangeTableGateway'=>'Vpbxui\NumberAllowed\Model\NumberRangeTableGatewayFactory',
             'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTable'=>'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTableFactory',
             'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTableGateway'=>'Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTableGatewayFactory',
+            'Vpbxui\ConferenceSettings\Model\ConferenceSettingsTable' => 'Vpbxui\ConferenceSettings\Model\ConferenceSettingsTableFactory',
+            'Vpbxui\ConferenceSettings\Model\ConferenceSettingsTableGateway' => 'Vpbxui\ConferenceSettings\Model\ConferenceSettingsTableGatewayFactory',
             'LazyServiceFactory' => 'Zend\ServiceManager\Proxy\LazyServiceFactoryFactory',            
            ),
             
@@ -434,6 +436,7 @@ class Module
             'Vpbxui\Controller\NumberAllowed' => 'Vpbxui\Controller\NumberAllowedControllerFactory',
             'Vpbxui\Controller\DefaultDenyPermit'=>'Vpbxui\Controller\DefaultDenyPermitControllerFactory',
         	'Vpbxui\Controller\FaxUser'=> 'Vpbxui\Controller\FaxUserControllerFactory',
+            'Vpbxui\Controller\ConferenceSettings' => 'Vpbxui\Controller\ConferenceSettingsControllerFactory'
             
             ),
      );

@@ -703,6 +703,26 @@ return array(
                 
                 		)
                 ),
+                array(
+                    'label' => 'настройки телеконференции',
+                    'title'=>'настройки телеконференции',
+                    'route' => 'vpbxui/settings/conferencesettings',
+                    'privilege' => 'index',
+                    'resource'   => 'mvc:conferencesettings.vpbxui', // resource
+                    'controller' => 'Vpbxui\Controller\ConferenceSettings',
+                    'action'  => 'index', 
+                   'pages'=>array(
+                								array(
+                										'label' => 'сбросить по умолчанию',
+                										'title'=>'по умолчанию',
+                										'route' => 'vpbxui/settings/conferencesettings',
+                										'privilege' => 'default',
+                										'resource'   => 'mvc:conferencesettings.vpbxui', // resource
+                										'controller' => 'Vpbxui\Controller\ConferenceSettings',
+                										'action'  => 'default',
+                								)
+                						)       
+                ),
                                 
             )
         ),

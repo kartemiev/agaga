@@ -6,6 +6,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Vpbxui\CallDestination\Model\CallDestination;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Db\TableGateway\Feature\FeatureSet;
 
 class CallDestinationTableGatewayFactory implements FactoryInterface
 {
@@ -15,6 +16,8 @@ class CallDestinationTableGatewayFactory implements FactoryInterface
     	$resultSetPrototype = new ResultSet();
     	$callDestination = new CallDestination();
     	$resultSetPrototype->setArrayObjectPrototype($callDestination);
-    	return new TableGateway('call_destination', $dbAdapter, null, $resultSetPrototype);
+    	$featureSet = new FeatureSet();
+    	$featureSet->addFeature($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));
+    	return new TableGateway('call_destination', $dbAdapter, $featureSet, $resultSetPrototype);
     }
 }

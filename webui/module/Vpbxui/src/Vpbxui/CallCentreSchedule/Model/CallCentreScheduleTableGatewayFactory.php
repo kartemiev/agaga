@@ -6,6 +6,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Vpbxui\CallCentreSchedule\Model\CallCentreSchedule;
+use Zend\Db\TableGateway\Feature\FeatureSet;
 
 class CallCentreScheduleTableGatewayFactory implements FactoryInterface
 {
@@ -14,6 +15,8 @@ class CallCentreScheduleTableGatewayFactory implements FactoryInterface
      $dbAdapter = $serviceLocator->get('Zend\Db\Adapter\Adapter');
      $resultSetPrototype = new ResultSet();
      $resultSetPrototype->setArrayObjectPrototype(new CallCentreSchedule());
-     return new TableGateway('callcentre_working_schedule', $dbAdapter, null, $resultSetPrototype);
+     $featureSet = new FeatureSet();
+     $featureSet->addFeature($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));
+     return new TableGateway('callcentre_working_schedule', $dbAdapter, $featureSet, $resultSetPrototype);
  }    
 }

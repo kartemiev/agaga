@@ -16,6 +16,7 @@ class ConferenceFreeTableGatewayFactory implements FactoryInterface
         $resultSetPrototype = new ResultSet();
         $resultSetPrototype->setArrayObjectPrototype(new ConferenceFree());
         $featureSet = new FeatureSet();
+        $featureSet->addFeature($serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidFeature'));
         return new TableGateway('conferencefree', $dbAdapter, $featureSet, $resultSetPrototype);
                 
     }

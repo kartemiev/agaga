@@ -11,8 +11,7 @@ class ConferenceTableFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         return new ConferenceTable(
-                $serviceLocator->get('Vpbxui\Conference\Model\ConferenceTableGateway'),
-                $serviceLocator->get('Vpbxui\Service\VpbxidProvider\VpbxidProvider')
-            );
+                $serviceLocator->get('Vpbxui\Conference\Model\ConferenceTableGateway')
+             );
     }
 }

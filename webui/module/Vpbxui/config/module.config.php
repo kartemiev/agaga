@@ -302,6 +302,18 @@ return array(
                                    ),
                                    'may_terminate'=>true
                                ),
+                               'conferencesettings' => array(
+                                   'type' => 'Segment',
+                                    
+                                   'options' => array(
+                                       'route' => '/conferencesettings',
+                                       'defaults' => array(
+                                           'controller' => 'Vpbxui\Controller\ConferenceSettings',
+                                           'action' => 'index',
+                                       ),
+                                   ),
+                                   'may_terminate'=>true
+                               ),
                            'extensiondefaults' => array(
                            		'type' => 'Segment',
                            				 
