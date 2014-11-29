@@ -15,6 +15,7 @@ use Zend\Stdlib\Hydrator\ObjectProperty as Hydrator;
 use PbxAgi\Service\ChannelVarManager\ChannelVarManagerInterface;
 use PbxAgi\Service\AppConfig\AppConfigInterface;
 use PbxAgi\CallDestination\Model\CallDestination;
+use PbxAgi\GeneralSettings\Model\GeneralSettings;
 
 class ExtensionReceiveIncomingControllerTest extends AbstractControllerTestCase
 {
@@ -45,8 +46,8 @@ class ExtensionReceiveIncomingControllerTest extends AbstractControllerTestCase
         
         
         $mockedAppConfig = $this->getMockBuilder('PbxAgi\Service\AppConfig\AppConfigService')
-        ->disableOriginalConstructor()
-        ->getMock();
+                ->disableOriginalConstructor()
+                ->getMock();
         
         $this->mockedAppConfig = $mockedAppConfig;
         $serviceManager->setService('AppConfig', $mockedAppConfig);
@@ -61,6 +62,14 @@ class ExtensionReceiveIncomingControllerTest extends AbstractControllerTestCase
                         ->with()
                         ->will($this->returnValue('vpbx_dialout'));
         
+        $generalSettings = new GeneralSettings();
+        
+        $generalSettings->ringingtone = '1';
+        
+        $mockedAppConfig->expects($this->any())
+                        ->method('getGeneralSettings')
+                        ->with()
+                        ->will($this->returnValue($generalSettings));
         
         
         

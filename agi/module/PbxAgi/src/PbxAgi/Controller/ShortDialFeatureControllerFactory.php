@@ -9,10 +9,11 @@ class ShortDialFeatureControllerFactory implements FactoryInterface
 {
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $mainMenu = $serviceLocator->get('PbxAgi\Service\ShortDialMenu\CreateMainMenu');        
-        $agi = $serviceLocator->get('ClientImpl');
-        $cursorContainerInitializer = $serviceLocator->get('PbxAgi\Service\ShortDialMenu\IndexShortDialMenu\CursorContainerInitializer');
-        $cursorContainer = $serviceLocator->get('PbxAgi\Service\ShortDialMenu\IndexShortDialMenu\CursorContainer');
+        $sl = (method_exists($serviceLocator, 'getServiceLocator'))?$serviceLocator->getServiceLocator():$serviceLocator;
+        $mainMenu = $sl->get('PbxAgi\Service\ShortDialMenu\CreateMainMenu');        
+        $agi = $sl->get('ClientImpl');
+        $cursorContainerInitializer = $sl->get('PbxAgi\Service\ShortDialMenu\IndexShortDialMenu\CursorContainerInitializer');
+        $cursorContainer = $sl->get('PbxAgi\Service\ShortDialMenu\IndexShortDialMenu\CursorContainer');
         return  new ShortDialFeatureController($mainMenu, $agi, $cursorContainerInitializer, $cursorContainer);
     }
 }

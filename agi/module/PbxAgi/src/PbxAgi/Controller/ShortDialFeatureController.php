@@ -27,7 +27,7 @@ class ShortDialFeatureController extends AbstractActionController
         try{
             call_user_func_array(array($this->cursorContainerInitializer,'initialize'),
             array($this->cursorContainer,$this->getServiceLocator()));
-             $mainMenu();
+            $mainMenu();
             $agi = $this->agi;
             $agi->answer();
             $nodeController->jumpTo('mainMenu');

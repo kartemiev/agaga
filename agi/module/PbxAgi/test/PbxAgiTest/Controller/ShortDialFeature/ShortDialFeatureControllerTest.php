@@ -142,15 +142,19 @@ class ShortDialFeatureControllerTest extends AbstractControllerTestCase
 
          $mockedAgi = $this->mockedClientImpl;
          $mockedAgi->assert('answer')
-                   ->onAnswer(true);
+                     ->onAnswer(true);
+
          $this->mockedNodeController->expects($this->once())
                                     ->method('jumpTo')
                                     ->with('mainMenu')
                                     ->will($this->returnValue(null));
+
+        
+         
          
          $result   = $this->controller->dispatch($this->request);
          $response = $this->controller->getResponse();
-          
+         
      
      } 
      

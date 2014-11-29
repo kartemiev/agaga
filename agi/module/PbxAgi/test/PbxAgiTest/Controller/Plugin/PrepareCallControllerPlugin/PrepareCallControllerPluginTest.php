@@ -137,7 +137,8 @@ class PrepareCallControllerPluginTest extends PHPUnit_Framework_TestCase
 	    		'diversion_busy_landingtype' => null,
 	    		'diversion_noanswer_landingtype' => null,
 	    		'diversion_unavail_landingtype' => null,
-	    		'diversion_noanswer_duration' => null
+	    		'diversion_noanswer_duration' => null,
+	            'vpbxid'=>null
 	    );
 	    $mockedCallOriginator->expects($this->once())
 	                         ->method('exchangeArray')

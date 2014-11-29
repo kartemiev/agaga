@@ -108,7 +108,7 @@ class InternalController extends AbstractActionController  {
         
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $extension = $this->$extension;
+            $extension = $this->extension;
             $form->setInputFilter($extension->getInputFilter());
             $form->setData($request->getPost());            
             if ($form->isValid()) {

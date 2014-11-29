@@ -3,12 +3,14 @@ namespace PbxAgi\Service\ShortDialMenu\CreateShortDialMenu;
 
 use PAGI\Node\NodeController;
 use PbxAgi\Service\BuildAbstractMenu\BuildAbstractMenu;
+use PbxAgi\Service\ShortDialMenu\IndexShortDialMenu\ChoiceCurrent;
+
 class BuildCreateShortDialMenu extends BuildAbstractMenu
 {
     const CHOICE_CREATE_NEW_ENTRY = 1;
     const CHOICE_MAIN_MENU = '*';
     const CHOICE_INDEX_MENU = 7; 
- 
+    private $choiceCurrent;
     public function __invoke(NodeController $nodeController)
     {
         $closurize = $this->closurize;
@@ -20,21 +22,25 @@ class BuildCreateShortDialMenu extends BuildAbstractMenu
         
         $buildGenericNode = $this->buildGenericNode;
         $buildGenericNode('indexCreateMenu', $nodeController)
-        ->saySound('silence/1')
-        ->saySound($appConfig->getShortDialCreateMenuPrompt())     
-        ->expectExactly(1)        
-         ->maxAttemptsForInput(4);
+                    ->saySound('silence/1')
+                    ->saySound($appConfig->getShortDialCreateMenuPrompt())     
+                    ->expectExactly(1)        
+                    ->maxAttemptsForInput(4);
                       
         $nodeController->registerResult('indexCreateMenu')->onComplete()
-        ->withInput(self::CHOICE_CREATE_NEW_ENTRY)->jumpTo('shortDialPromtMenu');
+                    ->withInput(self::CHOICE_CREATE_NEW_ENTRY)->jumpTo('shortDialPromtMenu');
         
         $nodeController->registerResult('indexCreateMenu')->onComplete()
-        ->withInput(self::CHOICE_MAIN_MENU)->jumpTo('indexMenu');
+                    ->withInput(self::CHOICE_MAIN_MENU)->jumpTo('indexMenu');
 
         $nodeController->registerResult('indexCreateMenu')->onComplete()
-        ->withInput(self::CHOICE_INDEX_MENU)->jumpTo('mainMenu');
+                    ->withInput(self::CHOICE_INDEX_MENU)->jumpTo('mainMenu');
         
         
+    }
+    public function setChoiceCurrent(ChoiceCurrent $choiceCurrent)
+    {
+        $this->choiceCurrent = $choiceCurrent;
     }
 }
  

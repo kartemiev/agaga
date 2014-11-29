@@ -16,9 +16,8 @@ class BuildMainMenu extends BuildAbstractMenu
         );
         $buildGenericNode = $this->buildGenericNode;
         $buildGenericNode('mainMenu', $nodeController)
-        ->saySound('silence/1')
         ->saySound($appConfig->getShortDialMainMenuPrompt())
-        ->expectExactly(1)
+         ->expectExactly(1)
         ->validateInputWith(
             'option',
             function(Node $node) {

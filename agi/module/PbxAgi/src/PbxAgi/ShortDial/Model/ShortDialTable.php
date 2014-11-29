@@ -28,7 +28,10 @@ class ShortDialTable
     {
         $rowset = $this->tableGateway->select(function(Select $select) use ($filter,$limit) {
             $select->where($filter);
-            $select->limit($limit);
+            if ($limit)
+            {
+                $select->limit($limit);
+            }
         });
         return $rowset;
     }

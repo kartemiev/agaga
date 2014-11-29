@@ -12,6 +12,7 @@ class BuildCreateShortDialMenuFactory implements FactoryInterface
         $instance = new BuildCreateShortDialMenu($newShortDateValidator, $shortDialNumChosen);
         $initializer = $serviceLocator->get('PbxAgi\Service\BuildAbstractMenu\BuildAbstractMenuInitializer');
         $initializer->initialize($instance, $serviceLocator);
+        $instance->setChoiceCurrent($serviceLocator->get('PbxAgi\Service\ShortDialMenu\IndexShortDialMenu\ChoiceCurrent'));
         return $instance;
         
     }

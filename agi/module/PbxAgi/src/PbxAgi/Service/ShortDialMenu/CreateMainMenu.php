@@ -51,7 +51,7 @@ class CreateMainMenu
         call_user_func($this->buildIndexShortDialMenu,$nodeController);        
         call_user_func($this->buildCreateShortDialMenu, $nodeController);
         call_user_func($this->buildDeleteShortDialMenu, $nodeController);
-         call_user_func($this->buildConfirmSaveShortDialMenu, $nodeController);
+        call_user_func($this->buildConfirmSaveShortDialMenu, $nodeController);
         call_user_func($this->buildGotoShortDialMenu, $nodeController);
         call_user_func($this->buildModifyShortDialMenu, $nodeController);
         call_user_func($this->buildPromptNewAliasNumMenu, $nodeController);
