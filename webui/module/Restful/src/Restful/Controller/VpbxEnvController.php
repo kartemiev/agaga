@@ -44,6 +44,8 @@ use Vpbxui\ExtensionDefaults\Model\ExtensionDefaultsTable;
 use Vpbxui\ExtensionDefaults\Model\ExtensionDefaults;
 use Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermitTable;
 use Vpbxui\DefaultDenyPermit\Model\DefaultDenyPermit;
+use Vpbxui\ConferenceSettings\Model\ConferenceSettingsTable;
+use Vpbxui\ConferenceSettings\Model\ConferenceSettings;
 
 class VpbxEnvController extends AbstractRestfulController
 {
@@ -75,6 +77,7 @@ class VpbxEnvController extends AbstractRestfulController
     protected $numberRangeTable;
     protected $extensionDefaultsTable;
     protected $defaultDenyPermitTable;
+    protected $conferenceSettingsTable;
 	public function __construct(
 			WizardSessionContainerInterface $wizardSessionContainer, 
 			ExtensionTableInterface $extensionTable, 
@@ -99,7 +102,8 @@ class VpbxEnvController extends AbstractRestfulController
 	       SaasConfigInterface $saasAppConfig,
 	       NumberRangeTable $numberRangeTable,
 	       ExtensionDefaultsTable $extensionDefaultsTable,
-	       DefaultDenyPermitTable $defaultDenyPermitTable	       
+	       DefaultDenyPermitTable $defaultDenyPermitTable,
+	       ConferenceSettingsTable $conferenceSettingsTable	       
 	)
 	{
 		$this->wizardSessionContainer = $wizardSessionContainer;
@@ -126,6 +130,7 @@ class VpbxEnvController extends AbstractRestfulController
 		$this->numberRangeTable = $numberRangeTable;
 		$this->extensionDefaultsTable = $extensionDefaultsTable;
 		$this->defaultDenyPermitTable = $defaultDenyPermitTable;
+		$this->conferenceSettingsTable = $conferenceSettingsTable;
 	}
 	public function create($data)
 	{
@@ -138,6 +143,7 @@ class VpbxEnvController extends AbstractRestfulController
 	    $this->processExtensionDefaults();
  	    $this->processRoute();
 	    $this->processCallCentre();
+	    $this->processConferenceSettings();
 	    $this->markCompletedWizardActionsCompleted();
 	    $this->getResponse()->setStatusCode(201);
 	   
@@ -403,6 +409,17 @@ class VpbxEnvController extends AbstractRestfulController
 	       $this->callCentreScheduleTable->saveCallCentreSchedule($callcentreSchedule);
 	       $this->wizardSessionContainer->wizardActionsCompletedList['process_callcentre'] = true;	       
 	    }
+	}
+	protected function processConferenceSettings()
+	{
+	    $conferenceSettingsStageCompleted = (isset($this->wizardSessionContainer->wizardActionsCompletedList['process_conferencesettings']))?$this->wizardSessionContainer->wizardActionsCompletedList['process_conferencesettings']:false;
+	    if (!$conferenceSettingsStageCompleted)
+	    {
+	        $conferenceSettings = new ConferenceSettings();
+	        $this->conferenceSettingsTable->saveConferenceSettings($conferenceSettings);
+	        $this->wizardSessionContainer->wizardActionsCompletedList['process_conferencesettings'] = true;
+	    }
+	     
 	}
 	protected function processDefaultDenyPermit()
 	{
