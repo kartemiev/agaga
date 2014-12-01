@@ -47,7 +47,7 @@ return array(
         'conference_conf_num_invalid' => 'conf-invalid',    
         'conference_conf_password_invalid' => 'conf-invalidpin',
         'short_dial_num_create_invalid_or_already_exists' => 'shortdial-create-num-invalid',
-        'short_dial_current_num_doesnt_exists' => 'shortdial-current-num-missing',
+        'short_dial_current_num_doesnt_exists' => 'shortdial-current-num-missing', // нет на диске - найти
         'short_dial_list_is_empty' => 'shortdial-listempty',        
         'short_dial_list_first_item_reached' => 'shortdial-firstreached',
         'short_dial_list_last_item_reached' => 'shortdial-lastreached',
@@ -67,7 +67,7 @@ return array(
     	'ivr_context_name' => 'vpbx_dialin', 
     	'features_context_name' => 'vpbx_features',
     	'conference_enter_pstn_disallowed_notice' => 'conf-pstndisallowed',
-    	'number_is_blocked_media' => 'number_blocked',
+    	'number_is_blocked_media' => 'number_blocked', // нет на диске - найти
     	'emailfax_bounce_unknown_user_subject' => 'невозможно отправить факс',
     	'asterisk_callfile_spool_path' => '/var/spool/asterisk',
     	'faxsender_context_name'=>'vpbx_faxsender',
@@ -78,7 +78,7 @@ return array(
     	'ghostscript_binary_path' => '/usr/bin/gs',
     	'conference_select_scope_prompt' => 'conf-select-scope',
     	'function_disabled_notice'=>'general/function_disabled_by_admin',
-        'alarm_wrong_time_format'=>'alarm/wrong_time_format',
-        'alarm_play_context_name'=>'vpbx_alarmplay'	
+        'alarm_wrong_time_format'=>'alarm/wrong_time_format', // нет на диске - найти
+        'alarm_play_context_name'=>'vpbx_alarmplay' //нет на диске - найти	
         )
      );
