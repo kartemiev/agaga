@@ -198,6 +198,21 @@ CREATE TYPE vpbx_cc_status AS ENUM (
 ALTER TYPE public.vpbx_cc_status OWNER TO agaga;
 
 --
+-- Name: vpbx_conf_web_accessmode_type; Type: TYPE; Schema: public; Owner: agaga
+--
+
+CREATE TYPE vpbx_conf_web_accessmode_type AS ENUM (
+    'CODEONLY',
+    'IPONLY',
+    'BOTH',
+    'EITHER',
+    'NONE'
+);
+
+
+ALTER TYPE public.vpbx_conf_web_accessmode_type OWNER TO agaga;
+
+--
 -- Name: vpbx_conference_feature_type; Type: TYPE; Schema: public; Owner: agaga
 --
 
@@ -830,6 +845,18 @@ CREATE TYPE vpbx_status AS ENUM (
 ALTER TYPE public.vpbx_status OWNER TO agaga;
 
 --
+-- Name: vpbx_tempmedia_accesstype; Type: TYPE; Schema: public; Owner: agaga
+--
+
+CREATE TYPE vpbx_tempmedia_accesstype AS ENUM (
+    'session',
+    'global'
+);
+
+
+ALTER TYPE public.vpbx_tempmedia_accesstype OWNER TO agaga;
+
+--
 -- Name: vpbx_tfi; Type: TYPE; Schema: public; Owner: agaga
 --
 
@@ -995,10 +1022,10 @@ CREATE TYPE vpbx_yesnonever AS ENUM (
 ALTER TYPE public.vpbx_yesnonever OWNER TO agaga;
 
 --
--- Name: check_callcentre_schedule(); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: check_callcentre_schedule(integer); Type: FUNCTION; Schema: public; Owner: agaga
 --
 
-CREATE FUNCTION check_callcentre_schedule() RETURNS boolean
+CREATE FUNCTION check_callcentre_schedule(vpbxidp integer DEFAULT NULL::integer) RETURNS boolean
     LANGUAGE plpgsql
     AS $$
     DECLARE
@@ -1009,15 +1036,18 @@ CREATE FUNCTION check_callcentre_schedule() RETURNS boolean
         workstatus text;
 		result boolean;	
     BEGIN
+    IF vpbxidp IS NULL  THEN
+    	RAISE EXCEPTION 'parameter not defined';
+    END IF;
 	dow = date_part('dow',now())::int+1;
-	workframes =  ARRAY[[s_sunday,e_sunday],[s_monday, e_monday],[s_tuesday,e_tuesday],[s_wednesday,e_wednesday],[s_thursday,e_thursday],[s_friday,e_friday],[s_saturday,e_saturday]] FROM callcentre_working_schedule c;
-	workstatuses =  ARRAY[active_sunday,active_monday,active_tuesday,active_wednesday,active_thursday,active_friday,active_saturday] FROM callcentre_working_schedule c;
-	workframe = workframes[dow];
+	workframes =  ARRAY[[s_sunday,e_sunday],[s_monday, e_monday],[s_tuesday,e_tuesday],[s_wednesday,e_wednesday],[s_thursday,e_thursday],[s_friday,e_friday],[s_saturday,e_saturday]] FROM callcentre_working_schedule c WHERE c.vpbxid=vpbxidp;
+	workstatuses =  ARRAY[active_sunday,active_monday,active_tuesday,active_wednesday,active_thursday,active_friday,active_saturday] FROM callcentre_working_schedule c WHERE c.vpbxid=vpbxidp;
+	workframe = workframes[dow:dow];
 	workstatus = workstatuses[dow];
 	result=false;
- 	IF workstatus='active'::text THEN
-		result=true; 
-		IF ((workframe[1]::time>=LOCALTIME) AND (workframe[2]::time<=LOCALTIME)) THEN
+ 	IF workstatus='t'::text THEN
+   	
+ 		IF (( (SELECT unnest(workframe) LIMIT 1 OFFSET 1)::time>=LOCALTIME) AND ( (SELECT unnest(workframe) LIMIT 1 OFFSET 0)::time<=LOCALTIME)) THEN
 			result=true;
 		END IF;	
 	END IF;
@@ -1026,7 +1056,7 @@ CREATE FUNCTION check_callcentre_schedule() RETURNS boolean
 $$;
 
 
-ALTER FUNCTION public.check_callcentre_schedule() OWNER TO agaga;
+ALTER FUNCTION public.check_callcentre_schedule(vpbxidp integer) OWNER TO agaga;
 
 --
 -- Name: convert_number(text); Type: FUNCTION; Schema: public; Owner: agaga
@@ -1264,6 +1294,23 @@ $$;
 ALTER FUNCTION public.vpbx_conf_confexpiry() OWNER TO agaga;
 
 --
+-- Name: vpbx_conf_free(integer); Type: FUNCTION; Schema: public; Owner: agaga
+--
+
+CREATE FUNCTION vpbx_conf_free(vpbxidp integer DEFAULT NULL::integer) RETURNS TABLE(ext integer)
+    LANGUAGE sql
+    AS $$   SELECT p.confnumber::integer AS confnumber
+   FROM ( SELECT generate_series(1000, 9999)::text AS confnumber) p
+  WHERE NOT (p.confnumber IN ( SELECT conference.confnumber
+           FROM conference
+          WHERE now() < conference.datesettoexpiry AND vpbxid=vpbxidp))
+  ORDER BY random()
+ $$;
+
+
+ALTER FUNCTION public.vpbx_conf_free(vpbxidp integer) OWNER TO agaga;
+
+--
 -- Name: vpbx_conf_uniqueconf(); Type: FUNCTION; Schema: public; Owner: agaga
 --
 
@@ -1304,6 +1351,57 @@ $$;
 ALTER FUNCTION public.vpbx_crm_working_hour() OWNER TO agaga;
 
 --
+-- Name: vpbx_crm_working_hour(integer); Type: FUNCTION; Schema: public; Owner: agaga
+--
+
+CREATE FUNCTION vpbx_crm_working_hour(vpbxidp integer DEFAULT NULL::integer) RETURNS boolean
+    LANGUAGE plpgsql
+    AS $$
+    DECLARE
+ schedulestatus boolean;
+
+BEGIN
+schedulestatus := (SELECT isworkinghour FROM pbx_working_hour_fromdb WHERE vpbxid=vpbxidp);
+IF schedulestatus IS NULL
+THEN
+	schedulestatus:=check_callcentre_schedule(vpbxidp);
+END IF;
+RETURN schedulestatus;
+
+END;
+$$;
+
+
+ALTER FUNCTION public.vpbx_crm_working_hour(vpbxidp integer) OWNER TO agaga;
+
+--
+-- Name: vpbx_free_extensions(integer); Type: FUNCTION; Schema: public; Owner: agaga
+--
+
+CREATE FUNCTION vpbx_free_extensions(vpbxid_in integer) RETURNS integer[]
+    LANGUAGE plpgsql STABLE
+    AS $$DECLARE
+	y integer[];
+	z integer[];
+	r record;	
+BEGIN
+ 	FOR r IN SELECT "value" FROM number_range WHERE vpbxid=vpbxid_in 	
+  		LOOP  
+    	z = array(SELECT t.exten FROM 
+    		(SELECT  generate_series(r.value, r.value+(overlay(r.value::text placing '1' from 1 for 1)::int-1)) AS exten) t 
+    		WHERE t.exten not IN (SELECT extension FROM sip WHERE vpbxid=vpbxid_in AND peertype='EXTENSION'));
+    		
+    	y = array_cat(y,z);
+	END LOOP; 
+ 
+        RETURN y;
+END;
+$$;
+
+
+ALTER FUNCTION public.vpbx_free_extensions(vpbxid_in integer) OWNER TO agaga;
+
+--
 -- Name: vpbx_get_call_direction_data_for_channel(text[], integer); Type: FUNCTION; Schema: public; Owner: agaga
 --
 
@@ -1336,6 +1434,31 @@ $_$;
 
 
 ALTER FUNCTION public.vpbx_get_call_direction_data_for_channel(num text[], root integer) OWNER TO agaga;
+
+--
+-- Name: vpbx_get_default_conf_accesscode(); Type: FUNCTION; Schema: public; Owner: agaga
+--
+
+CREATE FUNCTION vpbx_get_default_conf_accesscode() RETURNS integer
+    LANGUAGE plpgsql
+    AS $$  
+DECLARE
+	ac int;
+	search record;
+BEGIN
+   LOOP
+   		ac = (select trunc(random() * 900000 + 1));
+   		search = (SELECT accesscode from conference_settings c WHERE c.accesscode=ac);
+   		
+        IF NOT FOUND THEN
+         	RETURN ac;
+        END IF;
+    END LOOP;  
+ END
+ $$;
+
+
+ALTER FUNCTION public.vpbx_get_default_conf_accesscode() OWNER TO agaga;
 
 --
 -- Name: vpbx_get_num_properties(text[], integer); Type: FUNCTION; Schema: public; Owner: agaga
@@ -1530,7 +1653,9 @@ ALTER TABLE public.pbx_settings OWNER TO agaga;
 --
 
 CREATE VIEW pbx_workinghour AS
- SELECT vpbx_crm_working_hour() AS workinghour;
+ SELECT vpbx_crm_working_hour(p.vpbxid) AS workinghour,
+    p.vpbxid
+   FROM pbx_settings p;
 
 
 ALTER TABLE public.pbx_workinghour OWNER TO agaga;
@@ -1540,11 +1665,12 @@ ALTER TABLE public.pbx_workinghour OWNER TO agaga;
 --
 
 CREATE VIEW callcentre_status AS
- SELECT pbx_workinghour.workinghour AS statutory,
-    pbx_settings.callcentre_status_override AS overridestatus,
-    (((pbx_settings.callcentre_status_override = 'FORCE_ENABLED'::vpbx_callcentre_override_status) OR pbx_workinghour.workinghour) AND (pbx_settings.callcentre_status_override <> 'FORCE_DISABLED'::vpbx_callcentre_override_status)) AS status
-   FROM pbx_workinghour,
-    pbx_settings;
+ SELECT pwh.workinghour AS statutory,
+    pbs.callcentre_status_override AS overridestatus,
+    (((pbs.callcentre_status_override = 'FORCE_ENABLED'::vpbx_callcentre_override_status) OR pwh.workinghour) AND (pbs.callcentre_status_override <> 'FORCE_DISABLED'::vpbx_callcentre_override_status)) AS status,
+    pbs.vpbxid
+   FROM (pbx_workinghour pwh
+   LEFT JOIN pbx_settings pbs ON ((pbs.vpbxid = pwh.vpbxid)));
 
 
 ALTER TABLE public.callcentre_status OWNER TO agaga;
@@ -2774,6 +2900,18 @@ CREATE TABLE conference (
 ALTER TABLE public.conference OWNER TO agaga;
 
 --
+-- Name: conference_free; Type: VIEW; Schema: public; Owner: agaga
+--
+
+CREATE VIEW conference_free AS
+ SELECT p.vpbxid,
+    vpbx_conf_free(p.vpbxid) AS confnumber
+   FROM pbx_settings p;
+
+
+ALTER TABLE public.conference_free OWNER TO agaga;
+
+--
 -- Name: conference_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
 --
 
@@ -2807,6 +2945,21 @@ CREATE SEQUENCE conference_serial
 
 
 ALTER TABLE public.conference_serial OWNER TO agaga;
+
+--
+-- Name: conference_settings; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE TABLE conference_settings (
+    vpbxid integer NOT NULL,
+    deny character varying(512) DEFAULT ''::character varying NOT NULL,
+    permit character varying(512) DEFAULT ''::character varying NOT NULL,
+    accessmode vpbx_conf_web_accessmode_type DEFAULT 'CODEONLY'::vpbx_conf_web_accessmode_type NOT NULL,
+    accesscode integer DEFAULT vpbx_get_default_conf_accesscode() NOT NULL
+);
+
+
+ALTER TABLE public.conference_settings OWNER TO agaga;
 
 --
 -- Name: conferencefree; Type: VIEW; Schema: public; Owner: agaga
@@ -2881,6 +3034,19 @@ CREATE TABLE crmoperators (
 
 
 ALTER TABLE public.crmoperators OWNER TO agaga;
+
+--
+-- Name: default_deny_permit; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE TABLE default_deny_permit (
+    vpbxid integer NOT NULL,
+    permit character varying(255) DEFAULT ''::character varying NOT NULL,
+    deny character varying(255) DEFAULT ''::character varying NOT NULL
+);
+
+
+ALTER TABLE public.default_deny_permit OWNER TO agaga;
 
 --
 -- Name: extensiondefaults; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
@@ -3236,41 +3402,21 @@ UNION
 ALTER TABLE public.faxusers_jointemails OWNER TO agaga;
 
 --
--- Name: feature_test; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: free_extensions; Type: VIEW; Schema: public; Owner: agaga
 --
 
-CREATE TABLE feature_test (
-    id integer NOT NULL,
-    vpbxid integer,
-    test1 integer,
-    test2 integer,
-    test3 integer,
-    testtxt character varying
-);
+CREATE VIEW free_extensions AS
+ WITH p AS (
+         SELECT DISTINCT pbx_settings.vpbxid
+           FROM pbx_settings
+        )
+ SELECT extension.extension,
+    p.vpbxid
+   FROM p,
+    LATERAL unnest(vpbx_free_extensions(p.vpbxid)) extension(extension);
 
 
-ALTER TABLE public.feature_test OWNER TO agaga;
-
---
--- Name: feature_test_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
---
-
-CREATE SEQUENCE feature_test_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.feature_test_id_seq OWNER TO agaga;
-
---
--- Name: feature_test_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
---
-
-ALTER SEQUENCE feature_test_id_seq OWNED BY feature_test.id;
-
+ALTER TABLE public.free_extensions OWNER TO agaga;
 
 --
 -- Name: functions; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
@@ -3519,6 +3665,40 @@ ALTER SEQUENCE number_match_id_seq OWNED BY number_match.id;
 
 
 --
+-- Name: number_range; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE TABLE number_range (
+    id integer NOT NULL,
+    vpbxid integer,
+    value integer
+);
+
+
+ALTER TABLE public.number_range OWNER TO agaga;
+
+--
+-- Name: number_range_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+--
+
+CREATE SEQUENCE number_range_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.number_range_id_seq OWNER TO agaga;
+
+--
+-- Name: number_range_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+--
+
+ALTER SEQUENCE number_range_id_seq OWNED BY number_range.id;
+
+
+--
 -- Name: operator_status_log; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
 --
 
@@ -3578,8 +3758,8 @@ ALTER TABLE public.schedule_replacements OWNER TO agaga;
 CREATE VIEW pbx_working_hour_fromdb AS
  SELECT p.isworkinghour,
     r.vpbxid
-   FROM (( SELECT DISTINCT schedule_replacements.vpbxid
-           FROM schedule_replacements) r
+   FROM (( SELECT DISTINCT pbx_settings.vpbxid
+           FROM pbx_settings) r
    LEFT JOIN ( SELECT
                 CASE s.isworking
                     WHEN 1 THEN true
@@ -3765,7 +3945,8 @@ CREATE TABLE shortdialtable (
     id integer NOT NULL,
     peerid integer,
     number character varying(15) NOT NULL,
-    short character varying(5) NOT NULL
+    short character varying(5) NOT NULL,
+    vpbxid integer NOT NULL
 );
 
 
@@ -3818,11 +3999,13 @@ ALTER SEQUENCE sip_devices_id_seq OWNED BY sip.id;
 --
 
 CREATE VIEW sip_free_extensions AS
- SELECT p.ext
-   FROM ( SELECT generate_series(100, 999) AS ext) p
-  WHERE ((NOT (p.ext IN ( SELECT DISTINCT sip.extension
-           FROM sip
-          WHERE (sip.peertype = 'EXTENSION'::vpbx_peertype)))) AND ((p.ext / 100) <> 7));
+ WITH p AS (
+         SELECT DISTINCT pbx_settings.vpbxid
+           FROM pbx_settings
+        )
+ SELECT unnest(vpbx_free_extensions(p.vpbxid)) AS ext,
+    p.vpbxid
+   FROM p;
 
 
 ALTER TABLE public.sip_free_extensions OWNER TO agaga;
@@ -3837,7 +4020,8 @@ CREATE TABLE skype_aliases (
     skypeid character varying(50) NOT NULL,
     custname character varying(50) DEFAULT ''::character varying NOT NULL,
     custdesc character varying(250) DEFAULT ''::character varying NOT NULL,
-    vpbx_id integer
+    vpbx_id integer,
+    vpbxid integer
 );
 
 
@@ -3874,7 +4058,9 @@ CREATE TABLE temp_media (
     custdesc character varying(2048) DEFAULT ''::character varying NOT NULL,
     contenttype character varying(255) DEFAULT ''::character varying NOT NULL,
     filesize integer DEFAULT 0 NOT NULL,
-    mediatype character varying(255) DEFAULT ''::character varying NOT NULL
+    mediatype character varying(255) DEFAULT ''::character varying NOT NULL,
+    isdefault boolean DEFAULT false NOT NULL,
+    accesslevel vpbx_tempmedia_accesstype DEFAULT 'session'::vpbx_tempmedia_accesstype NOT NULL
 );
 
 
@@ -4138,38 +4324,6 @@ ALTER SEQUENCE vpbx_entities_id_seq OWNED BY vpbx_entities.id;
 
 
 --
--- Name: vpbx_setting; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE TABLE vpbx_setting (
-    id integer NOT NULL
-);
-
-
-ALTER TABLE public.vpbx_setting OWNER TO agaga;
-
---
--- Name: vpbx_setting_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
---
-
-CREATE SEQUENCE vpbx_setting_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
-ALTER TABLE public.vpbx_setting_id_seq OWNER TO agaga;
-
---
--- Name: vpbx_setting_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
---
-
-ALTER SEQUENCE vpbx_setting_id_seq OWNED BY vpbx_setting.id;
-
-
---
 -- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
 --
 
@@ -4278,13 +4432,6 @@ ALTER TABLE ONLY faxusers_extra_email ALTER COLUMN id SET DEFAULT nextval('faxus
 -- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
 --
 
-ALTER TABLE ONLY feature_test ALTER COLUMN id SET DEFAULT nextval('feature_test_id_seq'::regclass);
-
-
---
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
---
-
 ALTER TABLE ONLY functions ALTER COLUMN id SET DEFAULT nextval('functions_id_seq'::regclass);
 
 
@@ -4314,6 +4461,13 @@ ALTER TABLE ONLY musiconhold ALTER COLUMN id SET DEFAULT nextval('musiconhold_id
 --
 
 ALTER TABLE ONLY number_match ALTER COLUMN id SET DEFAULT nextval('number_match_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY number_range ALTER COLUMN id SET DEFAULT nextval('number_range_id_seq'::regclass);
 
 
 --
@@ -4401,602 +4555,1002 @@ ALTER TABLE ONLY vpbx_entities ALTER COLUMN id SET DEFAULT nextval('vpbx_entitie
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: authcode_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
-ALTER TABLE ONLY vpbx_setting ALTER COLUMN id SET DEFAULT nextval('vpbx_setting_id_seq'::regclass);
-
-
---
--- Data for Name: authcode; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY authcode (id, vpbx_id, pincode) FROM stdin;
-\.
+ALTER TABLE ONLY authcode
+    ADD CONSTRAINT authcode_pkey PRIMARY KEY (id);
 
 
 --
--- Name: authcode_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
+-- Name: call_destination_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
-SELECT pg_catalog.setval('authcode_id_seq', 1, false);
-
-
---
--- Data for Name: call_destination; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY call_destination (id, peerid, number, duration, vpbxid) FROM stdin;
-\.
+ALTER TABLE ONLY call_destination
+    ADD CONSTRAINT call_destination_pkey PRIMARY KEY (id);
 
 
 --
--- Name: call_destination_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
+-- Name: callcentre_call_que_operators_log_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
-SELECT pg_catalog.setval('call_destination_id_seq', 103, true);
-
-
---
--- Data for Name: callcentre_call_que_operators_log; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY callcentre_call_que_operators_log (id, callref, extension, name, operatorstatus, memberofcallcentreque, active, devicestate, iscalltoforward, vpbxid) FROM stdin;
-\.
+ALTER TABLE ONLY callcentre_call_que_operators_log
+    ADD CONSTRAINT callcentre_call_que_operators_log_pkey PRIMARY KEY (id);
 
 
 --
--- Name: callcentre_call_que_operators_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
+-- Name: callcentre_working_schedule_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
-SELECT pg_catalog.setval('callcentre_call_que_operators_log_id_seq', 1, false);
-
-
---
--- Data for Name: callcentre_working_schedule; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY callcentre_working_schedule (vpbx_id, s_monday, e_monday, active_monday, s_tuesday, e_tuesday, active_tuesday, s_wednesday, e_wednesday, active_wednesday, s_thursday, e_thursday, active_thursday, s_friday, e_friday, active_friday, s_saturday, e_saturday, active_saturday, s_sunday, e_sunday, active_sunday, s_shortday, e_shortday, s_regularwd, e_regularwd, vpbxid) FROM stdin;
-1	09:00	18:00	t	09:00	18:00	t	09:00	18:00	t	09:00	18:00	t	09:00	18:00	t	00:00	00:00	f	00:00	00:00	f	00:00	00:00	00:00	00:00	1
-\.
+ALTER TABLE ONLY callcentre_working_schedule
+    ADD CONSTRAINT callcentre_working_schedule_pkey PRIMARY KEY (vpbx_id);
 
 
 --
--- Name: callcentre_working_schedule_vpbx_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
+-- Name: cdr_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
-SELECT pg_catalog.setval('callcentre_working_schedule_vpbx_id_seq', 1, false);
-
-
---
--- Data for Name: cdr; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY cdr (id, calldate, clid, src, dst, dcontext, channel, dstchannel, lastapp, lastdata, duration, billsec, disposition, accountcode, uniqueid, userfield, peeraccount, linkedid, sequence, transferred_from, src_id, dst_id, call_type, call_direction, recorded_call_ref, record_duration, amaflags, pstn_num_incoming, srcname, dstname, calleridname, operatorstatus, backupdate, recordedname, vpbxid) FROM stdin;
-1892	2013-09-08 06:17:42			s	default	Bridge/0xb7309954-output				28	28	ANSWERED		1378606662.32			1378606662.32	32		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1831	2013-09-08 02:19:11	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001c		Hangup		7	5	ANSWERED		1378592351.28			1378592351.28	28		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1804	2013-09-01 04:38:52	"501" <501>	501	*70	vpbx_dialout	SIP/501-00000002		VoiceMailMain	s1@default	5	3	ANSWERED		1377995932.2			1377995932.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1805	2013-09-01 20:17:35	"501" <501>	501	*70	vpbx_dialout	SIP/501-00000000		VoiceMailMain	s1@default	31	29	ANSWERED		1378052255.0			1378052255.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1806	2013-09-08 01:17:13	"501" <501>	501	*70	vpbx_dialout	SIP/501-00000001		VoiceMailMain	s1@default	5	3	ANSWERED		1378588633.1			1378588633.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1807	2013-09-08 01:17:20	"501" <501>	501	*80	vpbx_dialout	SIP/501-00000002		AGI	HANGUP	4	3	ANSWERED		1378588640.2			1378588640.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1808	2013-09-08 01:21:13	"501" <501>	501	*80	vpbx_dialout	SIP/501-00000003		AGI	HANGUP	5	3	ANSWERED		1378588873.3			1378588873.3	3		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1809	2013-09-08 01:24:01	"501" <501>	501	*80	vpbx_dialout	SIP/501-00000000		AGI	HANGUP	5	2	ANSWERED		1378589041.0			1378589041.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1810	2013-09-08 01:34:13	"501" <501>	501	*80	vpbx_dialout	SIP/501-00000001		AGI	HANGUP	4	3	ANSWERED		1378589653.1			1378589653.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1811	2013-09-08 01:36:01	"501" <501>	501	*70	vpbx_dialout	SIP/501-00000002		VoiceMailMain	s1@default	3	2	ANSWERED		1378589761.2			1378589761.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1812	2013-09-08 01:36:08	"501" <501>	501	*70	vpbx_dialout	SIP/501-00000003		VoiceMailMain	s1@default	3	2	ANSWERED		1378589768.3			1378589768.3	3		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1813	2013-09-08 01:36:22	"501" <501>	501	*80	vpbx_dialout	SIP/501-00000004		AGI	HANGUP	3	2	ANSWERED		1378589782.4			1378589782.4	4		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1814	2013-09-08 01:42:46	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000008		AGI	HANGUP	3	2	ANSWERED		1378590166.8			1378590166.8	8		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1815	2013-09-08 01:45:05	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000009		AGI	HANGUP	13	12	ANSWERED		1378590305.9			1378590305.9	9		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1816	2013-09-08 01:46:57	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000a		AGI	HANGUP	12	11	ANSWERED		1378590417.10			1378590417.10	10		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1817	2013-09-08 01:51:35	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000b		AGI	HANGUP	8	7	ANSWERED		1378590695.11			1378590695.11	11		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1818	2013-09-08 01:52:22	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000c		AGI	HANGUP	6	4	ANSWERED		1378590742.12			1378590742.12	12		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1819	2013-09-08 01:57:31	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000f		AGI	HANGUP	7	5	ANSWERED		1378591051.15			1378591051.15	15		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1820	2013-09-08 02:03:20	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000010		AGI	HANGUP	10	9	ANSWERED		1378591400.16			1378591400.16	16		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1821	2013-09-08 02:04:11	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000011		AGI	HANGUP	8	7	ANSWERED		1378591451.17			1378591451.17	17		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1822	2013-09-08 02:05:26	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000012		AGI	HANGUP	9	8	ANSWERED		1378591526.18			1378591526.18	18		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1823	2013-09-08 02:09:08	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000013		AGI	HANGUP	15	13	ANSWERED		1378591748.19			1378591748.19	19		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1824	2013-09-08 02:10:52	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000014		Hangup		6	5	ANSWERED		1378591852.20			1378591852.20	20		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1825	2013-09-08 02:15:13	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000015		Hangup		4	3	ANSWERED		1378592113.21			1378592113.21	21		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1826	2013-09-08 02:15:51	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000016		Hangup		8	7	ANSWERED		1378592151.22			1378592151.22	22		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1827	2013-09-08 02:16:27	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000017		Hangup		7	5	ANSWERED		1378592187.23			1378592187.23	23		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1828	2013-09-08 02:17:20	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000018		AGI	HANGUP	10	8	ANSWERED		1378592240.24			1378592240.24	24		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1829	2013-09-08 02:18:26	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000019		Hangup		8	6	ANSWERED		1378592306.25			1378592306.25	25		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1830	2013-09-08 02:18:49	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001b		Hangup		7	5	ANSWERED		1378592329.27			1378592329.27	27		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1832	2013-09-08 02:19:21	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001d		Hangup		7	5	ANSWERED		1378592361.29			1378592361.29	29		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1833	2013-09-08 02:19:48	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001e		AGI	HANGUP	6	5	ANSWERED		1378592388.30			1378592388.30	30		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1834	2013-09-08 02:20:46	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001f		AGI	HANGUP	5	4	ANSWERED		1378592446.31			1378592446.31	31		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1835	2013-09-08 02:20:56	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000020		AGI	HANGUP	5	4	ANSWERED		1378592456.32			1378592456.32	32		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1836	2013-09-08 02:21:13	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000021		AGI	HANGUP	11	10	ANSWERED		1378592473.33			1378592473.33	33		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1837	2013-09-08 02:21:56	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000022		AGI	HANGUP	9	8	ANSWERED		1378592516.34			1378592516.34	34		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1838	2013-09-08 02:29:58	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000025		AGI	HANGUP	6	5	ANSWERED		1378592998.37			1378592998.37	37		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1839	2013-09-08 02:32:53	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000026		AGI	HANGUP	12	11	ANSWERED		1378593173.38			1378593173.38	38		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1840	2013-09-08 02:37:21	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000027		AGI	HANGUP	15	13	ANSWERED		1378593441.39			1378593441.39	39		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1841	2013-09-08 02:43:51	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000028		AGI	HANGUP	22	21	ANSWERED		1378593831.40			1378593831.40	40		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1842	2013-09-08 02:49:46	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000029		AGI	HANGUP	9	8	ANSWERED		1378594186.41			1378594186.41	41		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1843	2013-09-08 02:50:00	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000002a		AGI	HANGUP	9	8	ANSWERED		1378594200.42			1378594200.42	42		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1844	2013-09-08 02:54:52	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000002b		AGI	HANGUP	17	15	ANSWERED		1378594492.43			1378594492.43	43		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1845	2013-09-08 02:58:47	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000002c		AGI	HANGUP	18	17	ANSWERED		1378594727.44			1378594727.44	44		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1846	2013-09-08 03:05:10	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000002d		AGI	HANGUP	16	14	ANSWERED		1378595110.45			1378595110.45	45		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1847	2013-09-08 03:06:53	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000002e		AGI	HANGUP	18	17	ANSWERED		1378595213.46			1378595213.46	46		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1848	2013-09-08 03:14:25	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000002f		AGI	HANGUP	7	5	ANSWERED		1378595665.47			1378595665.47	47		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1849	2013-09-08 03:14:39	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000030		AGI	HANGUP	8	6	ANSWERED		1378595679.48			1378595679.48	48		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1850	2013-09-08 03:14:51	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000031		AGI	HANGUP	17	15	ANSWERED		1378595691.49			1378595691.49	49		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1851	2013-09-08 03:19:13	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000032		AGI	HANGUP	16	15	ANSWERED		1378595953.50			1378595953.50	50		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1852	2013-09-08 03:20:21	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000033		AGI	HANGUP	13	12	ANSWERED		1378596021.51			1378596021.51	51		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1853	2013-09-08 03:28:12	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000034		AGI	HANGUP	16	14	ANSWERED		1378596492.52			1378596492.52	52		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1854	2013-09-08 03:31:54	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000035		AGI	WAIT	14	12	ANSWERED		1378596714.53			1378596714.53	53		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1855	2013-09-08 03:32:12	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000036		Hangup		16	15	ANSWERED		1378596732.54			1378596732.54	54		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1856	2013-09-08 03:32:38	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000037		AGI	HANGUP	8	6	ANSWERED		1378596758.55			1378596758.55	55		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1857	2013-09-08 03:42:16	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000038		Hangup		13	12	ANSWERED		1378597336.56			1378597336.56	56		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1858	2013-09-08 04:05:30	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000039		Hangup		12	11	ANSWERED		1378598730.57			1378598730.57	57		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1859	2013-09-08 04:14:08	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000003a		Hangup		9	7	ANSWERED		1378599248.58			1378599248.58	58		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1860	2013-09-08 04:24:31	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000003b		AGI	HANGUP	9	7	ANSWERED		1378599871.59			1378599871.59	59		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1861	2013-09-08 04:27:30	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000003c		Hangup		12	11	ANSWERED		1378600050.60			1378600050.60	60		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1862	2013-09-08 04:38:22	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000000		Hangup		13	12	ANSWERED		1378600702.0			1378600702.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1863	2013-09-08 04:41:25	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000001		AGI	HANGUP	10	9	ANSWERED		1378600885.1			1378600885.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1864	2013-09-08 04:42:36	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000002		Hangup		9	8	ANSWERED		1378600956.2			1378600956.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1865	2013-09-08 04:45:27	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000003		AGI	HANGUP	17	15	ANSWERED		1378601127.3			1378601127.3	3		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1866	2013-09-08 04:53:56	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000004		AGI	HANGUP	12	11	ANSWERED		1378601636.4			1378601636.4	4		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1867	2013-09-08 04:54:57	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000005		AGI	HANGUP	17	16	ANSWERED		1378601697.5			1378601697.5	5		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1868	2013-09-08 04:56:03	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000006		Hangup		17	16	ANSWERED		1378601763.6			1378601763.6	6		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1869	2013-09-08 05:03:16	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000007		Hangup		12	10	ANSWERED		1378602196.7			1378602196.7	7		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1870	2013-09-08 05:03:46	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000008		Hangup		11	10	ANSWERED		1378602226.8			1378602226.8	8		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1871	2013-09-08 05:05:15	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000009		AGI	HANGUP	12	11	ANSWERED		1378602315.9			1378602315.9	9		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1872	2013-09-08 05:12:17	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000a		AGI	HANGUP	13	12	ANSWERED		1378602737.10			1378602737.10	10		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1873	2013-09-08 05:17:27	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000b		AGI	HANGUP	9	8	ANSWERED		1378603047.11			1378603047.11	11		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1874	2013-09-08 05:18:55	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000c		AGI	HANGUP	11	10	ANSWERED		1378603135.12			1378603135.12	12		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1875	2013-09-08 05:26:53	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000d		AGI	HANGUP	15	13	ANSWERED		1378603613.13			1378603613.13	13		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1876	2013-09-08 05:29:59	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000e		AGI	HANGUP	6	5	ANSWERED		1378603799.14			1378603799.14	14		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1877	2013-09-08 05:31:42	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000f		AGI	HANGUP	12	11	ANSWERED		1378603902.15			1378603902.15	15		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1878	2013-09-08 05:32:29	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000010		AGI	HANGUP	11	9	ANSWERED		1378603949.16			1378603949.16	16		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1879	2013-09-08 05:32:46	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000011		AGI	HANGUP	5	4	ANSWERED		1378603966.17			1378603966.17	17		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1880	2013-09-08 05:33:45	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000012		AGI	HANGUP	10	9	ANSWERED		1378604025.18			1378604025.18	18		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1881	2013-09-08 05:34:03	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000013		AGI	HANGUP	6	5	ANSWERED		1378604043.19			1378604043.19	19		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1882	2013-09-08 05:34:23	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000014		AGI	HANGUP	7	6	ANSWERED		1378604063.20			1378604063.20	20		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1883	2013-09-08 05:35:38	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000015		AGI	HANGUP	6	5	ANSWERED		1378604138.21			1378604138.21	21		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1884	2013-09-08 05:36:20	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000016		AGI	HANGUP	21	20	ANSWERED		1378604180.22			1378604180.22	22		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1885	2013-09-08 05:39:04	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000017		AGI	HANGUP	11	10	ANSWERED		1378604344.23			1378604344.23	23		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1886	2013-09-08 05:41:55	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000018		AGI	HANGUP	32	31	ANSWERED		1378604515.24			1378604515.24	24		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1887	2013-09-08 05:45:00	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000019		Hangup		30	29	ANSWERED		1378604700.25			1378604700.25	25		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1888	2013-09-08 05:46:06	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001a		AGI	HANGUP	44	43	ANSWERED		1378604766.26			1378604766.26	26		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1889	2013-09-08 06:00:44	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001b		AGI	HANGUP	43	42	ANSWERED		1378605644.27			1378605644.27	27		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1890	2013-09-08 06:04:33	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001c		AGI	HANGUP	31	29	ANSWERED		1378605873.28			1378605873.28	28		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1891	2013-09-08 06:13:15	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001d		AGI	HANGUP	33	32	ANSWERED		1378606395.29			1378606395.29	29		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1893	2013-09-08 06:17:06	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001e		ConfBridge	333	65	64	ANSWERED		1378606626.30			1378606626.30	30		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1894	2013-09-08 06:32:09	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000000		AGI	HANGUP	28	27	ANSWERED		1378607529.0			1378607529.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1895	2013-09-08 06:33:30	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000001		AGI	HANGUP	25	24	ANSWERED		1378607610.1			1378607610.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1896	2013-09-08 06:35:11	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000000		AGI	HANGUP	21	20	ANSWERED		1378607711.0			1378607711.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1897	2013-09-08 06:36:47	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000000		AGI	HANGUP	21	19	ANSWERED		1378607807.0			1378607807.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1898	2013-09-08 06:40:54	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000000		AGI	HANGUP	29	28	ANSWERED		1378608054.0			1378608054.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1899	2013-09-08 06:42:04	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000001		AGI	HANGUP	21	20	ANSWERED		1378608124.1			1378608124.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1900	2013-09-08 06:49:13	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000000		AGI	HANGUP	29	27	ANSWERED		1378608553.0			1378608553.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1901	2013-09-08 06:53:56	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000001		AGI	HANGUP	22	21	ANSWERED		1378608836.1			1378608836.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1902	2013-09-08 06:54:45	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000002		AGI	HANGUP	15	14	ANSWERED		1378608885.2			1378608885.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1903	2013-09-08 06:56:03	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000000		AGI	HANGUP	30	29	ANSWERED		1378608963.0			1378608963.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1904	2013-09-08 06:57:55	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000001		AGI	HANGUP	16	15	ANSWERED		1378609075.1			1378609075.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1905	2013-09-08 07:02:43	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000002		AGI	HANGUP	24	22	ANSWERED		1378609363.2			1378609363.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1906	2013-09-08 07:03:42	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000003		AGI	HANGUP	19	18	ANSWERED		1378609422.3			1378609422.3	3		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1907	2013-09-08 07:05:05	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000004		AGI	HANGUP	22	21	ANSWERED		1378609505.4			1378609505.4	4		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1908	2013-09-08 07:12:06	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000005		AGI	HANGUP	24	23	ANSWERED		1378609926.5			1378609926.5	5		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1909	2013-09-08 07:13:22	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000006		AGI	HANGUP	25	24	ANSWERED		1378610002.6			1378610002.6	6		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1910	2013-09-08 07:15:27	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000007		AGI	HANGUP	16	15	ANSWERED		1378610127.7			1378610127.7	7		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1911	2013-09-08 07:17:06	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000008		AGI	HANGUP	30	28	ANSWERED		1378610226.8			1378610226.8	8		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1912	2013-09-08 07:22:19	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000000		AGI	HANGUP	44	42	ANSWERED		1378610539.0			1378610539.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1913	2013-09-08 07:27:14			s	default	Bridge/0xb7501d6c-output				14	14	ANSWERED		1378610834.2			1378610834.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1914	2013-09-08 07:26:30	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000000		ConfBridge	333,,user	59	58	ANSWERED		1378610790.0			1378610790.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1915	2013-09-08 07:28:29			s	default	Bridge/0xb730327c-output				74	74	ANSWERED		1378610909.2			1378610909.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1916	2013-09-08 07:28:01	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000000		ConfBridge	333,,user	103	101	ANSWERED		1378610881.0			1378610881.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1917	2013-09-08 07:29:51	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000001		AGI	HANGUP	16	15	ANSWERED		1378610991.3			1378610991.3	3		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1918	2013-09-08 07:33:40	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000002		AGI	HANGUP	14	13	ANSWERED		1378611220.4			1378611220.4	4		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1919	2013-09-08 07:37:43	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000003		AGI	HANGUP	12	11	ANSWERED		1378611463.5			1378611463.5	5		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1920	2013-09-08 07:38:49	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000004		Hangup		15	14	ANSWERED		1378611529.6			1378611529.6	6		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1921	2013-09-08 07:53:06	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000005		AGI	HANGUP	17	15	ANSWERED		1378612386.7			1378612386.7	7		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1922	2013-09-08 07:55:45	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000006		AGI	HANGUP	8	7	ANSWERED		1378612545.8			1378612545.8	8		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1923	2013-09-08 07:56:08	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000007		AGI	HANGUP	11	9	ANSWERED		1378612568.9			1378612568.9	9		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1924	2013-09-08 07:56:59			s	default	Bridge/0xb7300e3c-output				65	65	ANSWERED		1378612619.12			1378612619.12	12		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1925	2013-09-08 07:56:22	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000008		ConfBridge	2885,,user	103	102	ANSWERED		1378612582.10			1378612582.10	10		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1926	2013-09-08 08:06:52	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000009		AGI	HANGUP	13	12	ANSWERED		1378613212.13			1378613212.13	13		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1927	2013-09-08 08:08:06	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000a		AGI	HANGUP	18	17	ANSWERED		1378613286.14			1378613286.14	14		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1928	2013-09-08 08:08:30	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000b		ConfBridge	4419,,user	36	35	ANSWERED		1378613310.15			1378613310.15	15		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1929	2013-09-08 08:16:31	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000e		Hangup		15	14	ANSWERED		1378613791.18			1378613791.18	18		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1930	2013-09-08 08:18:05	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000f		ConfBridge	5582,,user	31	30	ANSWERED		1378613885.19			1378613885.19	19		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1931	2013-09-08 08:26:59	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000010		AGI	HANGUP	12	10	ANSWERED		1378614419.20			1378614419.20	20		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1932	2013-09-08 08:27:55	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000011		AGI	SAY	9	8	ANSWERED		1378614475.21			1378614475.21	21		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1933	2013-09-08 08:29:07	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000012		AGI	HANGUP	10	9	ANSWERED		1378614547.22			1378614547.22	22		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1934	2013-09-08 08:32:40	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000013		AGI	STREAM	6	5	ANSWERED		1378614760.23			1378614760.23	23		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1935	2013-09-08 08:32:47	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000014		AGI	HANGUP	10	9	ANSWERED		1378614767.24			1378614767.24	24		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1936	2013-09-08 08:46:44	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000015		AGI	HANGUP	8	7	ANSWERED		1378615604.25			1378615604.25	25		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1937	2013-09-08 08:49:40	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000016		ConfBridge	5258,,user	24	23	ANSWERED		1378615780.26			1378615780.26	26		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1938	2013-09-08 08:51:19	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000017		ConfBridge	4737,,user	28	26	ANSWERED		1378615879.27			1378615879.27	27		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1939	2013-09-08 21:00:47	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000002a		AGI	STREAM	7	6	ANSWERED		1378659647.42			1378659647.42	42		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1940	2013-09-09 05:14:16	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000004		AGI	STREAM	7	5	ANSWERED		1378689256.4			1378689256.4	4		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1941	2013-09-09 05:14:44	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000005		AGI	STREAM	6	5	ANSWERED		1378689284.5			1378689284.5	5		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1942	2013-09-09 05:15:06	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000006		AGI	STREAM	13	12	ANSWERED		1378689306.6			1378689306.6	6		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1943	2013-09-09 06:32:57	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000007		AGI	STREAM	4	3	ANSWERED		1378693977.7			1378693977.7	7		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1944	2013-09-09 06:44:42	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000009		AGI	STREAM	5	4	ANSWERED		1378694682.9			1378694682.9	9		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1945	2013-09-09 06:47:58	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000a		AGI	STREAM	7	5	ANSWERED		1378694878.10			1378694878.10	10		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1946	2013-09-09 06:55:28	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000b		AGI	STREAM	12	10	ANSWERED		1378695328.11			1378695328.11	11		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1947	2013-09-09 06:55:54	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000c		AGI	WAIT	14	12	ANSWERED		1378695354.12			1378695354.12	12		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1948	2013-09-09 06:59:16	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000d		AGI	HANGUP	12	10	ANSWERED		1378695556.13			1378695556.13	13		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1949	2013-09-09 06:59:50	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000e		AGI	HANGUP	8	6	ANSWERED		1378695590.14			1378695590.14	14		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1950	2013-09-09 07:01:03	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000f		ConfBridge	4289,,user	29	28	ANSWERED		1378695663.15			1378695663.15	15		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1951	2013-09-09 07:03:05	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000010		ConfBridge	4403,,user	24	22	ANSWERED		1378695785.16			1378695785.16	16		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1952	2013-09-09 07:04:32			s	default	Bridge/0xb73024d4-output				39	39	ANSWERED		1378695872.19			1378695872.19	19		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1953	2013-09-09 07:03:53	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000011		ConfBridge	3781,,user	80	79	ANSWERED		1378695833.17			1378695833.17	17		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1954	2013-09-09 07:05:07	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000012		AGI	HANGUP	14	13	ANSWERED		1378695907.20			1378695907.20	20		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1955	2013-09-09 07:10:26			s	default	Bridge/0xb73020ec-output				23	23	ANSWERED		1378696226.24			1378696226.24	24		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1956	2013-09-09 07:10:14	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000014		ConfBridge	3781,,user	36	34	ANSWERED		1378696214.22			1378696214.22	22		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1957	2013-09-09 07:10:51	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000015		AGI	HANGUP	27	25	ANSWERED		1378696251.25			1378696251.25	25		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1958	2013-09-09 07:11:32	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000016		AGI	HANGUP	7	5	ANSWERED		1378696292.26			1378696292.26	26		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1959	2013-09-09 07:15:59			s	default	Bridge/0xb7301194-output				9	9	ANSWERED		1378696559.29			1378696559.29	29		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1960	2013-09-09 07:15:25	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000017		ConfBridge	4737,,user	44	42	ANSWERED		1378696525.27			1378696525.27	27		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1961	2013-09-09 08:23:06	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000018		AGI	HANGUP	13	12	ANSWERED		1378700586.30			1378700586.30	30		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1962	2013-09-09 08:23:24	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000019		AGI	HANGUP	12	10	ANSWERED		1378700604.31			1378700604.31	31		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1963	2013-09-09 08:28:16	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001a		ConfBridge	2204,,user	22	20	ANSWERED		1378700896.32			1378700896.32	32		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1964	2013-09-09 08:30:39	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001b		Hangup		9	7	ANSWERED		1378701039.33			1378701039.33	33		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1965	2013-09-09 08:33:20	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001c		AGI	STREAM	5	4	ANSWERED		1378701200.34			1378701200.34	34		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1966	2013-09-09 08:33:43	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001d		AGI	WAIT	9	8	ANSWERED		1378701223.35			1378701223.35	35		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1967	2013-09-09 08:40:39	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000022		ConfBridge	4066,,user	21	19	ANSWERED		1378701639.40			1378701639.40	40		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1968	2013-09-09 09:00:39	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000002a		Hangup		12	10	ANSWERED		1378702839.48			1378702839.48	48		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1969	2013-09-09 09:03:10	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000002b		ConfBridge	2757,,user	38	36	ANSWERED		1378702990.49			1378702990.49	49		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1970	2013-09-09 17:00:22	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000002c		Hangup		42	40	ANSWERED		1378731622.50			1378731622.50	50		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1971	2013-09-09 17:01:16	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000002d		Hangup		36	34	ANSWERED		1378731676.51			1378731676.51	51		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1972	2013-09-10 00:23:56	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000001		AGI	HANGUP	3	1	ANSWERED		1378758236.1			1378758236.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1973	2013-09-10 00:29:20	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000002		AGI	HANGUP	17	15	ANSWERED		1378758560.2			1378758560.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1974	2013-09-10 00:34:25			s	default	Bridge/0xa3705d4-output				6	6	ANSWERED		1378758865.5			1378758865.5	5		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1975	2013-09-10 00:33:47	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000003		ConfBridge	2757,,user	46	45	ANSWERED		1378758827.3			1378758827.3	3		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1976	2013-09-10 00:35:23			s	default	Bridge/0x9f567d4-output				32	32	ANSWERED		1378758923.8			1378758923.8	8		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1977	2013-09-10 00:34:39	"501" <501>	501	*90	vpbx_dialout	SIP/501-00000004		ConfBridge	4737,,user	77	76	ANSWERED		1378758879.6			1378758879.6	6		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1978	2013-09-10 00:48:16	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000000a		AGI	STREAM	19	17	ANSWERED		1378759696.14			1378759696.14	14		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1979	2013-09-10 00:51:19	"501" <501>	501	*91	vpbx_dialout	SIP/501-0000000d		Hangup		27	26	ANSWERED		1378759879.17			1378759879.17	17		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1980	2013-09-10 00:53:12	"501" <501>	501	*91	vpbx_dialout	SIP/501-0000000e		AGI	HANGUP	19	17	ANSWERED		1378759992.18			1378759992.18	18		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1981	2013-09-10 00:55:09	"501" <501>	501	*91	vpbx_dialout	SIP/501-0000000f		AGI	HANGUP	13	12	ANSWERED		1378760109.19			1378760109.19	19		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1982	2013-09-10 00:59:56			s	default	Bridge/0xa288bdc-output				15	15	ANSWERED		1378760396.22			1378760396.22	22		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1983	2013-09-10 00:59:29	"501" <501>	501	*91	vpbx_dialout	SIP/501-00000010		ConfBridge	5873,,user	43	41	ANSWERED		1378760369.20			1378760369.20	20		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1984	2013-09-10 01:00:59			s	default	Bridge/0xa376994-output				10	10	ANSWERED		1378760459.25			1378760459.25	25		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1985	2013-09-10 01:00:25	"501" <501>	501	*91	vpbx_dialout	SIP/501-00000011		ConfBridge	2610,,user	45	44	ANSWERED		1378760425.23			1378760425.23	23		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1986	2013-09-10 01:01:02	"501" <501>	501	*91	vpbx_dialout	SIP/501-00000012		Hangup		19	18	ANSWERED		1378760462.26			1378760462.26	26		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1987	2013-09-10 01:05:31	"501" <501>	501	*91	vpbx_dialout	SIP/501-00000013		ConfBridge	3345,,user	28	27	ANSWERED		1378760731.27			1378760731.27	27		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1988	2013-09-10 01:06:19	"501" <501>	501	*91	vpbx_dialout	SIP/501-00000014		ConfBridge	4511,,user	30	29	ANSWERED		1378760779.28			1378760779.28	28		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1989	2013-09-10 01:07:58	"501" <501>	501	*91	vpbx_dialout	SIP/501-00000015		ConfBridge	3235,,user	19	18	ANSWERED		1378760878.29			1378760878.29	29		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1990	2013-09-10 01:10:17	"501" <501>	501	*91	vpbx_dialout	SIP/501-00000016		ConfBridge	3782,,user	21	19	ANSWERED		1378761017.30			1378761017.30	30		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1991	2013-09-10 01:13:26	"501" <501>	501	*91	vpbx_dialout	SIP/501-00000017		ConfBridge	2890,,user	32	31	ANSWERED		1378761206.31			1378761206.31	31		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1992	2013-09-10 01:14:00	"501" <501>	501	*91	vpbx_dialout	SIP/501-00000018		ConfBridge	3295,,user	24	22	ANSWERED		1378761240.32			1378761240.32	32		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1993	2013-09-10 01:34:43	"501" <501>	501	*91	vpbx_dialout	SIP/501-00000019		ConfBridge	4676,,user	42	40	ANSWERED		1378762483.33			1378762483.33	33		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1994	2013-09-10 01:35:43	"501" <501>	501	*91	vpbx_dialout	SIP/501-0000001a		ConfBridge	2415,,user	26	24	ANSWERED		1378762543.34			1378762543.34	34		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1995	2013-09-10 01:47:06	"501" <501>	501	*91	vpbx_dialout	SIP/501-0000001b		ConfBridge	3527,,user	24	22	ANSWERED		1378763226.35			1378763226.35	35		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1996	2013-09-10 01:48:08	"501" <501>	501	*91	vpbx_dialout	SIP/501-0000001c		ConfBridge	2229,,user	27	25	ANSWERED		1378763288.36			1378763288.36	36		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1997	2013-09-10 01:48:46	"501" <501>	501	*91	vpbx_dialout	SIP/501-0000001d		AGI	STREAM	16	14	ANSWERED		1378763326.37			1378763326.37	37		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1998	2013-09-10 01:49:49			s	default	Bridge/0xa36e59c-output				32	32	ANSWERED		1378763389.40			1378763389.40	40		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-1999	2013-09-10 01:49:04	"501" <501>	501	*90	vpbx_dialout	SIP/501-0000001e		ConfBridge	2229,,user	78	76	ANSWERED		1378763344.38			1378763344.38	38		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2000	2013-09-16 17:11:58	"501" <501>	501	8888	test1212	SIP/501-00000000		Wait	2000	11	11	ANSWERED		1379337118.0			1379337118.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2001	2013-09-16 17:12:11	"501" <501>	501	33344	test1212	SIP/501-00000001		Wait	2000	7	7	ANSWERED		1379337131.1			1379337131.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2002	2013-09-16 17:12:46	"501" <501>	501	3344	test1212	SIP/501-00000000		Wait	2000	11	11	ANSWERED		1379337166.0			1379337166.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2003	2013-09-16 17:14:31	"501" <501>	501	3444	test1212	SIP/501-00000001		Wait	2000	59	59	ANSWERED		1379337271.1			1379337271.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2004	2013-09-16 17:15:32	"501" <501>	501	33344	test1212	SIP/501-00000002		MusicOnHold	1_greeting	7	7	ANSWERED		1379337332.2			1379337332.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2005	2013-09-16 17:18:44	"501" <501>	501	3344	test1212	SIP/501-00000000		MusicOnHold	1_greeting	6	6	ANSWERED		1379337524.0			1379337524.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2006	2013-09-16 17:19:17	"501" <501>	501	22	test1212	SIP/501-00000001		MusicOnHold	1_greeting	8	8	ANSWERED		1379337557.1			1379337557.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2007	2013-09-16 17:20:09	"501" <501>	501	344	test1212	SIP/501-00000002		MusicOnHold	1_greeting	7	7	ANSWERED		1379337609.2			1379337609.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2008	2013-09-16 17:35:05	"501" <501>	501	3444	test1212	SIP/501-00000000		MusicOnHold	1_greeting	389	389	ANSWERED		1379338505.0			1379338505.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2009	2013-09-16 17:51:48	"501" <501>	501	3444	test1212	SIP/501-00000001		MusicOnHold	1_greeting	15	15	ANSWERED		1379339508.1			1379339508.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2010	2013-09-16 17:53:24	"501" <501>	501	3444	test1212	SIP/501-00000002		MusicOnHold	1_greeting	453	453	ANSWERED		1379339604.2			1379339604.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2011	2013-09-17 03:02:50	"501" <501>	501	2334	test1212	SIP/501-00000000		MusicOnHold		5	5	ANSWERED		1379372570.0			1379372570.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2012	2013-09-17 03:06:32	"501" <501>	501	1344	test1212	SIP/501-00000000		MusicOnHold		43	43	ANSWERED		1379372792.0			1379372792.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2013	2013-09-17 17:14:53	"501" <501>	501	344	test1212	SIP/501-00000001		MusicOnHold		2	2	ANSWERED		1379423693.1			1379423693.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2014	2013-09-18 18:17:00	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000005		VoiceMailMain	s4@default	11	9	ANSWERED		1379513820.5			1379513820.5	5		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2015	2013-09-18 18:22:55	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000000		VoiceMailMain	s4@default@default	9	7	ANSWERED		1379514175.0			1379514175.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2016	2013-09-18 18:27:41	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000002		VoiceMailMain	s4@default	13	11	ANSWERED		1379514461.2			1379514461.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2017	2013-09-18 18:36:26	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000003		VoiceMailMain	s4@default	13	11	ANSWERED		1379514986.3			1379514986.3	3		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2018	2013-09-18 18:40:32	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000004		VoiceMailMain	s4@default	13	11	ANSWERED		1379515232.4			1379515232.4	4		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2019	2013-09-18 18:41:28	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000005		VoiceMailMain	s4@default	12	11	ANSWERED		1379515288.5			1379515288.5	5		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2020	2013-09-18 19:02:50	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000000		VoiceMailMain	s4@default	6	4	ANSWERED		1379516570.0			1379516570.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2021	2013-09-18 19:05:53	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000001		VoiceMailMain	s4@default	7	5	ANSWERED		1379516753.1			1379516753.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2022	2013-09-18 19:06:31	"501" <501>	501	502	test1212	SIP/501-00000002		MusicOnHold		13	13	ANSWERED		1379516791.2			1379516791.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2023	2013-09-18 19:07:07	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000000;2	SIP/502-00000004	Dial	SIP/502,0,mtTm(1_ringingtone)	22	0	NO ANSWER		1379516827.5			1379516825.3	5		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2024	2013-09-18 19:07:05	"501" <501>	501	502	vpbx_dialout	SIP/501-00000003	Local/502@extenreceive-00000000;1	Dial	Local/502@extenreceive/n,60,M(callrecord)mtTg	24	0	NO ANSWER		1379516825.3			1379516825.3	3		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2025	2013-09-18 19:07:31	"103" <502>	502	501	vpbx_dialout	SIP/502-00000005	Local/501@extenreceive-00000001;1	Dial	Local/501@extenreceive/n,60,M(callrecord)mtTg	25	15	ANSWERED		1379516851.7	2ca1531f703c322ce23adaf77c8a94ee		1379516851.7	7		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2026	2013-09-18 19:07:33	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000001;2	SIP/501-00000006	VoiceMail	1@default	26	18	ANSWERED		1379516853.9			1379516851.7	9		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2027	2013-09-18 19:08:07	"501" <501>	501	*70	vpbx_dialout	SIP/501-00000007		VoiceMailMain	s1@default	26	24	ANSWERED		1379516887.11			1379516887.11	12		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2028	2013-09-18 19:08:45	"103" <502>	502	501	vpbx_dialout	SIP/502-00000008	Local/501@extenreceive-00000002;1	Dial	Local/501@extenreceive/n,60,M(callrecord)mtTg	13	3	ANSWERED		1379516925.12	d620923a5c590a3a5077aad047405ffa		1379516925.12	13		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2029	2013-09-18 19:08:47	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000002;2	SIP/501-00000009	VoiceMail	1@default	14	6	ANSWERED		1379516927.14			1379516925.12	15		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2030	2013-09-18 19:09:49	"103" <502>	502	501	vpbx_dialout	SIP/502-0000000a	Local/501@extenreceive-00000003;1	Dial	Local/501@extenreceive/n,60,M(callrecord)mtTg	19	5	ANSWERED		1379516989.16	48930b3b7cf053a3f65bfbebdd17b959		1379516989.16	18		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2031	2013-09-18 19:09:51	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000003;2	SIP/501-0000000b	VoiceMail	1@default	20	8	ANSWERED		1379516991.18			1379516989.16	20		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2032	2013-09-18 19:10:33	"103" <502>	502	501	vpbx_dialout	SIP/502-0000000c	Local/501@extenreceive-00000004;1	Dial	Local/501@extenreceive/n,60,M(callrecord)mtTg	30	5	ANSWERED		1379517033.20	5df7d17cf29d15c82a74b86d29ba0a6e		1379517033.20	23		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2033	2013-09-18 19:10:35	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000004;2	SIP/501-0000000d	VoiceMail	1@default	31	8	ANSWERED		1379517035.22			1379517033.20	25		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2034	2013-09-18 19:12:07	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000005;2	SIP/502-0000000f	Dial	SIP/502,0,mtTm(1_ringingtone)	20	0	NO ANSWER		1379517127.26			1379517125.24	30		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2035	2013-09-18 19:12:05	"501" <501>	501	502	vpbx_dialout	SIP/501-0000000e	Local/502@extenreceive-00000005;1	Dial	Local/502@extenreceive/n,60,M(callrecord)mtTg	22	0	NO ANSWER		1379517125.24			1379517125.24	28		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2036	2013-09-18 19:49:53	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000010		VoiceMailMain	s4@default	6	4	ANSWERED		1379519393.28			1379519393.28	32		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2037	2013-09-18 20:05:32	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000000		VoiceMailMain	s4@default	9	7	ANSWERED		1379520332.0			1379520332.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2038	2013-09-18 21:18:20	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000001		VoiceMailMain	s4@default	6	5	ANSWERED		1379524700.1			1379524700.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2039	2013-09-18 22:49:34	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000002		VoiceMailMain	s4@default	7	6	ANSWERED		1379530174.2			1379530174.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2040	2013-09-18 22:49:48	"103" <502>	502	501	vpbx_dialout	SIP/502-00000003	Local/501@extenreceive-00000000;1	Dial	Local/501@extenreceive/n,60,M(callrecord)mtTg	5	0	NO ANSWER		1379530188.3			1379530188.3	3		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2041	2013-09-18 22:58:16	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000004		VoiceMailMain	s4@default	5	4	ANSWERED		1379530696.6			1379530696.6	6		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2042	2013-09-18 22:59:07	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000005		VoiceMailMain	s4@default	5	3	ANSWERED		1379530747.7			1379530747.7	7		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2043	2013-09-18 23:01:29	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000006		VoiceMailMain	s4@default	5	3	ANSWERED		1379530889.8			1379530889.8	8		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2044	2013-09-18 23:18:06	"103" <502>	502	100	vpbx_dialout	SIP/502-00000007		Hangup		7	5	ANSWERED		1379531886.9			1379531886.9	9		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2045	2013-09-18 23:40:36	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000001;2	SIP/502-0000000c	Dial	SIP/502,0,mtTm(1_ringingtone)	11	0	NO ANSWER		1379533236.15			1379533234.13	15		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2046	2013-09-18 23:40:34	"501" <501>	501	502	vpbx_dialout	SIP/501-0000000b	Local/502@extenreceive-00000001;1	Dial	Local/502@extenreceive/n,60,M(callrecord)mtTg	13	0	NO ANSWER		1379533234.13			1379533234.13	13		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2047	2013-09-18 23:43:18	"103" <502>	502	105	vpbx_dialout	SIP/502-0000000d		PlayTones	Busy	6	4	ANSWERED		1379533398.17			1379533398.17	17		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2048	2013-09-18 23:45:18	"103" <502>	502	105	vpbx_dialout	SIP/502-0000000e		Hangup		6	4	ANSWERED		1379533518.18			1379533518.18	18		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2049	2013-09-18 23:45:31	"103" <502>	502	105	vpbx_dialout	SIP/502-0000000f		Hangup		6	4	ANSWERED		1379533531.19			1379533531.19	19		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2050	2013-09-19 01:59:33	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000010		VoiceMailMain	s4@default	8	7	ANSWERED		1379541573.20			1379541573.20	20		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2051	2013-09-19 02:01:27	"103" <502>	502	100	vpbx_dialout	SIP/502-00000011		Hangup		7	5	ANSWERED		1379541687.21			1379541687.21	21		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2052	2013-09-21 02:58:22	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000000		VoiceMailMain	s4@default	5	3	ANSWERED		1379717902.0			1379717902.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2053	2013-09-26 20:36:31	"103" <502>	502	105	vpbx_dialout	SIP/502-00000002		Hangup		7	4	ANSWERED		1380213391.2			1380213391.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2054	2013-09-26 20:40:36	"103" <502>	502	105	vpbx_dialout	SIP/502-00000003		PlayTones	Busy	7	4	ANSWERED		1380213636.3			1380213636.3	3		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2055	2013-09-26 20:41:23	"103" <502>	502	105	vpbx_dialout	SIP/502-00000005		Hangup		7	5	ANSWERED		1380213683.5			1380213683.5	5		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2056	2013-09-26 21:54:16	"103" <502>	502	*	vpbx_dialout	SIP/502-00000006		Hangup		7	5	ANSWERED		1380218056.6			1380218056.6	6		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2057	2013-09-26 21:54:25	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000007		VoiceMailMain	s4@default	5	4	ANSWERED		1380218065.7			1380218065.7	7		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2058	2013-09-26 22:54:16	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000008		VoiceMailMain	s4@default	6	5	ANSWERED		1380221656.8			1380221656.8	8		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2059	2013-10-03 00:58:19	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000000		AGI	HANGUP	19	17	ANSWERED		1380747499.0			1380747499.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2060	2013-10-03 01:00:05	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000000;2	SIP/501-00000002	Dial	SIP/501,20,mtTm(1_ringingtone)	4	0	NO ANSWER		1380747605.3			1380747604.1	3		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2061	2013-10-03 01:00:04	"103" <502>	502	501	vpbx_dialout	SIP/502-00000001	Local/501@extenreceive-00000000;1	Dial	Local/501@extenreceive/n,60,M(callrecord)tTg	5	0	NO ANSWER		1380747604.1			1380747604.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2062	2013-10-03 01:00:24	"501" <501>	501	501	vpbx_dialout	SIP/501-00000003	Local/501@extenreceive-00000001;1	Dial	Local/501@extenreceive/n,60,M(callrecord)tTg	6	0	NO ANSWER		1380747624.5			1380747624.5	5		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2063	2013-10-03 01:00:25	"501" <501>	501	501	extenreceive	Local/501@extenreceive-00000001;2	SIP/501-00000004	Dial	SIP/501,20,mtTm(1_ringingtone)	5	0	NO ANSWER		1380747625.7			1380747624.5	7		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2064	2013-10-03 01:00:32	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000002;2	SIP/502-00000006	Dial	SIP/502,0,mtTm(1_ringingtone)	14	0	NO ANSWER		1380747632.11			1380747631.9	11		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2065	2013-10-03 01:00:31	"501" <501>	501	502	vpbx_dialout	SIP/501-00000005	Local/502@extenreceive-00000002;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	15	0	NO ANSWER		1380747631.9			1380747631.9	9		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2066	2013-10-03 01:13:22	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000007		VoiceMailMain	s4@default	5	4	ANSWERED		1380748402.13			1380748402.13	13		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2067	2013-10-03 01:40:29	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000008		AGI	HANGUP	71	70	ANSWERED		1380750029.14			1380750029.14	14		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2068	2013-10-03 01:41:48	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000009		AGI	HANGUP	82	81	ANSWERED		1380750108.15			1380750108.15	15		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2069	2013-10-03 01:43:46	"103" <502>	502	*70	vpbx_dialout	SIP/502-0000000a		VoiceMailMain	s4@default	14	13	ANSWERED		1380750226.16			1380750226.16	16		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2070	2013-10-03 02:08:36	"103" <502>	502	*70	vpbx_dialout	SIP/502-0000000b		VoiceMailMain	s4@default	94	93	ANSWERED		1380751716.17			1380751716.17	17		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2071	2013-10-03 02:13:50	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000000		VoiceMailMain	s4@default	16	15	ANSWERED		1380752030.0			1380752030.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2072	2013-10-03 04:35:21	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000001		VoiceMailMain	s4@default	8	7	ANSWERED		1380760520.1			1380760520.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2073	2013-10-03 23:50:45	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000000		VoiceMailMain	s4@default	8	5	ANSWERED		1380829845.0			1380829845.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2074	2013-10-04 00:31:59	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000001		VoiceMailMain	s4@default	6	5	ANSWERED		1380832319.1			1380832319.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2075	2013-10-04 05:38:30	"103" <502>	502	*70	vpbx_dialout	SIP/502-00000002		VoiceMailMain	s4@default	19	17	ANSWERED		1380850710.2			1380850710.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2076	2013-10-14 09:58:21	"501" <501>	501	502	vpbx_dialout	SIP/501-00000000	Local/502@extenreceive-00000000;1	Hangup		5	0	NO ANSWER		1381730301.0	649e43ec58a3b4457f09427c9485277c		1381730301.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2077	2013-10-14 10:00:11	"501" <501>	501	502	vpbx_dialout	SIP/501-00000001	Local/502@extenreceive-00000001;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	5	0	NO ANSWER		1381730411.3			1381730411.3	3		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2078	2013-10-14 10:01:07	"501" <501>	501	502	vpbx_dialout	SIP/501-00000002	Local/502@extenreceive-00000002;1	Hangup		5	0	NO ANSWER		1381730467.6	524adb8559065127a4d3dde8ca159384		1381730467.6	6		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2079	2013-10-14 10:01:49	"501" <501>	501	502	vpbx_dialout	SIP/501-00000003	Local/502@extenreceive-00000003;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	5	0	NO ANSWER		1381730509.9			1381730509.9	9		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2080	2013-10-14 10:02:50	"501" <501>	501	502	vpbx_dialout	SIP/501-00000004	Local/502@extenreceive-00000004;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	5	0	NO ANSWER		1381730570.12			1381730570.12	12		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2081	2013-10-14 10:03:55	"501" <501>	501	502	vpbx_dialout	SIP/501-00000005	Local/502@extenreceive-00000005;1	Hangup		5	0	NO ANSWER		1381730635.15	cef5efc4fe927d265910505ff2a1beb3		1381730635.15	15		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2082	2013-10-14 10:07:36	"501" <501>	501	502	vpbx_dialout	SIP/501-00000006	Local/502@extenreceive-00000006;1	Hangup		8	0	NO ANSWER		1381730856.18	8cda3aecbcca93a8d182b15542c680cd		1381730856.18	18		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2083	2013-10-14 10:08:05	"501" <501>	501	333	vpbx_dialout	Local/333@vpbx_dialout-00000008;2		Hangup		8	5	ANSWERED		1381730885.25			1381730881.21	25		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2084	2013-10-14 10:08:03	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000007;2	Local/333@vpbx_dialout-00000008;1	Dial	Local/333@vpbx_dialout,5	12	7	ANSWERED		1381730883.23	20a85c3d1c69f0b15db3c76c7d11bc51		1381730881.21	23		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2085	2013-10-14 10:08:01	"501" <501>	501	502	vpbx_dialout	SIP/501-00000007	Local/502@extenreceive-00000007;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	14	7	ANSWERED		1381730881.21	20a85c3d1c69f0b15db3c76c7d11bc51		1381730881.21	21		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2086	2013-10-27 11:27:31	"501" <501>	501	89251999108	vpbx_dialout	SIP/501-0000000b		AGI	HANGUP	8	5	ANSWERED		1382858851.11			1382858851.11	11		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	Москва моб.	\N	\N	\N		1
-2087	2013-10-27 11:28:32	"501" <501>	501	89251999108	vpbx_dialout	SIP/501-0000000c		AGI	HANGUP	6	4	ANSWERED		1382858912.12			1382858912.12	12		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	Москва моб.	\N	\N	\N		1
-2088	2013-10-27 14:23:11	"501" <501>	501	4444	vpbx_dialout	SIP/501-00000015		Hangup		6	4	ANSWERED		1382869391.21			1382869391.21	21		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2089	2013-10-27 14:25:14	"501" <501>	501	44444	vpbx_dialout	SIP/501-00000017		Hangup		7	5	ANSWERED		1382869514.23			1382869514.23	23		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2090	2013-10-28 11:26:27	"103" <502>	502	100	vpbx_dialout	SIP/502-00000000		Hangup		7	4	ANSWERED		1382945187.0			1382945187.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2091	2013-10-28 11:26:43	"103" <502>	502	100	vpbx_dialout	SIP/502-00000001		Hangup		6	4	ANSWERED		1382945203.1			1382945203.1	1		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2092	2013-10-28 11:33:03	"103" <502>	502	521	vpbx_dialout	Local/521@vpbx_dialout-00000001;2	Local/521@extenreceive-00000002;1	Hangup		3	0	FAILED		1382945583.6			1382945581.2	6		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2093	2013-10-28 11:33:02	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000000;2	Local/521@vpbx_dialout-00000001;1	AGI	HANGUP	5	0	FAILED		1382945582.4			1382945581.2	4		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2094	2013-10-28 11:33:01	"103" <502>	502	501	vpbx_dialout	SIP/502-00000002	Local/501@extenreceive-00000000;1	Hangup		7	0	FAILED		1382945581.2			1382945581.2	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2095	2013-10-28 11:34:48	"501" <501>	501	333	vpbx_dialout	Local/333@vpbx_dialout-00000004;2		Hangup		7	5	ANSWERED		1382945688.13			1382945686.9	13		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2096	2013-10-28 11:34:47	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000003;2	Local/333@vpbx_dialout-00000004;1	Dial	Local/333@vpbx_dialout,5	9	6	ANSWERED		1382945687.11	751ac9b9776482be9975e545ebc0252f		1382945686.9	11		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2097	2013-10-28 11:34:46	"501" <501>	501	502	vpbx_dialout	SIP/501-00000003	Local/502@extenreceive-00000003;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	10	6	ANSWERED		1382945686.9	751ac9b9776482be9975e545ebc0252f		1382945686.9	9		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2128	2013-10-28 11:52:56	502	502	700	transfer	SIP/501-00000004	Local/502@extenreceive-00000002;1	Park		81	76	ANSWERED		1382946776.8	338570caedc7d3e0744fdbc990774bd3		1382946776.8	13		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2098	2013-10-28 11:35:50	"501" <501>	501	502	vpbx_dialout	SIP/501-00000004	Local/502@extenreceive-00000005;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	6	3	ANSWERED		1382945750.14	e80dfd124401fcbfbf24a021922ce334		1382945750.14	16		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2099	2013-10-28 11:35:51	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000005;2	Local/333@vpbx_dialout-00000006;1	Dial	Local/333@vpbx_dialout,5	7	5	ANSWERED		1382945751.16	e80dfd124401fcbfbf24a021922ce334		1382945750.14	18		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2100	2013-10-28 11:35:52	"501" <501>	501	333	vpbx_dialout	Local/333@vpbx_dialout-00000006;2		Hangup		7	6	ANSWERED		1382945752.18			1382945750.14	20		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2101	2013-10-28 11:36:12	"103" <502>	502	521	vpbx_dialout	Local/521@vpbx_dialout-00000008;2	Local/521@extenreceive-00000009;1	Hangup		4	0	FAILED		1382945772.23			1382945770.19	27		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2102	2013-10-28 11:36:11	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000007;2	Local/521@vpbx_dialout-00000008;1	AGI	HANGUP	5	0	FAILED		1382945771.21			1382945770.19	25		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2103	2013-10-28 11:36:10	"103" <502>	502	501	vpbx_dialout	SIP/502-00000005	Local/501@extenreceive-00000007;1	Hangup		7	0	FAILED		1382945770.19			1382945770.19	23		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2104	2013-10-28 11:36:57	"103" <502>	502	521	vpbx_dialout	Local/521@vpbx_dialout-0000000b;2	Local/521@extenreceive-0000000c;1	Hangup		7	0	FAILED		1382945817.30			1382945813.26	34		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2105	2013-10-28 11:36:55	"103" <502>	502	501	extenreceive	Local/501@extenreceive-0000000a;2	Local/521@vpbx_dialout-0000000b;1	AGI	HANGUP	10	0	FAILED		1382945815.28			1382945813.26	32		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2106	2013-10-28 11:36:53	"103" <502>	502	501	vpbx_dialout	SIP/502-00000006	Local/501@extenreceive-0000000a;1	Hangup		14	0	FAILED		1382945813.26			1382945813.26	30		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2107	2013-10-28 11:37:35	"103" <502>	502	501	extenreceive	Local/501@extenreceive-0000000d;2	SIP/501-00000008	Dial	SIP/501,20,mt	58	53	ANSWERED		1382945855.35			1382945854.33	41		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2108	2013-10-28 11:37:34	"103" <502>	502	501	vpbx_dialout	SIP/502-00000007	Local/501@extenreceive-0000000d;1	Dial	Local/501@extenreceive/n,60,M(callrecord)tTg	65	59	ANSWERED		1382945854.33	38c3eee08b88c4b5afc752ea9f2027c4		1382945854.33	37		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2109	2013-10-28 11:39:04	"501" <501>	501	333	vpbx_dialout	Local/333@vpbx_dialout-0000000f;2		Hangup		7	5	ANSWERED		1382945944.41			1382945942.37	47		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2110	2013-10-28 11:39:03	"501" <501>	501	502	extenreceive	Local/502@extenreceive-0000000e;2	Local/333@vpbx_dialout-0000000f;1	Dial	Local/333@vpbx_dialout,5	9	6	ANSWERED		1382945943.39	b5b3d156c731b7bed434ae24331f608d		1382945942.37	45		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2174	2013-10-28 12:48:52	"501" <501>	501	*80	vpbx_dialout	SIP/501-00000026		AGI	HANGUP	4	2	ANSWERED		1382950132.74			1382950132.74	81		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2111	2013-10-28 11:39:02	"501" <501>	501	502	vpbx_dialout	SIP/501-00000009	Local/502@extenreceive-0000000e;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	11	7	ANSWERED		1382945942.37	b5b3d156c731b7bed434ae24331f608d		1382945942.37	43		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2112	2013-10-28 11:39:34	"501" <501>	501	502	vpbx_dialout	SIP/501-0000000a	Local/502@extenreceive-00000010;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	20	0	NO ANSWER		1382945974.42			1382945974.42	50		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2113	2013-10-28 11:39:35	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000010;2	SIP/502-0000000b	Dial	SIP/502,0,mt	19	0	NO ANSWER		1382945975.44			1382945974.42	52		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2114	2013-10-28 11:41:00	"501" <501>	501	501	extenreceive	Local/501@extenreceive-00000011;2	SIP/501-0000000d	Dial	SIP/501,20,mt	4	0	NO ANSWER		1382946060.48			1382946059.46	56		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2115	2013-10-28 11:40:59	"501" <501>	501	501	vpbx_dialout	SIP/501-0000000c	Local/501@extenreceive-00000011;1	Dial	Local/501@extenreceive/n,60,M(callrecord)tTg	6	0	NO ANSWER		1382946059.46			1382946059.46	54		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2116	2013-10-28 11:41:04	501	501	170	vpbx_dialout	SIP/501-0000000e	Local/502@extenreceive-00000012;1	Hangup		37	20	ANSWERED		1382946064.50	03c2bf099d7d93efb06433d641c76543		1382946064.50	63		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2117	2013-10-28 11:41:06	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000012;2	SIP/502-0000000f	Dial	SIP/502,0,mt	36	21	ANSWERED		1382946066.52	03c2bf099d7d93efb06433d641c76543		1382946064.50	60		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2118	2013-10-28 11:43:33	"501" <501>	501	700	vpbx_dialout	SIP/501-00000010		Hangup		6	4	ANSWERED		1382946213.55			1382946213.55	65		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2119	2013-10-28 11:48:10	501	501	700	vpbx_dialout	SIP/501-00000011	Local/502@extenreceive-00000013;1	Hangup		18	13	ANSWERED		1382946490.56	24ed2d68e6ac51376cfa836a7ecff315		1382946490.56	71		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2120	2013-10-28 11:48:11	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000013;2	SIP/502-00000012	Dial	SIP/502,0,mt	18	14	ANSWERED		1382946491.58	24ed2d68e6ac51376cfa836a7ecff315		1382946490.56	68		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2121	2013-10-28 11:48:55	501	501	700	vpbx_dialout	SIP/501-00000013	Local/502@extenreceive-00000014;1	Hangup		19	13	ANSWERED		1382946535.61	4c33bc223a7b9ae22e5e9b8e8b134194		1382946535.61	78		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2122	2013-10-28 11:48:56	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000014;2	SIP/502-00000014	Dial	SIP/502,0,mt	20	15	ANSWERED		1382946536.63	4c33bc223a7b9ae22e5e9b8e8b134194		1382946535.61	75		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2123	2013-10-28 11:51:15	"501" <501>	501	502	vpbx_dialout	SIP/501-00000000	Local/502@extenreceive-00000000;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	8	0	NO ANSWER		1382946675.0			1382946675.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2124	2013-10-28 11:51:16	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000000;2	SIP/502-00000001	Dial	SIP/502,0,mt	7	0	NO ANSWER		1382946676.2			1382946675.0	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2125	2013-10-28 11:51:24	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000001;2	SIP/502-00000003	Dial	SIP/502,0,mt	5	0	NO ANSWER		1382946684.6			1382946682.4	6		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2126	2013-10-28 11:51:22	"501" <501>	501	502	vpbx_dialout	SIP/501-00000002	Local/502@extenreceive-00000001;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	7	0	NO ANSWER		1382946682.4			1382946682.4	4		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2127	2013-10-28 11:52:57	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000002;2	SIP/502-00000005	Dial	SIP/502,0,mt	80	76	ANSWERED		1382946777.10	338570caedc7d3e0744fdbc990774bd3		1382946776.8	10		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2129	2013-10-28 11:54:31	"501" <501>	501	700	vpbx_dialout	SIP/501-00000006		Park		11	11	ANSWERED		1382946871.14			1382946871.14	16		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2130	2013-10-28 11:54:45	502	502	s	vpbx_dialout	SIP/501-00000007	Local/502@extenreceive-00000003;1	Park		55	51	ANSWERED		1382946885.16	94a61fa7fc2b29ef360ef72c0494da07		1382946885.16	23		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2131	2013-10-28 11:54:46	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000003;2	SIP/502-00000008	Dial	SIP/502,0,mt	55	52	ANSWERED		1382946886.18	94a61fa7fc2b29ef360ef72c0494da07		1382946885.16	20		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2132	2013-10-28 11:56:41	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000004;2	SIP/502-0000000a	Dial	SIP/502,0,mt	31	28	ANSWERED		1382947001.24	22d82faf01d14b8a0cf96e44ee395313		1382947000.22	28		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2133	2013-10-28 11:57:03	"501" <501>	501	701	vpbx_dialout	SIP/501-0000000b	Local/502@extenreceive-00000004;1	ParkedCall	701,default	10	10	ANSWERED		1382947023.28	22d82faf01d14b8a0cf96e44ee395313		1382947000.22	34		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2134	2013-10-28 11:57:43	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000005;2	SIP/501-0000000d	Dial	SIP/501,20,mt	43	41	ANSWERED		1382947063.31	dc805afe7b81cd325bd4461c851d2f60		1382947062.29	38		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2135	2013-10-28 11:57:42	501	501	700	transfer	SIP/502-0000000c	Local/501@extenreceive-00000005;1	Park		44	40	ANSWERED		1382947062.29	dc805afe7b81cd325bd4461c851d2f60		1382947062.29	41		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2136	2013-10-28 12:01:46	"501" <501>	501	702	vpbx_dialout	SIP/501-0000000e		Hangup		7	5	ANSWERED		1382947306.35			1382947306.35	44		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2137	2013-10-28 12:01:54	"501" <501>	501	502	vpbx_dialout	SIP/501-0000000f	Local/502@extenreceive-00000006;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	16	13	ANSWERED		1382947314.36	a4f2e1a2e5767aaef70c7dc77ad9deaa		1382947314.36	45		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2138	2013-10-28 12:01:55	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000006;2	SIP/502-00000010	Dial	SIP/502,0,mt	17	15	ANSWERED		1382947315.38	a4f2e1a2e5767aaef70c7dc77ad9deaa		1382947314.36	47		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2139	2013-10-28 12:02:59	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000000;2	SIP/502-00000001	Dial	SIP/502,0,mt	9	0	NO ANSWER		1382947379.2			1382947378.0	2		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2140	2013-10-28 12:02:58	"501" <501>	501	502	vpbx_dialout	SIP/501-00000000	Local/502@extenreceive-00000000;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	10	0	NO ANSWER		1382947378.0			1382947378.0	0		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2141	2013-10-28 12:03:11	"501" <501>	501	502	vpbx_dialout	SIP/501-00000002	Local/502@extenreceive-00000001;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	10	0	NO ANSWER		1382947391.4			1382947391.4	4		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2142	2013-10-28 12:03:12	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000001;2	SIP/502-00000003	Dial	SIP/502,0,mt	9	0	NO ANSWER		1382947392.6			1382947391.4	6		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2143	2013-10-28 12:03:23	"501" <501>	501	502	vpbx_dialout	SIP/501-00000004	Local/502@extenreceive-00000002;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	6	0	NO ANSWER		1382947403.8			1382947403.8	8		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2144	2013-10-28 12:03:24	"501" <501>	501	502	extenreceive	Local/502@extenreceive-00000002;2	SIP/502-00000005	Dial	SIP/502,0,mt	5	0	NO ANSWER		1382947404.10			1382947403.8	10		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2145	2013-10-28 12:03:49	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000003;2	SIP/501-00000007	Dial	SIP/501,20,mt	35	32	ANSWERED		1382947429.14	8955fcf9ce3193e192f67dfe156cfc4a		1382947428.12	14		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2146	2013-10-28 12:04:40	"501" <501>	501	701	vpbx_dialout	SIP/501-00000008	Local/700@transfer-00000004;2	ParkedCall	701,default	5	5	ANSWERED		1382947480.20			1382947428.12	24		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2147	2013-10-28 12:03:49	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000003;2	SIP/501-00000007	Transferred Call	Local/700@transfer-00000004;1	56	53	ANSWERED		1382947429.14			1382947428.12	16		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2148	2013-10-28 12:03:48	"103" <502>	502	501	vpbx_dialout	SIP/502-00000006	Local/501@extenreceive-00000003;1	Dial	Local/501@extenreceive/n,60,M(callrecord)tTg	57	53	ANSWERED		1382947428.12	8955fcf9ce3193e192f67dfe156cfc4a		1382947428.12	12		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2149	2013-10-28 12:31:43	510	510	501	vpbx_dialout	SIP/510-00000009	Local/501@extenreceive-00000005;1	Dial	Local/501@extenreceive/n,60,M(callrecord)tTg	48	43	ANSWERED		1382949103.21	f6fb93b8b6f5f6986bdd5e3c21bb5488		1382949103.21	26		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2150	2013-10-28 12:31:44	510	510	501	extenreceive	Local/501@extenreceive-00000005;2	SIP/501-0000000a	Dial	SIP/501,20,mt	48	44	ANSWERED		1382949104.23	f6fb93b8b6f5f6986bdd5e3c21bb5488		1382949103.21	28		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2151	2013-10-28 12:32:41	510	510	501	vpbx_dialout	SIP/510-0000000b	Local/501@extenreceive-00000006;1	Dial	Local/501@extenreceive/n,60,M(callrecord)tTg	19	0	NO ANSWER		1382949161.25			1382949161.25	32		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2152	2013-10-28 12:32:42	510	510	501	extenreceive	Local/501@extenreceive-00000006;2	SIP/501-0000000c	Dial	SIP/501,20,mt	18	0	NO ANSWER		1382949162.27			1382949161.25	34		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2153	2013-10-28 12:33:16	"501" <501>	501	510	vpbx_dialout	SIP/501-0000000d	Local/510@extenreceive-00000007;1	Dial	Local/510@extenreceive/n,60,M(callrecord)tTg	10	0	NO ANSWER		1382949196.29			1382949196.29	36		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2154	2013-10-28 12:33:17	"501" <501>	501	510	extenreceive	Local/510@extenreceive-00000007;2	SIP/510-0000000e	Dial	SIP/510,0,mt	9	0	NO ANSWER		1382949197.31			1382949196.29	38		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2155	2013-10-28 12:33:53	510	510	501	extenreceive	Local/501@extenreceive-00000008;2	SIP/501-00000010	AGI	HANGUP	5	0	FAILED		1382949233.35			1382949232.33	42		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2156	2013-10-28 12:33:52	510	510	501	vpbx_dialout	SIP/510-0000000f	Local/501@extenreceive-00000008;1	Hangup		7	0	NO ANSWER		1382949232.33			1382949232.33	40		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2157	2013-10-28 12:34:09	"501" <501>	501	510	extenreceive	Local/510@extenreceive-00000009;2	SIP/510-00000012	Dial	SIP/510,0,mt	6	0	NO ANSWER		1382949249.39			1382949248.37	46		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2158	2013-10-28 12:34:08	"501" <501>	501	510	vpbx_dialout	SIP/501-00000011	Local/510@extenreceive-00000009;1	Dial	Local/510@extenreceive/n,60,M(callrecord)tTg	7	0	NO ANSWER		1382949248.37			1382949248.37	44		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2159	2013-10-28 12:36:57	"501" <501>	501	502	vpbx_dialout	SIP/501-00000013	Local/502@extenreceive-0000000a;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	10	0	NO ANSWER		1382949417.41			1382949417.41	48		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2160	2013-10-28 12:36:58	"501" <501>	501	502	extenreceive	Local/502@extenreceive-0000000a;2	SIP/502-00000014	Dial	SIP/502,0,mt	9	0	NO ANSWER		1382949418.43			1382949417.41	50		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2161	2013-10-28 12:37:08	"103" <502>	502	501	extenreceive	Local/501@extenreceive-0000000b;2	SIP/501-00000016	AGI	HANGUP	6	0	FAILED		1382949428.47			1382949426.45	54		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2162	2013-10-28 12:37:11	"103" <502>	502	501	extenreceive	Local/501@extenreceive-0000000c;2	SIP/501-00000018	AGI	HANGUP	4	0	FAILED		1382949431.51			1382949430.49	58		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2163	2013-10-28 12:37:06	"103" <502>	502	501	vpbx_dialout	SIP/502-00000015	Local/501@extenreceive-0000000b;1	Hangup		9	0	NO ANSWER		1382949426.45			1382949426.45	52		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2164	2013-10-28 12:37:10	"103" <502>	502	501	vpbx_dialout	SIP/502-00000017	Local/501@extenreceive-0000000c;1	Hangup		6	0	NO ANSWER		1382949430.49			1382949430.49	56		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2165	2013-10-28 12:37:53	"103" <502>	502	501	extenreceive	Local/501@extenreceive-0000000d;2	SIP/501-0000001a	AGI	HANGUP	6	0	FAILED		1382949473.55			1382949472.53	62		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2166	2013-10-28 12:37:52	"103" <502>	502	501	vpbx_dialout	SIP/502-00000019	Local/501@extenreceive-0000000d;1	Hangup		8	0	NO ANSWER		1382949472.53			1382949472.53	60		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2167	2013-10-28 12:38:23	"501" <501>	501	501	extenreceive	Local/501@extenreceive-0000000e;2	SIP/501-0000001c	Dial	SIP/501,20,mt	6	0	NO ANSWER		1382949503.59			1382949502.57	66		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2168	2013-10-28 12:38:22	"501" <501>	501	501	vpbx_dialout	SIP/501-0000001b	Local/501@extenreceive-0000000e;1	Dial	Local/501@extenreceive/n,60,M(callrecord)tTg	7	0	NO ANSWER		1382949502.57			1382949502.57	64		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2169	2013-10-28 12:38:30	"501" <501>	501	502	extenreceive	Local/502@extenreceive-0000000f;2	SIP/502-0000001e	Dial	SIP/502,0,mt	4	0	NO ANSWER		1382949510.63			1382949509.61	70		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	ABSENT	\N		1
-2170	2013-10-28 12:38:29	"501" <501>	501	502	vpbx_dialout	SIP/501-0000001d	Local/502@extenreceive-0000000f;1	Dial	Local/502@extenreceive/n,60,M(callrecord)tTg	5	0	NO ANSWER		1382949509.61			1382949509.61	68		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2171	2013-10-28 12:38:41	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000010;2	SIP/501-00000020	AGI	HANGUP	6	0	FAILED		1382949521.67			1382949520.65	74		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2172	2013-10-28 12:38:40	"103" <502>	502	501	vpbx_dialout	SIP/502-0000001f	Local/501@extenreceive-00000010;1	Hangup		8	0	NO ANSWER		1382949520.65			1382949520.65	72		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2173	2013-10-28 12:48:07	"501" <501>	501	*70	vpbx_dialout	SIP/501-00000024		VoiceMailMain	s1@default	6	5	ANSWERED		1382950087.72			1382950087.72	79		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2175	2013-10-28 14:10:43	"501" <501>	501	*60*3211	vpbx_dialout	SIP/501-00000028		AGI	HANGUP	3	2	ANSWERED		1382955043.76			1382955043.76	83		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2176	2013-10-28 14:12:07	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000011;2	Local/3211@vpbx_dialout-00000012;1	AGI	HANGUP	4	0	FAILED		1382955127.79			1382955126.77	86		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2177	2013-10-28 14:12:06	"103" <502>	502	501	vpbx_dialout	SIP/502-00000029	Local/501@extenreceive-00000011;1	Hangup		6	0	FAILED		1382955126.77			1382955126.77	84		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2178	2013-10-28 14:12:23	"103" <502>	502	501	extenreceive	Local/501@extenreceive-00000013;2	Local/3211@vpbx_dialout-00000014;1	AGI	HANGUP	3	0	FAILED		1382955143.84			1382955142.82	91		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	LOGGED_IN	\N		1
-2179	2013-10-28 14:12:22	"103" <502>	502	501	vpbx_dialout	SIP/502-0000002a	Local/501@extenreceive-00000013;1	Hangup		5	0	FAILED		1382955142.82			1382955142.82	89		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2180	2013-11-03 13:26:18	"103" <502>	502	*70	vpbx_dialout	SIP/502-0000002e		VoiceMailMain	s4@default	6	5	ANSWERED		1383470778.46			1383470778.46	46		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	\N	\N	\N	\N		1
-2181	2013-11-10 20:18:46	"501" <501>	501	89251999108	vpbx_dialout	SIP/501-00000007	SIP/495640804009-00000008	Dial	SIP/495640804009/89251999108,60,KM(callrecord)TW	5	0	NO ANSWER		1384100326.7			1384100326.7	7		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	Москва моб.	\N	\N	\N		1
-2182	2013-11-10 20:21:08	"501" <501>	501	89251999108	vpbx_dialout	SIP/501-0000000a	SIP/495640804009-0000000b	Dial	SIP/495640804009/89251999108,60,KM(callrecord)TW	4	0	NO ANSWER		1384100468.10			1384100468.10	10		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	Москва моб.	\N	\N	\N		1
-2183	2013-11-10 20:22:44	"501" <501>	501	89251999108	vpbx_dialout	SIP/501-0000000d	SIP/495640804009-0000000e	Dial	SIP/495640804009/89251999108,60,KM(callrecord)TW	11	0	NO ANSWER		1384100564.13			1384100564.13	13		\N	\N	\N	unknown-unknown	\N	0	DOCUMENTATION	\N	\N	Москва моб.	\N	\N	\N		1
-\.
+ALTER TABLE ONLY cdr
+    ADD CONSTRAINT cdr_pkey PRIMARY KEY (id);
 
 
 --
--- Name: cdr_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
+-- Name: conference_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
-SELECT pg_catalog.setval('cdr_id_seq', 2183, true);
-
-
---
--- Data for Name: cel; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY cel (id, eventtype, eventtime, userdeftype, cid_name, cid_num, cid_ani, cid_rdnis, cid_dnid, exten, context, channame, appname, appdata, amaflags, accountcode, peeraccount, uniqueid, linkedid, userfield, peer, vpbxid) FROM stdin;
-\.
+ALTER TABLE ONLY conference
+    ADD CONSTRAINT conference_pkey PRIMARY KEY (id);
 
 
 --
--- Name: cel_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
+-- Name: conference_settings_accesscode_key; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
-SELECT pg_catalog.setval('cel_id_seq', 1, false);
-
-
---
--- Data for Name: conference; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY conference (id, custname, custdesc, confnumber, ownertype, ownerref, isprotected, pin, websecret, maxmembers, memberspresent, datecreated, datesettoexpiry, datefirstentered, createdfrom, ispstnallowed, vpbxnum, lastentered, joinacl, vpbxid) FROM stdin;
-51			5258	INTERNAL	\N	0		\N	255	0	2013-09-08 08:49:49.720014	2013-10-08 08:49:49.720014	\N	INTERNAL	t	\N	\N	ALL	1
-52			4737	INTERNAL	\N	1	3321	\N	255	0	2013-09-08 08:51:34.624519	2013-10-08 08:51:34.624519	\N	INTERNAL	t	\N	\N	ALL	1
-53			4640	INTERNAL	\N	0		\N	255	0	2013-09-09 06:59:27.489045	2013-10-09 06:59:27.489045	\N	INTERNAL	t	\N	\N	ALL	1
-54			2536	INTERNAL	\N	0		\N	255	0	2013-09-09 06:59:56.925455	2013-10-09 06:59:56.925455	\N	INTERNAL	t	\N	\N	ALL	1
-55			4289	INTERNAL	\N	0		\N	255	0	2013-09-09 07:01:14.05722	2013-10-09 07:01:14.05722	\N	INTERNAL	t	\N	\N	ALL	1
-56			4403	INTERNAL	\N	0		\N	255	0	2013-09-09 07:03:18.895038	2013-10-09 07:03:18.895038	\N	INTERNAL	t	\N	\N	ALL	1
-57			3781	INTERNAL	\N	0		\N	255	0	2013-09-09 07:04:09.803597	2013-10-09 07:04:09.803597	\N	INTERNAL	t	\N	\N	ALL	1
-58			2408	INTERNAL	\N	0		\N	255	0	2013-09-09 07:10:22.834195	2013-10-09 07:10:22.834195	\N	INTERNAL	t	\N	2013-09-09 03:10:22	ALL	1
-59			2565	INTERNAL	\N	1	3321	\N	255	0	2013-09-09 07:15:55.954106	2013-10-09 07:15:55.954106	\N	INTERNAL	t	\N	2013-09-09 03:15:55	ALL	1
-60			2204	INTERNAL	\N	0		\N	255	0	2013-09-09 08:28:28.636591	2013-10-09 08:28:28.636591	\N	INTERNAL	t	\N	\N	ALL	1
-61			4066	INTERNAL	\N	0		\N	255	0	2013-09-09 08:40:46.891696	2013-10-09 08:40:46.891696	\N	INTERNAL	t	\N	\N	ALL	1
-62			2757	INTERNAL	140	0		\N	255	0	2013-09-09 09:03:34.556685	2013-10-09 09:03:34.556685	\N	INTERNAL	t	\N	\N	ALL	1
-63			2757	INTERNAL	140	0		\N	255	0	2013-09-10 00:34:21.63214	2013-10-10 00:34:21.63214	\N	INTERNAL	t	\N	2013-09-09 20:34:21	ALL	1
-64			4737	INTERNAL	\N	1	3321	\N	255	0	2013-09-10 00:35:20.530164	2013-10-10 00:35:20.530164	\N	INTERNAL	t	\N	2013-09-09 20:35:20	ALL	1
-67			5873	INTERNAL	140	0		\N	255	0	2013-09-10 00:59:37.55132	2013-10-10 00:59:37.55132	\N	INTERNAL	t	\N	\N	ALL	1
-68			2610	INTERNAL	140	0		\N	255	0	2013-09-10 01:00:42.138009	2013-10-10 01:00:42.138009	\N	INTERNAL	t	\N	\N	ALL	1
-69			3345	INTERNAL	140	0		\N	255	0	2013-09-10 01:05:44.675793	2013-10-10 01:05:44.675793	\N	INTERNAL	t	\N	\N	ALL	1
-70			4511	INTERNAL	140	0		\N	255	0	2013-09-10 01:06:35.938993	2013-10-10 01:06:35.938993	\N	INTERNAL	t	\N	\N	ALL	1
-71			3235	INTERNAL	140	0		\N	255	0	2013-09-10 01:08:07.574896	2013-10-10 01:08:07.574896	\N	INTERNAL	t	\N	\N	ALL	1
-72			3782	INTERNAL	140	0		\N	255	0	2013-09-10 01:10:29.811551	2013-10-10 01:10:29.811551	\N	INTERNAL	t	\N	\N	ALL	1
-73			2890	INTERNAL	140	0		\N	255	0	2013-09-10 01:13:44.203906	2013-10-10 01:13:44.203906	\N	INTERNAL	t	\N	\N	ALL	1
-74			3295	INTERNAL	140	0		\N	255	0	2013-09-10 01:14:10.948194	2013-10-10 01:14:10.948194	\N	INTERNAL	t	\N	\N	ALL	1
-75			4676	INTERNAL	140	0		\N	255	0	2013-09-10 01:35:09.354368	2013-10-10 01:35:09.354368	\N	INTERNAL	t	\N	\N	ALL	1
-76			2415	INTERNAL	140	0		\N	255	0	2013-09-10 01:35:59.249768	2013-10-10 01:35:59.249768	\N	INTERNAL	t	\N	\N	ALL	1
-77			3527	INTERNAL	140	0	3456	\N	255	0	2013-09-10 01:47:20.604303	2013-10-10 01:47:20.604303	\N	INTERNAL	t	\N	\N	ALL	1
-78			2229	INTERNAL	140	1	3434	\N	255	0	2013-09-10 01:48:21.861297	2013-10-10 01:48:21.861297	\N	INTERNAL	t	\N	\N	ALL	1
-79			2229	INTERNAL	140	1	3434	\N	255	0	2013-09-10 01:49:46.555907	2013-10-10 01:49:46.555907	\N	INTERNAL	t	\N	2013-09-09 21:49:46	ALL	1
-80			5249	INTERNAL	140	1	1111	\N	255	0	2013-09-14 13:26:34.551187	2013-10-14 13:26:34.551187	\N	INTERNAL	t	\N	\N	ALL	1
-81			3363	INTERNAL	140	1	1111	\N	255	0	2013-09-14 13:38:48.825608	2013-10-14 13:38:48.825608	\N	INTERNAL	t	\N	\N	ALL	1
-82			4131	INTERNAL	140	1	1111	\N	255	0	2013-09-14 13:43:33.755739	2013-10-14 13:43:33.755739	\N	INTERNAL	t	\N	\N	ALL	1
-83			5626	INTERNAL	140	1	1111	\N	255	0	2013-09-14 14:22:04.429391	2013-10-14 14:22:04.429391	\N	INTERNAL	t	\N	\N	ALL	1
-84			4136	INTERNAL	140	1	1111	\N	255	0	2013-09-14 14:25:05.119276	2013-10-14 14:25:05.119276	\N	INTERNAL	t	\N	\N	ALL	1
-86			1678	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 06:34:34.573652	2013-10-18 06:34:34.573652	\N	INTERNAL	t	\N	\N	\N	1
-87			1678	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 06:35:03.50167	2013-10-18 06:35:03.50167	\N	INTERNAL	t	\N	\N	\N	1
-88			5495	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 06:35:22.251966	2013-10-18 06:35:22.251966	\N	INTERNAL	t	\N	\N	\N	1
-89			5495	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 06:35:51.28203	2013-10-18 06:35:51.28203	\N	INTERNAL	t	\N	\N	\N	1
-90			1344	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 06:36:13.181733	2013-10-18 06:36:13.181733	\N	INTERNAL	t	\N	\N	\N	1
-91			2976	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 06:36:28.670779	2013-10-18 06:36:28.670779	\N	INTERNAL	t	\N	\N	\N	1
-92			3872	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 06:40:19.338076	2013-10-18 06:40:19.338076	\N	INTERNAL	t	\N	\N	ALL	1
-93			7716	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 07:28:20.72994	2013-10-18 07:28:20.72994	\N	INTERNAL	t	\N	\N	ALL	1
-94			6208	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 20:15:13.213991	2013-10-18 20:15:13.213991	\N	INTERNAL	t	\N	\N	ALL	1
-95			1638	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 20:15:38.732134	2013-10-18 20:15:38.732134	\N	INTERNAL	t	\N	\N	ALL	1
-96			2952	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 20:15:52.315372	2013-10-18 20:15:52.315372	\N	INTERNAL	t	\N	\N	ALL	1
-97			6049	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 20:21:29.793461	2013-10-18 20:21:29.793461	\N	INTERNAL	t	\N	\N	ALL	1
-98			2984	INTERNAL	\N	\N	\N	\N	255	0	2013-09-18 20:22:07.182079	2013-10-18 20:22:07.182079	\N	INTERNAL	t	\N	\N	ALL	1
-99			5322	INTERNAL	140	1	1111	\N	255	0	2013-10-21 16:39:16.12654	2013-11-20 16:39:16.12654	\N	INTERNAL	t	\N	\N	ALL	1
-100			3054	INTERNAL	140	1	1111	\N	255	0	2013-10-21 16:40:08.073474	2013-11-20 16:40:08.073474	\N	INTERNAL	t	\N	\N	ALL	1
-101			2236	INTERNAL	\N	\N	0	\N	255	0	2013-11-30 12:30:25.061021	2013-12-30 12:30:25.061021	\N	INTERNAL	t	\N	\N	ALL	1
-102			2587	INTERNAL	\N	1	4444	\N	255	0	2013-11-30 12:35:54.275601	2013-12-30 12:35:54.275601	\N	INTERNAL	t	\N	\N	ALL	1
-103			2762	INTERNAL	140	0		\N	255	0	2014-02-20 15:11:36.97727	2014-03-22 15:11:36.97727	\N	INTERNAL	t	\N	\N	ALL	1
-104			2251	INTERNAL	140	0		\N	255	0	2014-02-20 15:11:57.31224	2014-03-22 15:11:57.31224	\N	INTERNAL	t	\N	\N	ALL	1
-105			2525	INTERNAL	140	0		\N	255	0	2014-02-20 15:12:23.544459	2014-03-22 15:12:23.544459	\N	INTERNAL	t	\N	\N	ALL	1
-106			2490	INTERNAL	140	0		\N	255	0	2014-02-20 15:12:38.968303	2014-03-22 15:12:38.968303	\N	INTERNAL	t	\N	\N	ALL	1
-107			2145	INTERNAL	140	0		\N	255	0	2014-02-20 15:14:02.400146	2014-03-22 15:14:02.400146	\N	INTERNAL	t	\N	\N	ALL	1
-108			3860	INTERNAL	140	0		\N	255	0	2014-02-20 15:14:37.885374	2014-03-22 15:14:37.885374	\N	INTERNAL	t	\N	\N	ALL	1
-109			1234	INTERNAL	140	0		\N	255	0	2014-02-20 22:33:54.846841	2014-03-22 22:33:54.846841	\N	INTERNAL	t	\N	\N	ALL	1
-110			1234	INTERNAL	140	0		\N	255	0	2014-02-21 11:28:11.751509	2014-03-23 11:28:11.751509	\N	INTERNAL	t	\N	\N	ALL	1
-111			1234	INTERNAL	140	0		\N	255	0	2014-02-21 11:37:48.523401	2014-03-23 11:37:48.523401	\N	INTERNAL	t	\N	\N	ALL	1
-112			1234	INTERNAL	140	0		\N	255	0	2014-02-21 11:38:12.641527	2014-03-23 11:38:12.641527	\N	INTERNAL	t	\N	\N	ALL	1
-113			1234	INTERNAL	140	0		\N	255	0	2014-02-21 11:38:34.169478	2014-03-23 11:38:34.169478	\N	INTERNAL	t	\N	\N	ALL	1
-114			1234	INTERNAL	140	0		\N	255	0	2014-02-21 11:38:50.833524	2014-03-23 11:38:50.833524	\N	INTERNAL	t	\N	\N	ALL	1
-115			1234	INTERNAL	140	0		\N	255	0	2014-02-21 11:40:06.135338	2014-03-23 11:40:06.135338	\N	INTERNAL	t	\N	\N	ALL	1
-116			1234	INTERNAL	140	0		\N	255	0	2014-02-21 11:40:43.115397	2014-03-23 11:40:43.115397	\N	INTERNAL	t	\N	\N	ALL	1
-117			1234	INTERNAL	140	0		\N	255	0	2014-02-21 11:41:03.756553	2014-03-23 11:41:03.756553	\N	INTERNAL	t	\N	\N	ALL	1
-118			1234	INTERNAL	140	0		\N	255	0	2014-02-21 11:41:09.146636	2014-03-23 11:41:09.146636	\N	INTERNAL	t	\N	\N	ALL	1
-\.
+ALTER TABLE ONLY conference_settings
+    ADD CONSTRAINT conference_settings_accesscode_key UNIQUE (accesscode);
 
 
 --
--- Name: conference_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
+-- Name: conference_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
-SELECT pg_catalog.setval('conference_id_seq', 1, false);
-
-
---
--- Name: conference_serial; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('conference_serial', 118, true);
+ALTER TABLE ONLY conference_settings
+    ADD CONSTRAINT conference_settings_pkey PRIMARY KEY (vpbxid);
 
 
 --
--- Data for Name: context; Type: TABLE DATA; Schema: public; Owner: agaga
+-- Name: context_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
-COPY context (id, custname, custdesc, contexttype, internalref, ivrref, funcref, vpbxid) FROM stdin;
-4	test8		EXTENSION	151	2	1	1
-13	основной	основной	IVR	\N	\N	\N	44
-14	основной	основной	IVR	\N	\N	\N	44
-15	основной	основной	IVR	\N	\N	\N	44
-16	основной	основной	IVR	\N	\N	\N	44
-17	основной	основной	IVR	\N	\N	\N	44
-18	основной	основной	IVR	\N	\N	\N	44
-19	основной	основной	IVR	\N	\N	\N	44
-20	основной	основной	IVR	\N	\N	\N	44
-21	основной	основной	IVR	\N	\N	\N	44
-\.
+ALTER TABLE ONLY context
+    ADD CONSTRAINT context_pkey PRIMARY KEY (id);
 
 
 --
--- Name: context_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
+-- Name: default_deny_permit_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
-SELECT pg_catalog.setval('context_id_seq', 21, true);
+ALTER TABLE ONLY default_deny_permit
+    ADD CONSTRAINT default_deny_permit_pkey PRIMARY KEY (vpbxid);
 
 
 --
--- Data for Name: crmoperators; Type: TABLE DATA; Schema: public; Owner: agaga
+-- Name: extensiondefaults_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
 --
 
-COPY crmoperators (sipname, status, state, que_participation_status, created, validtill, recordcallset, queprioritytype, quepriorityorder, vpbxid) FROM stdin;
-\.
+ALTER TABLE ONLY extensiondefaults
+    ADD CONSTRAINT extensiondefaults_pkey PRIMARY KEY (vpbxid);
 
+
+--
+-- Name: extensiongroupprofile_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY extensiongroupprofile
+    ADD CONSTRAINT extensiongroupprofile_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extensiongroups_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY extensiongroups
+    ADD CONSTRAINT extensiongroups_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: extensionprofile_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY extensionprofile
+    ADD CONSTRAINT extensionprofile_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: faxspool_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY faxspool
+    ADD CONSTRAINT faxspool_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: faxspoollog_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY faxspoollog
+    ADD CONSTRAINT faxspoollog_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: faxusers_extra_email_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY faxusers_extra_email
+    ADD CONSTRAINT faxusers_extra_email_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: faxusers_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY faxusers
+    ADD CONSTRAINT faxusers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: functions_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY functions
+    ADD CONSTRAINT functions_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: ivr_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY ivr
+    ADD CONSTRAINT ivr_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: mediarepos_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY mediarepos
+    ADD CONSTRAINT mediarepos_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: musiconhold_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY musiconhold
+    ADD CONSTRAINT musiconhold_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: number_match_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY number_match
+    ADD CONSTRAINT number_match_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: number_range_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY number_range
+    ADD CONSTRAINT number_range_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: number_unique; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY skype_aliases
+    ADD CONSTRAINT number_unique UNIQUE (number);
+
+
+--
+-- Name: pbx_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY pbx_settings
+    ADD CONSTRAINT pbx_settings_pkey PRIMARY KEY (vpbxid);
+
+
+--
+-- Name: pickupgroup_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY pickupgroup
+    ADD CONSTRAINT pickupgroup_pkey PRIMARY KEY (name);
+
+
+--
+-- Name: recordedcalls_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY recordedcalls
+    ADD CONSTRAINT recordedcalls_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: regentries_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY regentries
+    ADD CONSTRAINT regentries_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: route_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY route
+    ADD CONSTRAINT route_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schedule_replacements_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY schedule_replacements
+    ADD CONSTRAINT schedule_replacements_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: schedule_replacements_rdate; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY schedule_replacements
+    ADD CONSTRAINT schedule_replacements_rdate UNIQUE (rdate);
+
+
+--
+-- Name: shortdialtable_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY shortdialtable
+    ADD CONSTRAINT shortdialtable_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: sip_devices_name_unique; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY sip
+    ADD CONSTRAINT sip_devices_name_unique UNIQUE (name);
+
+
+--
+-- Name: sip_devices_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY sip
+    ADD CONSTRAINT sip_devices_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: skype_aliases_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY skype_aliases
+    ADD CONSTRAINT skype_aliases_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: temp_media_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY temp_media
+    ADD CONSTRAINT temp_media_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: trunkassoc_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY trunkassoc
+    ADD CONSTRAINT trunkassoc_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_email_key; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT user_email_key UNIQUE (email);
+
+
+--
+-- Name: user_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT user_pkey PRIMARY KEY (user_id);
+
+
+--
+-- Name: user_role_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY user_role
+    ADD CONSTRAINT user_role_pkey PRIMARY KEY (role_id);
+
+
+--
+-- Name: user_username_key; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT user_username_key UNIQUE (username);
+
+
+--
+-- Name: user_vpbx_linker_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY user_vpbx_linker
+    ADD CONSTRAINT user_vpbx_linker_pkey PRIMARY KEY (userid);
+
+
+--
+-- Name: user_vpbx_linker_userid_uq; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY user_vpbx_linker
+    ADD CONSTRAINT user_vpbx_linker_userid_uq UNIQUE (userid);
+
+
+--
+-- Name: vpbx_entities_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY vpbx_entities
+    ADD CONSTRAINT vpbx_entities_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: vpbx_operator_status_log_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+--
+
+ALTER TABLE ONLY operator_status_log
+    ADD CONSTRAINT vpbx_operator_status_log_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: cdr_linkedid; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX cdr_linkedid ON cdr USING btree (linkedid);
+
+
+--
+-- Name: directions_class; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX directions_class ON directions USING btree (class);
+
+
+--
+-- Name: directions_id; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX directions_id ON directions USING btree (id);
+
+
+--
+-- Name: directions_name; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX directions_name ON directions USING btree (name);
+
+
+--
+-- Name: directions_parent; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX directions_parent ON directions USING btree (parent);
+
+
+--
+-- Name: directions_root; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX directions_root ON directions USING btree (root);
+
+
+--
+-- Name: faxusers_email_idx; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX faxusers_email_idx ON faxusers USING btree (email);
+
+
+--
+-- Name: faxusers_extra_email_idx; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX faxusers_extra_email_idx ON faxusers_extra_email USING btree (email);
+
+
+--
+-- Name: operator_status_log_changed; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX operator_status_log_changed ON operator_status_log USING btree (changed);
+
+
+--
+-- Name: operator_status_log_extension; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX operator_status_log_extension ON operator_status_log USING btree (extension);
+
+
+--
+-- Name: rdate_date_index; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX rdate_date_index ON schedule_replacements USING btree (rdate);
+
+
+--
+-- Name: sip_idx_extenl; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX sip_idx_extenl ON sip USING btree (extension, vpbxid, peertype);
+
+
+--
+-- Name: sip_mailbox_index; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+--
+
+CREATE INDEX sip_mailbox_index ON sip USING btree (mailbox);
+
+
+--
+-- Name: sip_insert_new_peername_extension; Type: RULE; Schema: public; Owner: agaga
+--
+
+CREATE RULE sip_insert_new_peername_extension AS
+    ON INSERT TO sip
+   WHERE (new.peertype = 'EXTENSION'::vpbx_peertype) DO  UPDATE sip SET name = (('9'::text || lpad((sip.vpbxid)::text, 4, '0'::text)) || lpad((sip.extension)::text, 4, '0'::text))
+  WHERE (sip.id = ( SELECT currval('sip_serial'::regclass) AS currval));
+
+
+--
+-- Name: user_update_id_value; Type: RULE; Schema: public; Owner: agaga
+--
+
+CREATE RULE user_update_id_value AS
+    ON INSERT TO "user" DO  UPDATE "user" SET id = "user".user_id;
+
+
+--
+-- Name: update_directions; Type: TRIGGER; Schema: public; Owner: agaga
+--
+
+CREATE TRIGGER update_directions BEFORE INSERT ON cdr FOR EACH ROW EXECUTE PROCEDURE update_directions_cdr();
+
+
+--
+-- Name: user_idupdate; Type: TRIGGER; Schema: public; Owner: agaga
+--
+
+CREATE TRIGGER user_idupdate BEFORE INSERT ON "user" FOR EACH ROW EXECUTE PROCEDURE trg();
+
+
+--
+-- Name: authcode_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY authcode
+    ADD CONSTRAINT authcode_vpbx_id_fkey FOREIGN KEY (vpbx_id) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: call_destination_peerid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY call_destination
+    ADD CONSTRAINT call_destination_peerid_fkey FOREIGN KEY (peerid) REFERENCES sip(id) ON DELETE CASCADE;
+
+
+--
+-- Name: call_destination_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY call_destination
+    ADD CONSTRAINT call_destination_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: callcentre_call_que_operators_log_callref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY callcentre_call_que_operators_log
+    ADD CONSTRAINT callcentre_call_que_operators_log_callref_fkey FOREIGN KEY (callref) REFERENCES cdr(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: callcentre_call_que_operators_log_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY callcentre_call_que_operators_log
+    ADD CONSTRAINT callcentre_call_que_operators_log_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: callcentre_working_schedule_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY callcentre_working_schedule
+    ADD CONSTRAINT callcentre_working_schedule_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: cdr_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY cdr
+    ADD CONSTRAINT cdr_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: cel_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY cel
+    ADD CONSTRAINT cel_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: conference_ownerref; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY conference
+    ADD CONSTRAINT conference_ownerref FOREIGN KEY (ownerref) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: conference_settings_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY conference_settings
+    ADD CONSTRAINT conference_settings_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: conference_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY conference
+    ADD CONSTRAINT conference_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: context_funcref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY context
+    ADD CONSTRAINT context_funcref_fkey FOREIGN KEY (funcref) REFERENCES functions(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: context_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY context
+    ADD CONSTRAINT context_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: contextref_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY trunkassoc
+    ADD CONSTRAINT contextref_fk FOREIGN KEY (contextref) REFERENCES context(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: crmoperators_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY crmoperators
+    ADD CONSTRAINT crmoperators_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: default_deny_permit_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY default_deny_permit
+    ADD CONSTRAINT default_deny_permit_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
+
+
+--
+-- Name: extensiongroupprofile_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY extensiongroupprofile
+    ADD CONSTRAINT extensiongroupprofile_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: extensionprofile_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY extensionprofile
+    ADD CONSTRAINT extensionprofile_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: faxspool_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY faxspool
+    ADD CONSTRAINT faxspool_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: faxspoollog_spoolref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY faxspoollog
+    ADD CONSTRAINT faxspoollog_spoolref_fkey FOREIGN KEY (spoolref) REFERENCES faxspool(id);
+
+
+--
+-- Name: faxspoollog_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY faxspoollog
+    ADD CONSTRAINT faxspoollog_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: faxusers_extra_email_userref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY faxusers_extra_email
+    ADD CONSTRAINT faxusers_extra_email_userref_fkey FOREIGN KEY (userref) REFERENCES faxusers(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: faxusers_extra_email_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY faxusers_extra_email
+    ADD CONSTRAINT faxusers_extra_email_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: faxusers_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY faxusers
+    ADD CONSTRAINT faxusers_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: internalref_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY context
+    ADD CONSTRAINT internalref_fk FOREIGN KEY (internalref) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: ivr_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY ivr
+    ADD CONSTRAINT ivr_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: ivrref_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY context
+    ADD CONSTRAINT ivrref_fk FOREIGN KEY (ivrref) REFERENCES ivr(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: mediarepos_greeting_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY pbx_settings
+    ADD CONSTRAINT mediarepos_greeting_fk FOREIGN KEY (greeting) REFERENCES mediarepos(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: mediarepos_greetingofftime_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY pbx_settings
+    ADD CONSTRAINT mediarepos_greetingofftime_fk FOREIGN KEY (greetingofftime) REFERENCES mediarepos(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: mediarepos_mohtone_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY pbx_settings
+    ADD CONSTRAINT mediarepos_mohtone_fk FOREIGN KEY (mohtone) REFERENCES mediarepos(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: mediarepos_ringingtone_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY pbx_settings
+    ADD CONSTRAINT mediarepos_ringingtone_fk FOREIGN KEY (ringingtone) REFERENCES mediarepos(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: musiconhold_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY musiconhold
+    ADD CONSTRAINT musiconhold_vpbx_id_fkey FOREIGN KEY (vpbx_id) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: number_match_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY number_match
+    ADD CONSTRAINT number_match_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: number_range_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY number_range
+    ADD CONSTRAINT number_range_vpbx_id_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: operator_status_log_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY operator_status_log
+    ADD CONSTRAINT operator_status_log_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: pickupgroup_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY pickupgroup
+    ADD CONSTRAINT pickupgroup_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
+
+
+--
+-- Name: recordedcalls_cdrref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY recordedcalls
+    ADD CONSTRAINT recordedcalls_cdrref_fkey FOREIGN KEY (cdrref) REFERENCES cdr(id) ON DELETE CASCADE;
+
+
+--
+-- Name: regentries_numbermatchref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY regentries
+    ADD CONSTRAINT regentries_numbermatchref_fkey FOREIGN KEY (numbermatchref) REFERENCES number_match(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: route_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY route
+    ADD CONSTRAINT route_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
+
+
+--
+-- Name: schedule_replacements_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY schedule_replacements
+    ADD CONSTRAINT schedule_replacements_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
+
+
+--
+-- Name: shortdialtable_peerid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY shortdialtable
+    ADD CONSTRAINT shortdialtable_peerid_fkey FOREIGN KEY (peerid) REFERENCES sip(id) ON DELETE CASCADE;
+
+
+--
+-- Name: shortdialtable_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY shortdialtable
+    ADD CONSTRAINT shortdialtable_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: sip_extensiongroup_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY sip
+    ADD CONSTRAINT sip_extensiongroup_fk FOREIGN KEY (extensiongroup) REFERENCES extensiongroups(id);
+
+
+--
+-- Name: sip_namedcallgroup_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY sip
+    ADD CONSTRAINT sip_namedcallgroup_fk FOREIGN KEY (namedcallgroup) REFERENCES pickupgroup(name);
+
+
+--
+-- Name: sip_namedpickupgroup_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY sip
+    ADD CONSTRAINT sip_namedpickupgroup_fk FOREIGN KEY (namedpickupgroup) REFERENCES pickupgroup(name);
+
+
+--
+-- Name: sip_routeref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY sip
+    ADD CONSTRAINT sip_routeref_fkey FOREIGN KEY (routeref) REFERENCES route(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: sip_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY sip
+    ADD CONSTRAINT sip_vpbx_id_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
+
+
+--
+-- Name: skype_aliases_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY skype_aliases
+    ADD CONSTRAINT skype_aliases_vpbx_id_fkey FOREIGN KEY (vpbx_id) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: skype_aliases_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY skype_aliases
+    ADD CONSTRAINT skype_aliases_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: trunkassoc_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY trunkassoc
+    ADD CONSTRAINT trunkassoc_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
+
+
+--
+-- Name: trunkdestinations_numbermatchref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY trunkdestinations
+    ADD CONSTRAINT trunkdestinations_numbermatchref_fkey FOREIGN KEY (numbermatchref) REFERENCES number_match(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: trunkdestinations_routeref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY trunkdestinations
+    ADD CONSTRAINT trunkdestinations_routeref_fkey FOREIGN KEY (routeref) REFERENCES route(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: trunkdestinations_trunkref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY trunkdestinations
+    ADD CONSTRAINT trunkdestinations_trunkref_fkey FOREIGN KEY (trunkref) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: trunkdestinations_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY trunkdestinations
+    ADD CONSTRAINT trunkdestinations_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
+
+
+--
+-- Name: trunkref_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY trunkassoc
+    ADD CONSTRAINT trunkref_fk FOREIGN KEY (trunkref) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE CASCADE;
+
+
+--
+-- Name: user_vpbx_linker_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY user_vpbx_linker
+    ADD CONSTRAINT user_vpbx_linker_userid_fkey FOREIGN KEY (userid) REFERENCES "user"(user_id) ON DELETE CASCADE;
+
+
+--
+-- Name: user_vpbx_linker_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY user_vpbx_linker
+    ADD CONSTRAINT user_vpbx_linker_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
+
+
+--
+-- Name: user_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY "user"
+    ADD CONSTRAINT user_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
+
+
+--
+-- Name: vpbx_cdr_fk_dst; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY cdr
+    ADD CONSTRAINT vpbx_cdr_fk_dst FOREIGN KEY (dst_id) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: vpbx_cdr_fk_src; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+--
+
+ALTER TABLE ONLY cdr
+    ADD CONSTRAINT vpbx_cdr_fk_src FOREIGN KEY (src_id) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE SET NULL;
+
+
+--
+-- Name: public; Type: ACL; Schema: -; Owner: kartemiev
+--
+
+REVOKE ALL ON SCHEMA public FROM PUBLIC;
+REVOKE ALL ON SCHEMA public FROM kartemiev;
+GRANT ALL ON SCHEMA public TO kartemiev;
+GRANT ALL ON SCHEMA public TO PUBLIC;
+
+
+--
+-- PostgreSQL database dump complete
+--
+
+--
+-- PostgreSQL database dump
+--
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+
+SET search_path = public, pg_catalog;
 
 --
 -- Data for Name: directions; Type: TABLE DATA; Schema: public; Owner: agaga
@@ -35449,168 +36003,6 @@ COPY directions (id, class, type, parent, name, sname, root, state, bgntm, modtm
 
 
 --
--- Data for Name: extensiondefaults; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY extensiondefaults (vpbxid, transfer, statuschange, incoming, hold, forwarding, group_members_status, number_status, diversion_unconditional_status, diversion_unconditional_number, diversion_unavail_status, diversion_unavail_number, diversion_busy_status, diversion_busy_number, diversion_noanswer_status, diversion_noanswer_number, diversion_unconditional_landingtype, diversion_unavail_landingtype, diversion_busy_landingtype, diversion_noanswer_landingtype, diversion_noanswer_duration, outgoingcallspermission, extensionrecord) FROM stdin;
-1	allowed	allowed	allowed	allowed	allowed	ACTIVE	ACTIVE	UNDEFINED		UNDEFINED		UNDEFINED	\N	ACTIVATED		NUMBER	NUMBER	NUMBER	VOICEMAIL	20	allowed	disabled
-\.
-
-
---
--- Data for Name: extensiongroupprofile; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY extensiongroupprofile (id, profilename, profiledesc, transfer, statuschange, incoming, memberofcallcentreque, hold, forwarding, vpbxid) FROM stdin;
-4	Тестовый профиль группы		allowed	allowed	allowed	true	allowed	allowed	1
-2	тест		allowed	allowed	allowed	true	allowed	allowed	1
-\.
-
-
---
--- Name: extensiongroupprofile_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('extensiongroupprofile_id_seq', 5, true);
-
-
---
--- Data for Name: extensiongroups; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY extensiongroups (id, name, transfer, statuschange, incoming, memberofcallcentreque, hold, forwarding, custdesc, group_members_status, number_status, diversion_unconditional_status, diversion_unconditional_number, diversion_unavail_status, diversion_unavail_number, diversion_busy_status, diversion_busy_number, diversion_noanswer_status, diversion_noanswer_number, diversion_unconditional_landingtype, diversion_unavail_landingtype, diversion_busy_landingtype, diversion_noanswer_landingtype, diversion_noanswer_duration, vpbxid, outgoingcallspermission, extensionrecord) FROM stdin;
-0		undefined	undefined	undefined	undefined	undefined	undefined		ACTIVE	UNDEFINED	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		NUMBER	NUMBER	NUMBER	NUMBER	20	1	undefined	undefined
-9	test111	allowed	allowed	allowed	\N	allowed	allowed		ACTIVE	UNDEFINED	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		NUMBER	NUMBER	NUMBER	NUMBER	0	1	undefined	undefined
-4	новая	allowed	allowed	allowed	\N	allowed	allowed	333	ACTIVE	SUSPENDED	UNDEFINED		UNDEFINED		UNDEFINED	\N	ACTIVATED		NUMBER	NUMBER	NUMBER	VOICEMAIL	20	1	undefined	undefined
-1	тест	allowed	allowed	forbidden	true	forbidden	allowed		ACTIVE	UNDEFINED	UNDEFINED		UNDEFINED		UNDEFINED	\N	ACTIVATED		NUMBER	NUMBER	NUMBER	VOICEMAIL	20	1	undefined	undefined
-10	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
-11	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
-12	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
-13	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
-14	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
-15	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
-16	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
-17	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
-18	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
-19	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
-20	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
-21	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
-22	обычные	\N	\N	\N	false	\N	\N	обычные	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	undefined
-23	операторы	\N	\N	\N	true	\N	\N	операторы	ACTIVE	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	44	undefined	active
-\.
-
-
---
--- Name: extensiongroups_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('extensiongroups_id_seq', 23, true);
-
-
---
--- Data for Name: extensionprofile; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY extensionprofile (id, profilename, profiledesc, extensiontype, operatorstatus, extensionrecord, extensiongroup, namedpickupgroup, namedcallgroup, outgoingcallspermission, transfer, statuschange, incoming, hold, forwarding, memberofcallcentreque, vpbxid) FROM stdin;
-0			regular	LOGGED_IN	\N	0	0	0	\N	\N	\N	\N	\N	\N	\N	1
-10	операторы новое	тест	operator	LOGGED_IN	disabled	0	0	0	undefined	undefined	undefined	undefined	undefined	undefined	false	1
-16	Тестовый профиль	тест2	regular	LOGGED_IN	disabled	0	0	0	undefined	undefined	undefined	undefined	undefined	undefined	false	1
-\.
-
-
---
--- Name: extensionprofile_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('extensionprofile_id_seq', 17, true);
-
-
---
--- Data for Name: faxspool; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY faxspool (id, recordtype, uniquieid, faxstatus, pages, quedate, vpbxid) FROM stdin;
-\.
-
-
---
--- Name: faxspool_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('faxspool_id_seq', 1, false);
-
-
---
--- Data for Name: faxspoollog; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY faxspoollog (id, spoolref, action, result, reason, stamp, vpbxid) FROM stdin;
-\.
-
-
---
--- Name: faxspoollog_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('faxspoollog_id_seq', 1, false);
-
-
---
--- Data for Name: faxusers; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY faxusers (id, custname, email, custdesc, vpbxid) FROM stdin;
-9	иванов	kartemiev@gmail.com		1
-\.
-
-
---
--- Data for Name: faxusers_extra_email; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY faxusers_extra_email (id, userref, email, vpbxid) FROM stdin;
-1	9	test@gmail.com	1
-\.
-
-
---
--- Name: faxusers_extra_email_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('faxusers_extra_email_id_seq', 1, true);
-
-
---
--- Name: faxusers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('faxusers_id_seq', 9, true);
-
-
---
--- Data for Name: feature_test; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY feature_test (id, vpbxid, test1, test2, test3, testtxt) FROM stdin;
-2	2	3	4	5	\N
-1	1	3	4	5	\N
-7	1	\N	\N	\N	\N
-9	1	\N	\N	\N	\N
-10	2	2	4	5	\N
-21	\N	\N	\N	\N	
-28	\N	\N	\N	\N	28
-36	\N	\N	\N	\N	36
-\.
-
-
---
--- Name: feature_test_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('feature_test_id_seq', 39, true);
-
-
---
 -- Data for Name: functions; Type: TABLE DATA; Schema: public; Owner: agaga
 --
 
@@ -35627,984 +36019,6 @@ SELECT pg_catalog.setval('functions_id_seq', 1, true);
 
 
 --
--- Data for Name: ivr; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY ivr (id, custname, custdesc, vpbxid) FROM stdin;
-2	Приветствие НУЦ		1
-3	основной	основной	44
-4	основной	основной	44
-5	основной	основной	44
-6	основной	основной	44
-7	основной	основной	44
-8	основной	основной	44
-9	основной	основной	44
-10	основной	основной	44
-11	основной	основной	44
-\.
-
-
---
--- Name: ivr_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('ivr_id_seq', 11, true);
-
-
---
--- Data for Name: mediarepos; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY mediarepos (id, vpbxid, custname, custdesc, contenttype, filesize, mediatype, duration, extension) FROM stdin;
-22	1	aida_nikolaychuk_-_kolybelnaya_(zaycev.net).mp3		audio/mp3	4146644	ANYMEDIA	\N	mp3
-23	1	Винтаж и DJ Smash - Москва.mp3		audio/mp3	3597174	ANYMEDIA	\N	mp3
-24	1	1v4n - Шутеев, Минеев, Демьянов против сторожа.mp3		audio/mp3	5600572	ANYMEDIA	\N	mp3
-\.
-
-
---
--- Name: mediarepos_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('mediarepos_id_seq', 26, true);
-
-
---
--- Data for Name: musiconhold; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY musiconhold (id, name, directory, application, mode, digit, sort, format, vpbx_id) FROM stdin;
-\.
-
-
---
--- Name: musiconhold_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('musiconhold_id_seq', 1, false);
-
-
---
--- Data for Name: number_match; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY number_match (id, custname, custdesc, vpbxid) FROM stdin;
-22	Скайп алиасы		1
-1	Только Москва		1
-21	любой номер (catchall)		1
-23	любой номер (catchall)	\N	44
-24	любой номер (catchall)	\N	44
-25	любой номер (catchall)	\N	44
-26	любой номер (catchall)	\N	44
-\.
-
-
---
--- Name: number_match_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('number_match_id_seq', 26, true);
-
-
---
--- Data for Name: operator_status_log; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY operator_status_log (id, changed, extension, operatorstatus, vpbxid) FROM stdin;
-1	2013-06-27 05:33:03.234028	103	LOGGED_IN	1
-2	2013-06-27 05:45:54.957796	103	LOGGED_IN	1
-3	2013-06-27 05:46:43.831054	103	LOGGED_IN	1
-4	2013-06-27 05:47:51.578869	103	LOGGED_IN	1
-5	2013-06-27 05:48:13.986516	103	LOGGED_IN	1
-6	2013-06-27 05:50:02.082818	103	LOGGED_IN	1
-7	2013-06-27 05:53:10.834661	103	AWAY_LUNCH	1
-8	2013-06-27 05:55:23.363554	103	LOGGED_IN	1
-9	2013-06-27 05:55:45.188314	103	LOGGED_IN	1
-10	2013-06-27 05:55:50.895979	103	AWAY_LUNCH	1
-11	2013-06-27 05:58:43.248475	103	LOGGED_IN	1
-12	2013-06-27 05:58:47.317032	103	LOGGED_IN	1
-13	2013-06-27 06:01:21.393172	103	LOGGED_IN	1
-14	2013-06-27 06:01:28.184477	103	LOGGED_IN	1
-15	2013-06-27 06:03:50.088036	103	LOGGED_IN	1
-16	2013-06-27 06:04:01.490338	103	LOGGED_IN	1
-17	2013-06-27 06:12:46.280451	103	LOGGED_IN	1
-18	2013-06-27 06:12:51.076927	103	LOGGED_IN	1
-19	2013-06-27 06:13:11.735805	103	LOGGED_IN	1
-20	2013-06-27 06:14:57.477384	103	AWAY_LUNCH	1
-21	2013-06-27 06:22:29.40847	103	LOGGED_IN	1
-22	2013-06-27 06:22:45.716579	103	AWAY_SHORT	1
-23	2013-06-27 06:23:12.582237	103	LOGGED_IN	1
-24	2013-06-27 06:26:24.417324	103	ABSENT	1
-25	2013-06-27 06:26:34.608695	103	LOGGED_IN	1
-26	2013-06-27 07:14:27.052767	103	AWAY_LUNCH	1
-27	2013-06-27 07:19:43.224373	103	LOGGED_IN	1
-28	2013-06-27 07:55:44.508311	103	AWAY_SHORT	1
-29	2013-06-27 07:55:58.451113	103	LOGGED_IN	1
-30	2013-07-01 16:51:39.641301	502	ABSENT	1
-31	2013-07-01 16:51:58.273754	502	LOGGED_IN	1
-32	2013-07-01 16:52:21.667625	502	AWAY_LUNCH	1
-33	2013-07-01 17:28:37.556712	501	ABSENT	1
-34	2013-07-01 17:29:24.094144	501	LOGGED_IN	1
-35	2013-07-01 17:29:36.09496	501	AWAY_LUNCH	1
-36	2013-07-01 17:29:47.770847	501	LOGGED_IN	1
-37	2013-07-01 17:29:59.15128	501	AWAY_LUNCH	1
-38	2013-07-01 17:30:37.038768	501	LOGGED_IN	1
-39	2013-07-01 17:30:45.717453	501	ABSENT	1
-40	2013-07-01 17:31:00.315975	501	LOGGED_IN	1
-41	2013-07-01 17:31:11.979317	501	AWAY_SHORT	1
-42	2013-07-01 17:31:45.206697	501	LOGGED_IN	1
-43	2013-07-01 17:53:57.614779	501	ABSENT	1
-44	2013-07-01 17:56:02.395572	501	LOGGED_IN	1
-45	2013-07-02 11:09:25.324015	502	LOGGED_IN	1
-46	2013-07-02 11:09:35.831879	502	ABSENT	1
-47	2013-07-02 11:09:59.456946	502	LOGGED_IN	1
-48	2013-07-02 11:17:48.074593	502	ABSENT	1
-49	2013-07-02 11:18:00.933044	502	LOGGED_IN	1
-50	2013-07-02 11:18:34.757964	502	ABSENT	1
-51	2013-07-02 11:20:23.319352	502	LOGGED_IN	1
-52	2013-07-02 11:20:32.90226	502	AWAY_LUNCH	1
-53	2013-07-02 11:22:22.974847	502	LOGGED_IN	1
-54	2013-07-02 11:22:35.315255	502	AWAY_SHORT	1
-55	2013-07-02 11:23:40.091482	502	LOGGED_IN	1
-56	2013-07-03 10:37:49.747551	502	AWAY_LUNCH	1
-57	2013-07-03 10:39:04.707166	502	LOGGED_IN	1
-58	2013-08-15 16:45:42.784383	502	ABSENT	1
-59	2013-08-15 16:46:19.78951	502	LOGGED_IN	1
-60	2013-08-15 16:46:59.034131	502	AWAY_LUNCH	1
-61	2013-08-15 16:47:15.534447	502	LOGGED_IN	1
-62	2013-08-15 16:47:46.412384	502	AWAY_SHORT	1
-63	2013-08-15 16:54:48.604006	502	LOGGED_IN	1
-64	2013-08-19 13:02:57.238626	507	ABSENT	1
-65	2013-08-19 13:03:05.264476	505	DELETED	1
-66	2013-08-19 13:03:10.156098	506	DELETED	1
-67	2013-08-19 13:03:14.839236	507	DELETED	1
-68	2013-08-19 17:57:26.334335	505	ABSENT	1
-69	2013-08-19 17:59:30.139952	505	LOGGED_IN	1
-70	2013-08-19 18:20:43.392983	505	AWAY_SHORT	1
-71	2013-08-19 18:21:06.620248	505	LOGGED_IN	1
-72	2013-08-20 19:38:12.30947	505	DELETED	1
-73	2013-08-20 21:11:55.581395	505	ABSENT	1
-74	2013-08-21 19:33:24.436248	505	DELETED	1
-75	2013-08-27 16:26:48.456394	534	ABSENT	1
-76	2013-08-27 16:27:15.281588	534	DELETED	1
-77	2013-08-27 16:36:24.605136	502	ABSENT	1
-78	2013-08-27 16:36:40.514518	502	LOGGED_IN	1
-79	2013-08-27 16:36:57.722301	502	AWAY_LUNCH	1
-80	2013-08-27 16:42:12.259772	502	LOGGED_IN	1
-81	2013-08-28 08:41:33.934041	502	AWAY_SHORT	1
-82	2013-08-28 08:42:04.162758	502	LOGGED_IN	1
-83	2013-08-28 16:21:31.813179	505	ABSENT	1
-84	2013-08-28 18:10:22.238232	505	LOGGED_IN	1
-85	2013-08-28 18:55:00.721818	505	DELETED	1
-86	2013-08-31 23:15:53.711686	501	ABSENT	1
-87	2013-09-08 01:17:22.803776	501	LOGGED_IN	1
-88	2013-09-16 07:43:03.725631	502	ABSENT	1
-89	2013-09-16 07:43:15.428486	502	DELETED	1
-90	2013-09-17 22:44:27.660539	502	ABSENT	1
-91	2013-09-17 22:44:34.978582	502	DELETED	1
-92	2013-09-18 17:39:19.771727	502	ABSENT	1
-93	2013-10-14 02:01:42.58773	570	ABSENT	1
-94	2013-10-14 02:08:37.484541	510	ABSENT	1
-95	2013-10-14 02:11:51.310635	521	ABSENT	1
-96	2013-10-14 02:21:46.421999	525	ABSENT	1
-97	2013-10-18 06:15:24.128403	101	ABSENT	1
-98	2013-10-18 06:18:22.832383	103	ABSENT	1
-99	2013-11-10 19:14:33.379799	108	ABSENT	1
-100	2013-11-10 19:16:11.407014	108	DELETED	1
-\.
-
-
---
--- Name: operator_status_log_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('operator_status_log_id_seq', 100, true);
-
-
---
--- Data for Name: pbx_settings; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY pbx_settings (vpbxid, callcentre_status_override, vmtimeout, greeting, greetingofftime, mohtone, ringingtone, mediarepospath, mohinternal) FROM stdin;
-1	default	8	22	24	22	22	/var/lib/asterisk/mediarepos	active
-4	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-5	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-6	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-7	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-8	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-9	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-10	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-11	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-12	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-17	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-18	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-19	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-20	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-21	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-22	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-23	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-24	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-25	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-26	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-27	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-28	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-29	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-30	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-31	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-32	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-33	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-34	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-35	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-36	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-37	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-38	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-39	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-40	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-41	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-42	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-43	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-44	default	8	\N	\N	\N	\N	/var/lib/asterisk/mediarepos	active
-\.
-
-
---
--- Name: pbx_settings_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('pbx_settings_seq', 44, true);
-
-
---
--- Data for Name: pickupgroup; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY pickupgroup (name, custname, description, vpbxid) FROM stdin;
-0		группа по умолчанию	1
-10	бухгалтерия		1
-\.
-
-
---
--- Name: pickupgroup_name_serial; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('pickupgroup_name_serial', 13, true);
-
-
---
--- Data for Name: recordedcalls; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY recordedcalls (id, cdrref, filesize) FROM stdin;
-\.
-
-
---
--- Name: recordedcalls_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('recordedcalls_id_seq', 1, false);
-
-
---
--- Data for Name: regentries; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY regentries (id, numbermatchref, regexpression) FROM stdin;
-8	22	/^[0-9]{4}$/
-12	1	/^7495[0-9]{7}$/
-13	1	/^7499[0-9]{7}$/
-14	21	/[\\d]{7,15}/
-15	1	/[\\d]{7,15}/
-16	1	/[\\d]{7,15}/
-17	1	/[\\d]{7,15}/
-18	1	/[\\d]{7,15}/
-\.
-
-
---
--- Name: regentries_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('regentries_id_seq', 18, true);
-
-
---
--- Data for Name: route; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY route (id, custname, custdesc, isdefault, vpbxid) FROM stdin;
-10	ТФОП 4997777777		t	1
-30	ТФОП 4997536772		t	44
-31	ТФОП 4997536772		t	44
-32	ТФОП 4997536772		t	44
-\.
-
-
---
--- Name: route_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('route_id_seq', 32, true);
-
-
---
--- Data for Name: schedule_replacements; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY schedule_replacements (id, rdate, isworking, cute, name, comment, vpbxid) FROM stdin;
-1	2013-01-01	0	0	\N	\N	1
-2	2013-01-02	0	0	\N	\N	1
-3	2013-01-03	0	0	\N	\N	1
-4	2013-01-04	0	0	\N	\N	1
-5	2013-01-05	0	0	\N	\N	1
-6	2013-01-06	0	0	\N	\N	1
-7	2013-01-07	0	0	\N	\N	1
-8	2013-01-08	0	0	\N	\N	1
-9	2013-01-09	1	0	\N	\N	1
-10	2013-01-10	1	0	\N	\N	1
-11	2013-01-11	1	0	\N	\N	1
-12	2013-01-12	0	0	\N	\N	1
-13	2013-01-13	0	0	\N	\N	1
-14	2013-01-14	1	0	\N	\N	1
-15	2013-01-15	1	0	\N	\N	1
-16	2013-01-16	1	0	\N	\N	1
-17	2013-01-17	1	0	\N	\N	1
-18	2013-01-18	1	0	\N	\N	1
-19	2013-01-19	0	0	\N	\N	1
-20	2013-01-20	0	0	\N	\N	1
-21	2013-01-21	1	0	\N	\N	1
-22	2013-01-22	1	0	\N	\N	1
-23	2013-01-23	1	0	\N	\N	1
-24	2013-01-24	1	0	\N	\N	1
-25	2013-01-25	1	0	\N	\N	1
-26	2013-01-26	0	0	\N	\N	1
-27	2013-01-27	0	0	\N	\N	1
-28	2013-01-28	1	0	\N	\N	1
-29	2013-01-29	1	0	\N	\N	1
-30	2013-01-30	1	0	\N	\N	1
-31	2013-01-31	1	0	\N	\N	1
-32	2013-02-01	1	0	\N	\N	1
-33	2013-02-02	0	0	\N	\N	1
-34	2013-02-03	0	0	\N	\N	1
-35	2013-02-04	1	0	\N	\N	1
-36	2013-02-05	1	0	\N	\N	1
-37	2013-02-06	1	0	\N	\N	1
-38	2013-02-07	1	0	\N	\N	1
-39	2013-02-08	1	0	\N	\N	1
-40	2013-02-09	0	0	\N	\N	1
-41	2013-02-10	0	0	\N	\N	1
-42	2013-02-11	1	0	\N	\N	1
-43	2013-02-12	1	0	\N	\N	1
-44	2013-02-13	1	0	\N	\N	1
-45	2013-02-14	1	0	\N	\N	1
-46	2013-02-15	1	0	\N	\N	1
-47	2013-02-16	0	0	\N	\N	1
-48	2013-02-17	0	0	\N	\N	1
-49	2013-02-18	1	0	\N	\N	1
-50	2013-02-19	1	0	\N	\N	1
-51	2013-02-20	1	0	\N	\N	1
-52	2013-02-21	1	0	\N	\N	1
-53	2013-02-22	1	1	\N	\N	1
-54	2013-02-23	0	0	\N	\N	1
-55	2013-02-24	0	0	\N	\N	1
-56	2013-02-25	1	0	\N	\N	1
-57	2013-02-26	1	0	\N	\N	1
-58	2013-02-27	1	0	\N	\N	1
-59	2013-02-28	1	0	\N	\N	1
-60	2013-03-01	1	0	\N	\N	1
-61	2013-03-02	0	0	\N	\N	1
-62	2013-03-03	0	0	\N	\N	1
-63	2013-03-04	1	0	\N	\N	1
-64	2013-03-05	1	0	\N	\N	1
-65	2013-03-06	1	0	\N	\N	1
-66	2013-03-07	1	1	\N	\N	1
-67	2013-03-08	0	0	\N	\N	1
-68	2013-03-09	0	0	\N	\N	1
-69	2013-03-10	0	0	\N	\N	1
-70	2013-03-11	1	0	\N	\N	1
-71	2013-03-12	1	0	\N	\N	1
-72	2013-03-13	1	0	\N	\N	1
-73	2013-03-14	1	0	\N	\N	1
-74	2013-03-15	1	0	\N	\N	1
-75	2013-03-16	0	0	\N	\N	1
-76	2013-03-17	0	0	\N	\N	1
-77	2013-03-18	1	0	\N	\N	1
-78	2013-03-19	1	0	\N	\N	1
-79	2013-03-20	1	0	\N	\N	1
-80	2013-03-21	1	0	\N	\N	1
-81	2013-03-22	1	0	\N	\N	1
-82	2013-03-23	0	0	\N	\N	1
-83	2013-03-24	0	0	\N	\N	1
-84	2013-03-25	1	0	\N	\N	1
-85	2013-03-26	1	0	\N	\N	1
-86	2013-03-27	1	0	\N	\N	1
-87	2013-03-28	1	0	\N	\N	1
-88	2013-03-29	1	0	\N	\N	1
-89	2013-03-30	0	0	\N	\N	1
-90	2013-03-31	0	0	\N	\N	1
-91	2013-04-01	1	0	\N	\N	1
-92	2013-04-02	1	0	\N	\N	1
-93	2013-04-03	1	0	\N	\N	1
-94	2013-04-04	1	0	\N	\N	1
-95	2013-04-05	1	0	\N	\N	1
-96	2013-04-06	0	0	\N	\N	1
-97	2013-04-07	0	0	\N	\N	1
-98	2013-04-08	1	0	\N	\N	1
-99	2013-04-09	1	0	\N	\N	1
-100	2013-04-10	1	0	\N	\N	1
-101	2013-04-11	1	0	\N	\N	1
-102	2013-04-12	1	0	\N	\N	1
-103	2013-04-13	0	0	\N	\N	1
-104	2013-04-14	0	0	\N	\N	1
-105	2013-04-15	1	0	\N	\N	1
-106	2013-04-16	1	0	\N	\N	1
-107	2013-04-17	1	0	\N	\N	1
-108	2013-04-18	1	0	\N	\N	1
-109	2013-04-19	1	0	\N	\N	1
-110	2013-04-20	0	0	\N	\N	1
-111	2013-04-21	0	0	\N	\N	1
-112	2013-04-22	1	0	\N	\N	1
-113	2013-04-23	1	0	\N	\N	1
-114	2013-04-24	1	0	\N	\N	1
-115	2013-04-25	1	0	\N	\N	1
-116	2013-04-26	1	0	\N	\N	1
-117	2013-04-27	0	0	\N	\N	1
-118	2013-04-28	0	0	\N	\N	1
-119	2013-04-29	1	0	\N	\N	1
-120	2013-04-30	1	1	\N	\N	1
-121	2013-05-01	0	0	\N	\N	1
-122	2013-05-02	0	0	\N	\N	1
-123	2013-05-03	0	0	\N	\N	1
-124	2013-05-04	0	0	\N	\N	1
-125	2013-05-05	0	0	\N	\N	1
-126	2013-05-06	1	0	\N	\N	1
-127	2013-05-07	1	0	\N	\N	1
-128	2013-05-08	1	1	\N	\N	1
-129	2013-05-09	0	0	\N	\N	1
-130	2013-05-10	0	0	\N	\N	1
-131	2013-05-11	0	0	\N	\N	1
-132	2013-05-12	0	0	\N	\N	1
-133	2013-05-13	1	0	\N	\N	1
-134	2013-05-14	1	0	\N	\N	1
-135	2013-05-15	1	0	\N	\N	1
-136	2013-05-16	1	0	\N	\N	1
-137	2013-05-17	1	0	\N	\N	1
-138	2013-05-18	0	0	\N	\N	1
-139	2013-05-19	0	0	\N	\N	1
-140	2013-05-20	1	0	\N	\N	1
-141	2013-05-21	1	0	\N	\N	1
-142	2013-05-22	1	0	\N	\N	1
-143	2013-05-23	1	0	\N	\N	1
-144	2013-05-24	1	0	\N	\N	1
-145	2013-05-25	0	0	\N	\N	1
-146	2013-05-26	0	0	\N	\N	1
-147	2013-05-27	1	0	\N	\N	1
-148	2013-05-28	1	0	\N	\N	1
-149	2013-05-29	1	0	\N	\N	1
-150	2013-05-30	1	0	\N	\N	1
-151	2013-05-31	1	0	\N	\N	1
-152	2013-06-01	0	0	\N	\N	1
-153	2013-06-02	0	0	\N	\N	1
-154	2013-06-03	1	0	\N	\N	1
-155	2013-06-04	1	0	\N	\N	1
-156	2013-06-05	1	0	\N	\N	1
-157	2013-06-06	1	0	\N	\N	1
-158	2013-06-07	1	0	\N	\N	1
-159	2013-06-08	0	0	\N	\N	1
-160	2013-06-09	0	0	\N	\N	1
-161	2013-06-10	1	0	\N	\N	1
-162	2013-06-11	1	1	\N	\N	1
-163	2013-06-12	0	0	\N	\N	1
-164	2013-06-13	1	0	\N	\N	1
-165	2013-06-14	1	0	\N	\N	1
-166	2013-06-15	0	0	\N	\N	1
-167	2013-06-16	0	0	\N	\N	1
-168	2013-06-17	1	0	\N	\N	1
-169	2013-06-18	1	0	\N	\N	1
-170	2013-06-19	1	0	\N	\N	1
-171	2013-06-20	1	0	\N	\N	1
-172	2013-06-21	1	0	\N	\N	1
-173	2013-06-22	0	0	\N	\N	1
-174	2013-06-23	0	0	\N	\N	1
-175	2013-06-24	1	0	\N	\N	1
-176	2013-06-25	1	0	\N	\N	1
-177	2013-06-26	1	0	\N	\N	1
-178	2013-06-27	1	0	\N	\N	1
-179	2013-06-28	1	0	\N	\N	1
-180	2013-06-29	0	0	\N	\N	1
-181	2013-06-30	0	0	\N	\N	1
-182	2013-07-01	1	0	\N	\N	1
-183	2013-07-02	1	0	\N	\N	1
-184	2013-07-03	1	0	\N	\N	1
-185	2013-07-04	1	0	\N	\N	1
-186	2013-07-05	1	0	\N	\N	1
-187	2013-07-06	0	0	\N	\N	1
-188	2013-07-07	0	0	\N	\N	1
-189	2013-07-08	1	0	\N	\N	1
-190	2013-07-09	1	0	\N	\N	1
-191	2013-07-10	1	0	\N	\N	1
-192	2013-07-11	1	0	\N	\N	1
-193	2013-07-12	1	0	\N	\N	1
-194	2013-07-13	0	0	\N	\N	1
-195	2013-07-14	0	0	\N	\N	1
-196	2013-07-15	1	0	\N	\N	1
-197	2013-07-16	1	0	\N	\N	1
-198	2013-07-17	1	0	\N	\N	1
-199	2013-07-18	1	0	\N	\N	1
-200	2013-07-19	1	0	\N	\N	1
-201	2013-07-20	0	0	\N	\N	1
-202	2013-07-21	0	0	\N	\N	1
-203	2013-07-22	1	0	\N	\N	1
-204	2013-07-23	1	0	\N	\N	1
-205	2013-07-24	1	0	\N	\N	1
-206	2013-07-25	1	0	\N	\N	1
-207	2013-07-26	1	0	\N	\N	1
-208	2013-07-27	0	0	\N	\N	1
-209	2013-07-28	0	0	\N	\N	1
-210	2013-07-29	1	0	\N	\N	1
-211	2013-07-30	1	0	\N	\N	1
-212	2013-07-31	1	0	\N	\N	1
-213	2013-08-01	1	0	\N	\N	1
-214	2013-08-02	1	0	\N	\N	1
-215	2013-08-03	0	0	\N	\N	1
-216	2013-08-04	0	0	\N	\N	1
-217	2013-08-05	1	0	\N	\N	1
-218	2013-08-06	1	0	\N	\N	1
-219	2013-08-07	1	0	\N	\N	1
-220	2013-08-08	1	0	\N	\N	1
-221	2013-08-09	1	0	\N	\N	1
-222	2013-08-10	0	0	\N	\N	1
-223	2013-08-11	0	0	\N	\N	1
-224	2013-08-12	1	0	\N	\N	1
-225	2013-08-13	1	0	\N	\N	1
-226	2013-08-14	1	0	\N	\N	1
-227	2013-08-15	1	0	\N	\N	1
-228	2013-08-16	1	0	\N	\N	1
-229	2013-08-17	0	0	\N	\N	1
-230	2013-08-18	0	0	\N	\N	1
-231	2013-08-19	1	0	\N	\N	1
-232	2013-08-20	1	0	\N	\N	1
-233	2013-08-21	1	0	\N	\N	1
-234	2013-08-22	1	0	\N	\N	1
-235	2013-08-23	1	0	\N	\N	1
-236	2013-08-24	0	0	\N	\N	1
-237	2013-08-25	0	0	\N	\N	1
-238	2013-08-26	1	0	\N	\N	1
-239	2013-08-27	1	0	\N	\N	1
-240	2013-08-28	1	0	\N	\N	1
-241	2013-08-29	1	0	\N	\N	1
-242	2013-08-30	1	0	\N	\N	1
-243	2013-08-31	0	0	\N	\N	1
-245	2013-09-02	1	0	\N	\N	1
-246	2013-09-03	1	0	\N	\N	1
-247	2013-09-04	1	0	\N	\N	1
-248	2013-09-05	1	0	\N	\N	1
-249	2013-09-06	1	0	\N	\N	1
-250	2013-09-07	0	0	\N	\N	1
-251	2013-09-08	0	0	\N	\N	1
-252	2013-09-09	1	0	\N	\N	1
-253	2013-09-10	1	0	\N	\N	1
-254	2013-09-11	1	0	\N	\N	1
-255	2013-09-12	1	0	\N	\N	1
-256	2013-09-13	1	0	\N	\N	1
-257	2013-09-14	0	0	\N	\N	1
-258	2013-09-15	0	0	\N	\N	1
-259	2013-09-16	1	0	\N	\N	1
-260	2013-09-17	1	0	\N	\N	1
-261	2013-09-18	1	0	\N	\N	1
-262	2013-09-19	1	0	\N	\N	1
-263	2013-09-20	1	0	\N	\N	1
-264	2013-09-21	0	0	\N	\N	1
-265	2013-09-22	0	0	\N	\N	1
-266	2013-09-23	1	0	\N	\N	1
-267	2013-09-24	1	0	\N	\N	1
-268	2013-09-25	1	0	\N	\N	1
-269	2013-09-26	1	0	\N	\N	1
-270	2013-09-27	1	0	\N	\N	1
-271	2013-09-28	0	0	\N	\N	1
-272	2013-09-29	0	0	\N	\N	1
-273	2013-09-30	1	0	\N	\N	1
-274	2013-10-01	1	0	\N	\N	1
-275	2013-10-02	1	0	\N	\N	1
-276	2013-10-03	1	0	\N	\N	1
-277	2013-10-04	1	0	\N	\N	1
-278	2013-10-05	0	0	\N	\N	1
-279	2013-10-06	0	0	\N	\N	1
-280	2013-10-07	1	0	\N	\N	1
-281	2013-10-08	1	0	\N	\N	1
-282	2013-10-09	1	0	\N	\N	1
-283	2013-10-10	1	0	\N	\N	1
-284	2013-10-11	1	0	\N	\N	1
-285	2013-10-12	0	0	\N	\N	1
-286	2013-10-13	0	0	\N	\N	1
-287	2013-10-14	1	0	\N	\N	1
-288	2013-10-15	1	0	\N	\N	1
-289	2013-10-16	1	0	\N	\N	1
-290	2013-10-17	1	0	\N	\N	1
-291	2013-10-18	1	0	\N	\N	1
-292	2013-10-19	0	0	\N	\N	1
-293	2013-10-20	0	0	\N	\N	1
-294	2013-10-21	1	0	\N	\N	1
-295	2013-10-22	1	0	\N	\N	1
-296	2013-10-23	1	0	\N	\N	1
-297	2013-10-24	1	0	\N	\N	1
-298	2013-10-25	1	0	\N	\N	1
-299	2013-10-26	0	0	\N	\N	1
-300	2013-10-27	0	0	\N	\N	1
-301	2013-10-28	1	0	\N	\N	1
-302	2013-10-29	1	0	\N	\N	1
-303	2013-10-30	1	0	\N	\N	1
-304	2013-10-31	1	0	\N	\N	1
-305	2013-11-01	1	0	\N	\N	1
-306	2013-11-02	0	0	\N	\N	1
-307	2013-11-03	0	0	\N	\N	1
-308	2013-11-04	0	0	\N	\N	1
-309	2013-11-05	1	0	\N	\N	1
-310	2013-11-06	1	0	\N	\N	1
-311	2013-11-07	1	0	\N	\N	1
-312	2013-11-08	1	0	\N	\N	1
-313	2013-11-09	0	0	\N	\N	1
-314	2013-11-10	0	0	\N	\N	1
-315	2013-11-11	1	0	\N	\N	1
-316	2013-11-12	1	0	\N	\N	1
-317	2013-11-13	1	0	\N	\N	1
-318	2013-11-14	1	0	\N	\N	1
-319	2013-11-15	1	0	\N	\N	1
-320	2013-11-16	0	0	\N	\N	1
-321	2013-11-17	0	0	\N	\N	1
-322	2013-11-18	1	0	\N	\N	1
-323	2013-11-19	1	0	\N	\N	1
-324	2013-11-20	1	0	\N	\N	1
-325	2013-11-21	1	0	\N	\N	1
-326	2013-11-22	1	0	\N	\N	1
-327	2013-11-23	0	0	\N	\N	1
-328	2013-11-24	0	0	\N	\N	1
-329	2013-11-25	1	0	\N	\N	1
-330	2013-11-26	1	0	\N	\N	1
-331	2013-11-27	1	0	\N	\N	1
-332	2013-11-28	1	0	\N	\N	1
-333	2013-11-29	1	0	\N	\N	1
-334	2013-11-30	0	0	\N	\N	1
-335	2013-12-01	0	0	\N	\N	1
-336	2013-12-02	1	0	\N	\N	1
-337	2013-12-03	1	0	\N	\N	1
-338	2013-12-04	1	0	\N	\N	1
-339	2013-12-05	1	0	\N	\N	1
-340	2013-12-06	1	0	\N	\N	1
-341	2013-12-07	0	0	\N	\N	1
-342	2013-12-08	0	0	\N	\N	1
-343	2013-12-09	1	0	\N	\N	1
-344	2013-12-10	1	0	\N	\N	1
-345	2013-12-11	1	0	\N	\N	1
-346	2013-12-12	1	0	\N	\N	1
-347	2013-12-13	1	0	\N	\N	1
-348	2013-12-14	0	0	\N	\N	1
-349	2013-12-15	0	0	\N	\N	1
-350	2013-12-16	1	0	\N	\N	1
-351	2013-12-17	1	0	\N	\N	1
-352	2013-12-18	1	0	\N	\N	1
-353	2013-12-19	1	0	\N	\N	1
-354	2013-12-20	1	0	\N	\N	1
-355	2013-12-21	0	0	\N	\N	1
-356	2013-12-22	0	0	\N	\N	1
-357	2013-12-23	1	0	\N	\N	1
-358	2013-12-24	1	0	\N	\N	1
-359	2013-12-25	1	0	\N	\N	1
-360	2013-12-26	1	0	\N	\N	1
-361	2013-12-27	1	0	\N	\N	1
-362	2013-12-28	0	0	\N	\N	1
-363	2013-12-29	0	0	\N	\N	1
-364	2013-12-30	1	0	\N	\N	1
-365	2013-12-31	1	1	\N	\N	1
-244	2013-09-01	0	0	День знаний		1
-\.
-
-
---
--- Name: schedule_replacements_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('schedule_replacements_id_seq', 369, true);
-
-
---
--- Data for Name: shortdialtable; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY shortdialtable (id, peerid, number, short) FROM stdin;
-88	140	89251999108	04
-89	140	89251999108	05
-\.
-
-
---
--- Name: shortdialtable_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('shortdialtable_id_seq', 89, true);
-
-
---
--- Data for Name: sip; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY sip (id, context, callingpres, deny, permit, secret, md5secret, remotesecret, transport, host, nat, type, accountcode, amaflags, callerid, defaultip, dtmfmode, fromuser, fromdomain, insecure, language, mailbox, qualify, regexten, rtptimeout, rtpholdtimeout, setvar, disallow, allow, fullcontact, ipaddr, port, defaultuser, subscribecontext, directmedia, trustrpid, sendrpid, progressinband, promiscredir, useclientcode, callcounter, busylevel, allowoverlap, allowsubscribe, allowtransfer, ignoresdpversion, template, videosupport, maxcallbitrate, rfc2833compensate, "session-timers", "session-expires", "session-minse", "session-refresher", t38pt_usertpsource, outboundproxy, callbackextension, registertrying, timert1, timerb, qualifyfreq, contactpermit, contactdeny, lastms, regserver, regseconds, useragent, name, custname, custdesc, active, ringoncall, callgroup, rec_type, register, ctrunkentryref, pickupgroup, istemplate, extension, extensiontype, operatorstatus, callrecording, extensiongroup, outgoingcallspermission, extensionrecord, namedpickupgroup, namedcallgroup, transfer, statuschange, incoming, hold, forwarding, memberofcallcentreque, stamp, email, musicclass, musiconhold, callsequence, diversion_unconditional_status, diversion_unconditional_number, diversion_unavail_status, diversion_unavail_number, diversion_busy_status, diversion_busy_number, diversion_noanswer_status, diversion_noanswer_number, number_status, faxemail, peertype, routeref, diversion_unconditional_landingtype, diversion_unavail_landingtype, diversion_busy_landingtype, diversion_noanswer_landingtype, diversion_noanswer_duration, vpbxid) FROM stdin;
-161	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	yuYYu6QL	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	22	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	530	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:33:58.529227		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-159	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	haIBO7s4	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	20	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	519	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:29:16.426764		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-153	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	nN8eSYte	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	14	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	516	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:20:44.242602		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-151	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	Fe7HEm4S	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	12	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	512	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:13:39.097935		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-157	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	Bx48zznj	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	18	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	527	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:26:17.556343		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-152	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	XtY4PqgB	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	13	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	544	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:14:40.684259		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-154	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	mbsBJLMU	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	15	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	525	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:21:46.341772		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-160	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	ipjMbh3z	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	21	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	528	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:29:55.032774		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-164	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	drjAoIEC	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	25	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	526	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:43:46.58342		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-149	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	X7oYwMLn	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	10	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	521	operator	ABSENT	disabled	1	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:11:51.223055		1_mohtone	1_mohtone	SEQUENTIAL	ACTIVATED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	VOICEMAIL	NUMBER	NUMBER	NUMBER	20	1
-155	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	YjAQROmM	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	16	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N	Иван Иванов		t	t	\N	phone	\N	\N	\N	f	536	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:23:10.024429		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-176	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	gpcNZJkm	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	37	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	102	regular	ABSENT	disabled	9	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-18 06:15:45.36898		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-175	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	Yf3qUxii	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	36	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N	Петр Петров		t	t	\N	phone	\N	\N	\N	f	101	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-18 06:15:24.008474		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	10	VOICEMAIL	NUMBER	NUMBER	NUMBER	20	1
-156	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	Xf70jPWh	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	17	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	514	regular	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:24:28.429594		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	DEACTIVATED		UNDEFINED		EXTENSION	10	NUMBER	NUMBER	NUMBER	VOICEMAIL	20	1
-148	vpbx_dialout	allowed			quit666	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	9	no	\N	\N	\N	\N	all	ulaw,alaw				510	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	0		0		\N			t	t	\N	phone	\N	\N	\N	f	510	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:08:37.403791		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	30	1
-205	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	9S9rziwP	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	66	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	107	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:13:55.919708		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
-143	vpbx_dialout	allowed			quit666	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	4	no	\N	\N	\N	\N	all	ulaw,alaw				502	default	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	0		0		\N			t	t	\N	phone	\N	\N	\N	f	502	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-09-18 17:39:19.298244		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED	0	UNDEFINED	0	UNDEFINED	\N	UNDEFINED	0	UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-204	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	8yXtMCTf	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	65	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	106	operator	ABSENT	disabled	1	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:13:23.000515		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
-140	vpbx_dialout	allowed			QWoIen0m	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	1	no	\N	\N	\N	\N	all	ulaw,alaw	sip:501@192.168.10.101:18028^3Brinstance=e974642430e04d94			501	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	0		1384100631	eyeBeam release 1102u stamp 52345	\N	тест 1		t	t	\N	phone	\N	\N	\N	f	501	operator	LOGGED_IN	disabled	4	undefined	active	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-08-31 23:15:53.27787		1_mohtone	1_mohtone	SIMULRING	DEACTIVATED	89251999108	UNDEFINED		UNDEFINED	\N	ACTIVATED	333	UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	VOICEMAIL	30	1
-197	vpbx_trunks	allowed	\N	\N	testpassword	\N	\N	udp	serv-02.vector-tel.ru	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	58	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		495640804009	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	197	no	\N	\N	\N	\N	\N	\N		0		\N	Вектор телеком	\N	t	t	\N	phone	\N	\N	\N	f	\N	regular	ABSENT	disabled	0	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-22 01:44:54.283573		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		TRUNK	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-209	vpbx_dialout	allowed						udp	dynamic	force_rport,comedia	peer								port,invite		69	no					all	ulaw,alaw						no	no	no	never	no	no	yes	2	yes	yes	yes	no		\N	\N	yes	accept	\N	90	\N	no			no	\N	\N	\N		\N	\N		0		\N			t	t	\N	phone		\N		f	300	regular	ABSENT	disabled	0	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-02 20:05:28.142412		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-144	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	TIO4OKwU	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	5	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N	Сидор Сидоров		t	t	\N	phone	\N	\N	\N	f	570	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-14 02:01:42.473342		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	\N
-202	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	9lqgaPtA	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	63	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	104	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:04:01.920126		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
-203	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	s0Lz5djN	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	64	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	105	operator	ABSENT	disabled	4	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:13:03.598057		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	\N
-177	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	YdmOIdwp	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	38	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N		тест	t	t	\N	phone	\N	\N	\N	f	103	operator	ABSENT	disabled	0	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-10-18 06:18:22.733153		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	1
-200	vpbx_dialout	allowed	0.0.0.0/0.0.0.0	192.168.6.0/255.255.255.0	g84RgIJf	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N		\N	\N	\N	\N	port,invite	\N	61	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N			t	t	\N	phone	\N	\N	\N	f	100	operator	ABSENT	disabled	9	undefined	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2013-11-10 19:03:23.049404		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED	\N	UNDEFINED		UNDEFINED		EXTENSION	\N	NUMBER	NUMBER	NUMBER	NUMBER	0	1
-244	vpbx_trunks	allowed	\N	\N	\N	\N	\N	udp	serv-02	force_rport,comedia	peer	\N	\N	\N	\N	\N	\N	\N	\N	\N	103	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N	5060	\N	\N	no	no	no	never	no	no	yes	2	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		\N	\N	\N	t	t	\N	phone	\N	\N	\N	f	\N	regular	ABSENT	disabled	0	allowed	disabled	0	0	undefined	undefined	undefined	undefined	undefined	undefined	2014-09-17 23:15:46.158416		1_mohtone	1_mohtone	SEQUENTIAL	UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		UNDEFINED		TRUNK	\N	NUMBER	NUMBER	NUMBER	NUMBER	20	44
-245	vpbx_dialout	allowed	\N	\N	\N	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N	\N	\N	\N	\N	\N	port,invite	\N	104	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	\N	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		900440302	3334	\N	t	t	\N	phone	\N	\N	\N	f	302	regular	ABSENT	disabled	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	undefined	2014-09-17 23:15:46.17766		1_mohtone	1_mohtone	\N	UNDEFINED	\N	UNDEFINED	\N	UNDEFINED	\N	UNDEFINED	\N	\N		EXTENSION	\N	\N	\N	\N	\N	\N	44
-246	vpbx_dialout	allowed	\N	\N	\N	\N	\N	udp	dynamic	force_rport,comedia	peer	\N	\N	\N	\N	\N	\N	\N	port,invite	\N	105	no	\N	\N	\N	\N	all	ulaw,alaw	\N	\N		\N	\N	no	no	no	never	no	no	yes	\N	yes	yes	yes	no	\N	yes	\N	yes	accept	\N	90	\N	no	\N	\N	no	\N	\N	\N	\N	\N	\N		0		900440305	3333	\N	t	t	\N	phone	\N	\N	\N	f	305	operator	ABSENT	disabled	\N	\N	\N	\N	\N	\N	\N	\N	\N	\N	undefined	2014-09-17 23:15:46.182545		1_mohtone	1_mohtone	\N	UNDEFINED	\N	UNDEFINED	\N	UNDEFINED	\N	UNDEFINED	\N	\N		EXTENSION	\N	\N	\N	\N	\N	\N	44
-\.
-
-
---
--- Name: sip_devices_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('sip_devices_id_seq', 1, false);
-
-
---
--- Name: sip_mailbox; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('sip_mailbox', 105, true);
-
-
---
--- Name: sip_serial; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('sip_serial', 246, true);
-
-
---
--- Data for Name: skype_aliases; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY skype_aliases (id, number, skypeid, custname, custdesc, vpbx_id) FROM stdin;
-3	3211	konstantin_artemiev	Вася Пупкин	тест	1
-\.
-
-
---
--- Name: skype_aliases_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('skype_aliases_id_seq', 7, true);
-
-
---
--- Data for Name: temp_media; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY temp_media (id, custname, custdesc, contenttype, filesize, mediatype) FROM stdin;
-4	[kickass.to]team.sket.trinity.rae.1080p.torrent		application/octet-stream	171503	
-5	[kickass.to]team.sket.trinity.rae.1080p.torrent		application/octet-stream	171503	
-6	[kickass.to]team.sket.trinity.rae.1080p.torrent		application/octet-stream	171503	
-7	[kickass.to]dp.chicks.3.new.2013.21sextury.dvdrip.torrent		application/octet-stream	19875	
-9	_Г†°а®нЂм Г†аб®† М†а™•б, О Ђо°Ґ® ® ѓаЃз®е °•б†е.doc		application/msword	528384	
-10	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	
-11	РосСкрининг.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	152175	
-12	kartemiev.kdb.kdb		application/octet-stream	28764	
-13	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное МЮ.doc		application/msword	72704	
-14	ТЗ API Глюкометр v.4.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	158837	
-16	РосСкрининг.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	152175	greetingofftime
-17	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	greeting
-20	ТЗ API Глюкометр v.4.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	158837	greeting
-21	РосСкрининг.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	152175	greeting
-22	ТЗ API Глюкометр v.4.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	158837	greeting
-24	ТЗ API Глюкометр v.4.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	158837	greetingofftime
-25	ТЗ API Глюкометр v.4.docx		application/vnd.openxmlformats-officedocument.wordprocessingml.document	158837	greeting
-26	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	greetingofftime
-27	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	ringingtone
-31	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	greeting
-32	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	greetingofftime
-33	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	ringingtone
-35	Резюме АРТЕМЬЕВ КОНСТАНТИН МИХАЙЛОВИЧ обновленное.doc		application/msword	63488	greeting
-36	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-37	03 Cant Sell Dope Forever.mp3			0	greeting
-38	_Г†°а®нЂм Г†аб®† М†а™•б, О Ђо°Ґ® ® ѓаЃз®е °•б†е.doc		application/msword	528384	greeting
-39	03 Cant Sell Dope Forever.mp3			0	greeting
-40	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-41	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-42	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-43	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-44	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-45	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-46	09 Dedication (Skit).mp3		audio/mp3	215957	greetingofftime
-47	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-48	09 Dedication (Skit).mp3		audio/mp3	215957	greetingofftime
-49	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-50	_Г†°а®нЂм Г†аб®† М†а™•б, О Ђо°Ґ® ® ѓаЃз®е °•б†е.doc		application/msword	528384	greetingofftime
-51	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-52	_Г†°а®нЂм Г†аб®† М†а™•б, О Ђо°Ґ® ® ѓаЃз®е °•б†е.doc		application/msword	528384	greetingofftime
-53	_Г†°а®нЂм Г†аб®† М†а™•б, О Ђо°Ґ® ® ѓаЃз®е °•б†е.doc		application/msword	528384	greeting
-54	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-55	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-56	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-57	03 Cant Sell Dope Forever.mp3			0	greeting
-58	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-59	09 Dedication (Skit).mp3		audio/mp3	215957	greetingofftime
-60	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-61	117883__arclegend05__alarm-clock.wav		audio/wav	2045302	ringingtone
-63	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-64	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-65	09 Dedication (Skit).mp3		audio/mp3	215957	greetingofftime
-66	840925a06e22.mp3			0	greeting
-67	09 Dedication (Skit).mp3		audio/mp3	215957	greetingofftime
-68	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-69	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-70	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-71	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-72	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-73	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-74	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-75	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-76	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-77	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-78	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-79	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-80	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-81	09 Dedication (Skit).mp3		audio/mp3	215957	ringingtone
-82	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-83	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-84	840925a06e22.mp3			0	greeting
-85	09 Dedication (Skit).mp3		audio/mp3	215957	greeting
-\.
-
-
---
--- Name: temp_media_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('temp_media_id_seq', 85, true);
-
-
---
--- Data for Name: trunkassoc; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY trunkassoc (id, trunkref, contextref, vpbxid) FROM stdin;
-33	197	4	1
-41	244	21	44
-\.
-
-
---
--- Name: trunkassoc_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('trunkassoc_id_seq', 41, true);
-
-
---
--- Data for Name: trunkdestinations; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY trunkdestinations (id, trunkref, numbermatchref, routeref, vpbxid) FROM stdin;
-1	\N	\N	\N	1
-2	197	\N	\N	1
-37	197	21	10	1
-38	197	22	10	1
-39	\N	1	31	44
-40	244	1	32	44
-\.
-
-
---
--- Name: trunkdestinations_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('trunkdestinations_id_seq', 40, true);
-
-
---
--- Data for Name: user; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY "user" (user_id, username, email, display_name, password, state, role, vpbxid, id) FROM stdin;
-1	\N	kartemiev@gmail.com	\N	$2y$04$EWs.NNHdnD38Pl/Pf97iceSs0GM3qfC3olpdTGFKfLG8vp4fnkYe2	\N	admin	1	1
-16	\N	kos@vector-tel.ru	test	$2y$04$g9mw1l9XHeK57x/XHJ8Ih.6bomqnMDI4E4pGrX4XZ65J7lp5DtzHW	\N	admin	1	16
-21	\N	supervisor@agaga.ru	supervisor@agaga.ru	$2y$04$0icXtDDz5d12qSipWQbJ4u5LotlNBsV8x6VmcANyKjiyBU/2QHany	\N	supervisor	1	21
-25	\N	lboikov@agaga.ru	lboikov	$2y$04$PG0EhAjTEXm/q6Tq7Qdb/O882zMQMIe/Gcan8M1FRVLEibW4UuTYm	\N	admin	1	25
-29	\N	kartemiev1@gmail.com	kartemiev1@gmail.com	$2y$04$TmUb4ZwzuZzdZPJWGQ9SBunJtx/vyNZmNqxTf.WP8fI/yVO1T9I0G	\N	admin	\N	29
-30	\N	kartemiev2@gmail.com	kartemiev2@gmail.com	$2y$04$suCiF0bahAGLSPTPNSMbd.gUzf0yS8.r44r0Jvg4s3MGxZsbl5auW	\N	admin	\N	30
-45	\N	kartemiev111@gmail.com	Vasya	$2y$04$bu6Q8wXgYjtv84esT1pTVuE0dZNVbjmpaws.FfM3wKn3a/ax44EAK	\N	admin	\N	45
-47	\N	kartemiev333433@gmail.com	Peter Ivanoff	$2y$04$RPATvO0YhJ.GXSOve5T8huEB6xiCJ9ZU/imUOd6RSDzKUPfa6rSEy	\N	admin	\N	47
-85	\N	kartemiev3444@gmail.com	Peter Ivanoff	$2y$04$GPQtu/Ak8gXvkJ6keXqqeuMHWlA.VjsXELW.NJP2s2nDEXn4getsm	\N	admin	30	85
-87	\N	kartemiev3344@gmail.com	kjjdjkd	$2y$04$wQIJj1.C5BgtrTUfYOTwNOENFCGr0SVKrcAlAXBcTMfLEe95FiuGi	\N	admin	31	87
-89	\N	kartemiev888@gmail.com	Вася Пупкин	$2y$04$EBm2ZhTKLTmmZHzlDJMtquP5R0NbfVlPMgTL0RNK4Q99K7NZ4hVui	\N	admin	32	89
-91	\N	kartemiev344333@gmail.com	Peter Ivanoff	$2y$04$OaSb43mD0HsOD6KrtW9wte2tvcTtXxjmUdOQQImF7wOTbFkAwwQNO	\N	admin	33	91
-93	\N	kartemiev444999@gmail.com	Peter Ivanoff	$2y$04$Lww3vgOMJ1.avRQ/QwvM4uQNKod3UWlVJPZHm3SKpM01xc9qUJyvG	\N	admin	34	93
-95	\N	kartemiev444111@gmail.com	Peter Ivanoff	$2y$04$ch7aTprLjCkfmPpsTm9Oo.5MUlTxluJph0DMi9ufdrviUzTGSd3ce	\N	admin	35	95
-97	\N	kartemiev3334422@gmail.com	Peter Ivanoff	$2y$04$w04FfHpBPym4468KGWEsOOv85Q9rpuBgesVXX3huacdn4QNmSSeeu	\N	admin	36	97
-99	\N	kartemiev88899@gmail.com	Peter Ivanoff	$2y$04$VbqR92bOg1tRJYiFoKTF.O/qEXpHH9sGvW10JmBV2/pkL5zpiBsm2	\N	admin	37	99
-101	\N	kartemiev133333@gmail.com	Peter Ivanoff	$2y$04$yHT7yQF6X8Unw/6gvkls5uKKZ7leWyeAa05Gi5hDHDGUJN4lmkeLW	\N	admin	38	101
-179	\N	kartemiev44444@gmail.com	Peter Ivanoff	$2y$04$HvRTSq0JHUgFRae43CY3auUfL0bZfyYKDwbrBtaoVP2.5QP7yscSy	\N	admin	42	179
-31	\N	kartemiev3@gmail.com	kartemiev3@gmail.com	$2y$04$8lgNxqYarNtUuspQsA9kMOxERgcfymtFG7PusAtlWDJEkoE6POObO	\N	admin	\N	31
-32	\N	kartemiev22@gmail.com	kartemiev22@gmail.com	$2y$04$pUCF94gmm7cJ99OrVJ5yq.1FhlgyK21SedyDzfuGbaxTw.r/glB1a	\N	admin	\N	32
-33	\N	kartemiev33@gmail.com	kartemiev33@gmail.com	$2y$04$KKNBjpMpE4L8fwkZbyUZzeziEQvWzZGcQo.HR.nntQvnlfPitkkEG	\N	admin	\N	33
-34	\N	kartemiev44@gmail.com	kartemiev44@gmail.com	$2y$04$Gz0e0lAIFBuxGkFpsAMgiO94RvikIXo2abU6KvsrasRbHnb2fuq1e	\N	admin	\N	34
-181	\N	kartemiev333111@gmail.com	Peter Ivanoff	$2y$04$78xbnwsbWLwxUUpnQgr1l.PhfkSr64FYSVTBQw.1IaWyeRxtp3/n6	\N	admin	43	181
-183	\N	777_bun111@inbox.ru	Вася Пупкин	$2y$04$cchiVSpfG5UENAVw1yLTkOkPHHZkxfo5BMa8uuByL0gISvLKc3DZW	\N	admin	44	183
-49	\N	kartemiev333444@gmail.com	Peter Ivanoff	$2y$04$xBXunkcI6JsUgs2yBQSk0up8pCdrr1pRkmq8I.DfGSwCNA58lcfOO	\N	admin	\N	49
-51	\N	kartemiev33322@gmail.com	Peter Ivanoff	$2y$04$HZup6JsPxb0AbQap.MfNw.zi4H1CxfSzJ3U5ZebE5VqZObLPkgZqa	\N	admin	\N	51
-53	\N	kartemiev33333@gmail.com	Вася Пупкин	$2y$04$HgjIZtDABm8xB3B6d3Ym1.xrPdbrBOMNVxgy/laKbODphPgqIej1y	\N	admin	\N	53
-55	\N	kartemiev33333233@gmail.com	Peter Ivanoff	$2y$04$sSymLIucIuuDwRl86VlMZ.R8QfVj2BHb3ROHwBkxI1Qh0Kx2CdxO.	\N	admin	\N	55
-57	\N	kartemiev333113@gmail.com	Peter Ivanoff	$2y$04$g8ua3QA5CQ4nY30AFJd2CeVt24cX4IqxuiYGawH6kQ6W5J7UN5cnu	\N	admin	\N	57
-59	\N	kartemiev333342@gmail.com	Peter Ivanoff	$2y$04$Kn7xMQ/KrY07rz/Vx73MAumNzZLYic1gJW2h5jSlru3wj7O4Yk3mG	\N	admin	17	59
-61	\N	kartemiev31113@gmail.com	Peter Ivanoff	$2y$04$I0HFqDEAqjSHJSOavh7SEeSVQnnjKwCTGVHlAyevdLJGpr9oEJEHa	\N	admin	18	61
-63	\N	kartemiev331233@gmail.com	Peter Ivanoff	$2y$04$LGGXEEeVA4wYGBVpbEUD5eDHsgrZrxeWLPqActYGUiIuWWUKYZd3e	\N	admin	19	63
-65	\N	kartemiev33223@gmail.com	Peter Ivanoff	$2y$04$ehuJJZm9YiFo3888OHM6fOpDtjgINaoqx2iEJrarh7xKTYPATxEGe	\N	admin	20	65
-67	\N	kartemiev3113@gmail.com	Peter Ivanoff	$2y$04$pUOzwiGL9g52ZZ/woNTwTOgDkN.HYM3iVjURyIEpGmXTwE6wK22SS	\N	admin	21	67
-69	\N	kartemiev33333113@gmail.com	Peter Ivanoff	$2y$04$m8lfNoU6QaBeUw4aY/wKXuYAvVPac9hyFhmEDs1IfGERMGxetyT6a	\N	admin	22	69
-71	\N	kartemiev3113113@gmail.com	Peter Ivanoff	$2y$04$QHNe8LhK15CHY9/LqTQJNedF0r4ABrPagybl20UuSQigTeJftiEMC	\N	admin	23	71
-73	\N	kartemiev3331333@gmail.com	Peter Ivanoff	$2y$04$YjeZApz7CY9WUKrKs9YDt.jkiVQFU.o9goWQA103ZX9ZtrHkdvtMa	\N	admin	24	73
-75	\N	kartemiev333188@gmail.com	Peter Ivanoff	$2y$04$SYfV3thaOYV5lP/4fVxlVe3fXy75UROk/GOBtBJgntWz37GpZPGM6	\N	admin	25	75
-77	\N	kartemiev332213@gmail.com	Peter Ivanoff	$2y$04$pxOxPSaTpLTzyF87wCe5Z.HkDiER6Fhmj.FyzNvnnBmltcms25Ity	\N	admin	26	77
-79	\N	kartemiev300113@gmail.com	Peter Ivanoff	$2y$04$dmAXsEYCCGbVbFTEMBluyenHRcpDhFYmXL.HsvKh4YJ7YPm66pzNG	\N	admin	27	79
-81	\N	kartemiev33443113@gmail.com	Peter Ivanoff	$2y$04$.HJQ3fZR6LpFLiaVgS3LkuYyGpaqHgfTKn63lF539GUbL12J4qjym	\N	admin	28	81
-83	\N	kartemiev@gmail3.com	Vasya	$2y$04$N7RzEYPhVkAH7kqhxlnOXeFQE1i5QvosCduVAvCt3oin4C92wgRM.	\N	admin	29	83
-110	test	test	test		\N	admin	1	110
-35	\N	kartemiev88@gmail.com	kartemiev88@gmail.com	$2y$04$H6ilvkH7/mrjx1oXk2jTv.32oKmvf6nMfhfk0DV5npR2r5rhonb2a	\N	admin	\N	35
-36	\N	kartemiev222@gmail.com	kartemiev222@gmail.com	$2y$04$2.1IAXMp13uqxqVx8leNDOjGtQ95gZKQkWRtXV5O/12mTinbQTHyq	\N	admin	\N	36
-37	\N	kartemiev4444@gmail.com	kartemiev4444@gmail.com	$2y$04$atiUxdx28Mjqjsa8dtTGIuSFdonuNCMilYQkebJAWoTadA5nuHhSi	\N	admin	\N	37
-38	\N	kartemiev3333@gmail.com	kartemiev3333@gmail.com	$2y$04$rok0Ml4i48VUOxgSiLMxU.eRBM6alVbedPYD0rhnCPAEV2dc2OBCe	\N	admin	\N	38
-39	\N	kartemiev999@gmail.com	kartemiev999@gmail.com	$2y$04$eqtFZ5z/nlFdfjgZYcq73eTMqj4/BOLk0wh7hBhoZ0kQUu8UeJxGC	\N	admin	\N	39
-40	\N	kartemiev1111@gmail.com	kartemiev1111@gmail.com	$2y$04$VkS9DsZSQiC1w.fktLzlyubVQTuBzSaePq3AC2buzdxQ0uBKDvw16	\N	admin	\N	40
-41	\N	kartemiev9991@gmail.com	kartemiev9991@gmail.com	$2y$04$gJfrIBnBxyMlLu2LWr.sKeJdb4aVEggrl74Gc7Us/dNX.claBJvMy	\N	admin	\N	41
-42	\N	kartemiev9992@gmail.com	kartemiev9992@gmail.com	$2y$04$qQoj81t1plcy6kfO./87o.dD9pPa7wCpA5aKVzRuhKSJC4MXslgHS	\N	admin	\N	42
-43	\N	kartemiev9993@gmail.com	kartemiev9993@gmail.com	$2y$04$M75XLhKPu4TSuvkbeTkcYeBuOo65yPl6eP2VcrSSb/U0d.vsjI4Pe	\N	admin	12	43
-\.
-
-
---
 -- Data for Name: user_role; Type: TABLE DATA; Schema: public; Owner: agaga
 --
 
@@ -36612,985 +36026,6 @@ COPY user_role (role_id, is_default, parent, description) FROM stdin;
 supervisor	0	\N	супервизор
 admin	0	\N	администратор
 \.
-
-
---
--- Name: user_user_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('user_user_id_seq', 183, true);
-
-
---
--- Data for Name: user_vpbx_linker; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY user_vpbx_linker (userid, vpbxid) FROM stdin;
-\.
-
-
---
--- Name: voicemail_users_mailbox_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('voicemail_users_mailbox_seq', 113, true);
-
-
---
--- Data for Name: vpbx_entities; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY vpbx_entities (id, createdby, legalentityclass, created, cust_name, cust_desc, approvalstatus) FROM stdin;
-\.
-
-
---
--- Name: vpbx_entities_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('vpbx_entities_id_seq', 1, false);
-
-
---
--- Data for Name: vpbx_setting; Type: TABLE DATA; Schema: public; Owner: agaga
---
-
-COPY vpbx_setting (id) FROM stdin;
-\.
-
-
---
--- Name: vpbx_setting_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
---
-
-SELECT pg_catalog.setval('vpbx_setting_id_seq', 1, false);
-
-
---
--- Name: authcode_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY authcode
-    ADD CONSTRAINT authcode_pkey PRIMARY KEY (id);
-
-
---
--- Name: call_destination_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY call_destination
-    ADD CONSTRAINT call_destination_pkey PRIMARY KEY (id);
-
-
---
--- Name: callcentre_call_que_operators_log_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY callcentre_call_que_operators_log
-    ADD CONSTRAINT callcentre_call_que_operators_log_pkey PRIMARY KEY (id);
-
-
---
--- Name: callcentre_working_schedule_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY callcentre_working_schedule
-    ADD CONSTRAINT callcentre_working_schedule_pkey PRIMARY KEY (vpbx_id);
-
-
---
--- Name: cdr_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY cdr
-    ADD CONSTRAINT cdr_pkey PRIMARY KEY (id);
-
-
---
--- Name: conference_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY conference
-    ADD CONSTRAINT conference_pkey PRIMARY KEY (id);
-
-
---
--- Name: context_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY context
-    ADD CONSTRAINT context_pkey PRIMARY KEY (id);
-
-
---
--- Name: extensiondefaults_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY extensiondefaults
-    ADD CONSTRAINT extensiondefaults_pkey PRIMARY KEY (vpbxid);
-
-
---
--- Name: extensiongroupprofile_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY extensiongroupprofile
-    ADD CONSTRAINT extensiongroupprofile_pkey PRIMARY KEY (id);
-
-
---
--- Name: extensiongroups_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY extensiongroups
-    ADD CONSTRAINT extensiongroups_pkey PRIMARY KEY (id);
-
-
---
--- Name: extensionprofile_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY extensionprofile
-    ADD CONSTRAINT extensionprofile_pkey PRIMARY KEY (id);
-
-
---
--- Name: faxspool_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY faxspool
-    ADD CONSTRAINT faxspool_pkey PRIMARY KEY (id);
-
-
---
--- Name: faxspoollog_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY faxspoollog
-    ADD CONSTRAINT faxspoollog_pkey PRIMARY KEY (id);
-
-
---
--- Name: faxusers_extra_email_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY faxusers_extra_email
-    ADD CONSTRAINT faxusers_extra_email_pkey PRIMARY KEY (id);
-
-
---
--- Name: faxusers_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY faxusers
-    ADD CONSTRAINT faxusers_pkey PRIMARY KEY (id);
-
-
---
--- Name: feature_test_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY feature_test
-    ADD CONSTRAINT feature_test_pkey PRIMARY KEY (id);
-
-
---
--- Name: functions_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY functions
-    ADD CONSTRAINT functions_pkey PRIMARY KEY (id);
-
-
---
--- Name: ivr_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY ivr
-    ADD CONSTRAINT ivr_pkey PRIMARY KEY (id);
-
-
---
--- Name: mediarepos_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY mediarepos
-    ADD CONSTRAINT mediarepos_pkey PRIMARY KEY (id);
-
-
---
--- Name: musiconhold_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY musiconhold
-    ADD CONSTRAINT musiconhold_pkey PRIMARY KEY (id);
-
-
---
--- Name: number_match_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY number_match
-    ADD CONSTRAINT number_match_pkey PRIMARY KEY (id);
-
-
---
--- Name: number_unique; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY skype_aliases
-    ADD CONSTRAINT number_unique UNIQUE (number);
-
-
---
--- Name: pbx_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY pbx_settings
-    ADD CONSTRAINT pbx_settings_pkey PRIMARY KEY (vpbxid);
-
-
---
--- Name: pickupgroup_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY pickupgroup
-    ADD CONSTRAINT pickupgroup_pkey PRIMARY KEY (name);
-
-
---
--- Name: recordedcalls_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY recordedcalls
-    ADD CONSTRAINT recordedcalls_pkey PRIMARY KEY (id);
-
-
---
--- Name: regentries_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY regentries
-    ADD CONSTRAINT regentries_pkey PRIMARY KEY (id);
-
-
---
--- Name: route_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY route
-    ADD CONSTRAINT route_pkey PRIMARY KEY (id);
-
-
---
--- Name: schedule_replacements_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY schedule_replacements
-    ADD CONSTRAINT schedule_replacements_pkey PRIMARY KEY (id);
-
-
---
--- Name: schedule_replacements_rdate; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY schedule_replacements
-    ADD CONSTRAINT schedule_replacements_rdate UNIQUE (rdate);
-
-
---
--- Name: shortdialtable_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY shortdialtable
-    ADD CONSTRAINT shortdialtable_pkey PRIMARY KEY (id);
-
-
---
--- Name: sip_devices_name_unique; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY sip
-    ADD CONSTRAINT sip_devices_name_unique UNIQUE (name);
-
-
---
--- Name: sip_devices_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY sip
-    ADD CONSTRAINT sip_devices_pkey PRIMARY KEY (id);
-
-
---
--- Name: skype_aliases_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY skype_aliases
-    ADD CONSTRAINT skype_aliases_pkey PRIMARY KEY (id);
-
-
---
--- Name: temp_media_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY temp_media
-    ADD CONSTRAINT temp_media_pkey PRIMARY KEY (id);
-
-
---
--- Name: trunkassoc_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY trunkassoc
-    ADD CONSTRAINT trunkassoc_pkey PRIMARY KEY (id);
-
-
---
--- Name: user_email_key; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY "user"
-    ADD CONSTRAINT user_email_key UNIQUE (email);
-
-
---
--- Name: user_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY "user"
-    ADD CONSTRAINT user_pkey PRIMARY KEY (user_id);
-
-
---
--- Name: user_role_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY user_role
-    ADD CONSTRAINT user_role_pkey PRIMARY KEY (role_id);
-
-
---
--- Name: user_username_key; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY "user"
-    ADD CONSTRAINT user_username_key UNIQUE (username);
-
-
---
--- Name: user_vpbx_linker_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY user_vpbx_linker
-    ADD CONSTRAINT user_vpbx_linker_pkey PRIMARY KEY (userid);
-
-
---
--- Name: user_vpbx_linker_userid_uq; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY user_vpbx_linker
-    ADD CONSTRAINT user_vpbx_linker_userid_uq UNIQUE (userid);
-
-
---
--- Name: vpbx_entities_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY vpbx_entities
-    ADD CONSTRAINT vpbx_entities_pkey PRIMARY KEY (id);
-
-
---
--- Name: vpbx_operator_status_log_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY operator_status_log
-    ADD CONSTRAINT vpbx_operator_status_log_pkey PRIMARY KEY (id);
-
-
---
--- Name: vpbx_setting_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
---
-
-ALTER TABLE ONLY vpbx_setting
-    ADD CONSTRAINT vpbx_setting_pkey PRIMARY KEY (id);
-
-
---
--- Name: cdr_linkedid; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE INDEX cdr_linkedid ON cdr USING btree (linkedid);
-
-
---
--- Name: directions_class; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE INDEX directions_class ON directions USING btree (class);
-
-
---
--- Name: directions_id; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE INDEX directions_id ON directions USING btree (id);
-
-
---
--- Name: directions_name; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE INDEX directions_name ON directions USING btree (name);
-
-
---
--- Name: directions_parent; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE INDEX directions_parent ON directions USING btree (parent);
-
-
---
--- Name: directions_root; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE INDEX directions_root ON directions USING btree (root);
-
-
---
--- Name: faxusers_email_idx; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE INDEX faxusers_email_idx ON faxusers USING btree (email);
-
-
---
--- Name: faxusers_extra_email_idx; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE INDEX faxusers_extra_email_idx ON faxusers_extra_email USING btree (email);
-
-
---
--- Name: operator_status_log_changed; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE INDEX operator_status_log_changed ON operator_status_log USING btree (changed);
-
-
---
--- Name: operator_status_log_extension; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE INDEX operator_status_log_extension ON operator_status_log USING btree (extension);
-
-
---
--- Name: rdate_date_index; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE INDEX rdate_date_index ON schedule_replacements USING btree (rdate);
-
-
---
--- Name: sip_mailbox_index; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
---
-
-CREATE INDEX sip_mailbox_index ON sip USING btree (mailbox);
-
-
---
--- Name: sip_insert_new_peername_extension; Type: RULE; Schema: public; Owner: agaga
---
-
-CREATE RULE sip_insert_new_peername_extension AS
-    ON INSERT TO sip
-   WHERE (new.peertype = 'EXTENSION'::vpbx_peertype) DO  UPDATE sip SET name = (('9'::text || lpad((sip.vpbxid)::text, 4, '0'::text)) || lpad((sip.extension)::text, 4, '0'::text))
-  WHERE (sip.id = ( SELECT currval('sip_serial'::regclass) AS currval));
-
-
---
--- Name: test_txt_rule; Type: RULE; Schema: public; Owner: agaga
---
-
-CREATE RULE test_txt_rule AS
-    ON INSERT TO feature_test DO  UPDATE feature_test SET testtxt = (feature_test.id)::character varying
-  WHERE (feature_test.id = ( SELECT currval('feature_test_id_seq'::regclass) AS currval));
-
-
---
--- Name: user_update_id_value; Type: RULE; Schema: public; Owner: agaga
---
-
-CREATE RULE user_update_id_value AS
-    ON INSERT TO "user" DO  UPDATE "user" SET id = "user".user_id;
-
-
---
--- Name: update_directions; Type: TRIGGER; Schema: public; Owner: agaga
---
-
-CREATE TRIGGER update_directions BEFORE INSERT ON cdr FOR EACH ROW EXECUTE PROCEDURE update_directions_cdr();
-
-
---
--- Name: user_idupdate; Type: TRIGGER; Schema: public; Owner: agaga
---
-
-CREATE TRIGGER user_idupdate BEFORE INSERT ON "user" FOR EACH ROW EXECUTE PROCEDURE trg();
-
-
---
--- Name: authcode_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY authcode
-    ADD CONSTRAINT authcode_vpbx_id_fkey FOREIGN KEY (vpbx_id) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: call_destination_peerid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY call_destination
-    ADD CONSTRAINT call_destination_peerid_fkey FOREIGN KEY (peerid) REFERENCES sip(id) ON DELETE CASCADE;
-
-
---
--- Name: call_destination_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY call_destination
-    ADD CONSTRAINT call_destination_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: callcentre_call_que_operators_log_callref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY callcentre_call_que_operators_log
-    ADD CONSTRAINT callcentre_call_que_operators_log_callref_fkey FOREIGN KEY (callref) REFERENCES cdr(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: callcentre_call_que_operators_log_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY callcentre_call_que_operators_log
-    ADD CONSTRAINT callcentre_call_que_operators_log_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: callcentre_working_schedule_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY callcentre_working_schedule
-    ADD CONSTRAINT callcentre_working_schedule_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: cdr_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY cdr
-    ADD CONSTRAINT cdr_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: cel_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY cel
-    ADD CONSTRAINT cel_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: conference_ownerref; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY conference
-    ADD CONSTRAINT conference_ownerref FOREIGN KEY (ownerref) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: conference_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY conference
-    ADD CONSTRAINT conference_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: context_funcref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY context
-    ADD CONSTRAINT context_funcref_fkey FOREIGN KEY (funcref) REFERENCES functions(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: context_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY context
-    ADD CONSTRAINT context_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: contextref_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY trunkassoc
-    ADD CONSTRAINT contextref_fk FOREIGN KEY (contextref) REFERENCES context(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: crmoperators_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY crmoperators
-    ADD CONSTRAINT crmoperators_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: extensiongroupprofile_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY extensiongroupprofile
-    ADD CONSTRAINT extensiongroupprofile_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: extensionprofile_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY extensionprofile
-    ADD CONSTRAINT extensionprofile_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: faxspool_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY faxspool
-    ADD CONSTRAINT faxspool_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: faxspoollog_spoolref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY faxspoollog
-    ADD CONSTRAINT faxspoollog_spoolref_fkey FOREIGN KEY (spoolref) REFERENCES faxspool(id);
-
-
---
--- Name: faxspoollog_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY faxspoollog
-    ADD CONSTRAINT faxspoollog_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: faxusers_extra_email_userref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY faxusers_extra_email
-    ADD CONSTRAINT faxusers_extra_email_userref_fkey FOREIGN KEY (userref) REFERENCES faxusers(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: faxusers_extra_email_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY faxusers_extra_email
-    ADD CONSTRAINT faxusers_extra_email_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: faxusers_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY faxusers
-    ADD CONSTRAINT faxusers_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: internalref_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY context
-    ADD CONSTRAINT internalref_fk FOREIGN KEY (internalref) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: ivr_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY ivr
-    ADD CONSTRAINT ivr_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: ivrref_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY context
-    ADD CONSTRAINT ivrref_fk FOREIGN KEY (ivrref) REFERENCES ivr(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: mediarepos_greeting_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY pbx_settings
-    ADD CONSTRAINT mediarepos_greeting_fk FOREIGN KEY (greeting) REFERENCES mediarepos(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: mediarepos_greetingofftime_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY pbx_settings
-    ADD CONSTRAINT mediarepos_greetingofftime_fk FOREIGN KEY (greetingofftime) REFERENCES mediarepos(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: mediarepos_mohtone_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY pbx_settings
-    ADD CONSTRAINT mediarepos_mohtone_fk FOREIGN KEY (mohtone) REFERENCES mediarepos(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: mediarepos_ringingtone_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY pbx_settings
-    ADD CONSTRAINT mediarepos_ringingtone_fk FOREIGN KEY (ringingtone) REFERENCES mediarepos(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: musiconhold_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY musiconhold
-    ADD CONSTRAINT musiconhold_vpbx_id_fkey FOREIGN KEY (vpbx_id) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: number_match_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY number_match
-    ADD CONSTRAINT number_match_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: operator_status_log_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY operator_status_log
-    ADD CONSTRAINT operator_status_log_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: pickupgroup_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY pickupgroup
-    ADD CONSTRAINT pickupgroup_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
-
-
---
--- Name: recordedcalls_cdrref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY recordedcalls
-    ADD CONSTRAINT recordedcalls_cdrref_fkey FOREIGN KEY (cdrref) REFERENCES cdr(id) ON DELETE CASCADE;
-
-
---
--- Name: regentries_numbermatchref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY regentries
-    ADD CONSTRAINT regentries_numbermatchref_fkey FOREIGN KEY (numbermatchref) REFERENCES number_match(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: route_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY route
-    ADD CONSTRAINT route_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
-
-
---
--- Name: schedule_replacements_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY schedule_replacements
-    ADD CONSTRAINT schedule_replacements_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
-
-
---
--- Name: shortdialtable_peerid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY shortdialtable
-    ADD CONSTRAINT shortdialtable_peerid_fkey FOREIGN KEY (peerid) REFERENCES sip(id) ON DELETE CASCADE;
-
-
---
--- Name: sip_extensiongroup_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY sip
-    ADD CONSTRAINT sip_extensiongroup_fk FOREIGN KEY (extensiongroup) REFERENCES extensiongroups(id);
-
-
---
--- Name: sip_namedcallgroup_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY sip
-    ADD CONSTRAINT sip_namedcallgroup_fk FOREIGN KEY (namedcallgroup) REFERENCES pickupgroup(name);
-
-
---
--- Name: sip_namedpickupgroup_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY sip
-    ADD CONSTRAINT sip_namedpickupgroup_fk FOREIGN KEY (namedpickupgroup) REFERENCES pickupgroup(name);
-
-
---
--- Name: sip_routeref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY sip
-    ADD CONSTRAINT sip_routeref_fkey FOREIGN KEY (routeref) REFERENCES route(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: sip_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY sip
-    ADD CONSTRAINT sip_vpbx_id_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
-
-
---
--- Name: skype_aliases_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY skype_aliases
-    ADD CONSTRAINT skype_aliases_vpbx_id_fkey FOREIGN KEY (vpbx_id) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: trunkassoc_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY trunkassoc
-    ADD CONSTRAINT trunkassoc_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
-
-
---
--- Name: trunkdestinations_numbermatchref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY trunkdestinations
-    ADD CONSTRAINT trunkdestinations_numbermatchref_fkey FOREIGN KEY (numbermatchref) REFERENCES number_match(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: trunkdestinations_routeref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY trunkdestinations
-    ADD CONSTRAINT trunkdestinations_routeref_fkey FOREIGN KEY (routeref) REFERENCES route(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: trunkdestinations_trunkref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY trunkdestinations
-    ADD CONSTRAINT trunkdestinations_trunkref_fkey FOREIGN KEY (trunkref) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: trunkdestinations_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY trunkdestinations
-    ADD CONSTRAINT trunkdestinations_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
-
-
---
--- Name: trunkref_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY trunkassoc
-    ADD CONSTRAINT trunkref_fk FOREIGN KEY (trunkref) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE CASCADE;
-
-
---
--- Name: user_vpbx_linker_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY user_vpbx_linker
-    ADD CONSTRAINT user_vpbx_linker_userid_fkey FOREIGN KEY (userid) REFERENCES "user"(user_id) ON DELETE CASCADE;
-
-
---
--- Name: user_vpbx_linker_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY user_vpbx_linker
-    ADD CONSTRAINT user_vpbx_linker_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid);
-
-
---
--- Name: user_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY "user"
-    ADD CONSTRAINT user_vpbxid_fkey FOREIGN KEY (vpbxid) REFERENCES pbx_settings(vpbxid) ON DELETE CASCADE;
-
-
---
--- Name: vpbx_cdr_fk_dst; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY cdr
-    ADD CONSTRAINT vpbx_cdr_fk_dst FOREIGN KEY (dst_id) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: vpbx_cdr_fk_src; Type: FK CONSTRAINT; Schema: public; Owner: agaga
---
-
-ALTER TABLE ONLY cdr
-    ADD CONSTRAINT vpbx_cdr_fk_src FOREIGN KEY (src_id) REFERENCES sip(id) ON UPDATE CASCADE ON DELETE SET NULL;
-
-
---
--- Name: public; Type: ACL; Schema: -; Owner: kartemiev
---
-
-REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM kartemiev;
-GRANT ALL ON SCHEMA public TO kartemiev;
-GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
 --
