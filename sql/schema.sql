@@ -26,7 +26,7 @@ COMMENT ON EXTENSION plpgsql IS 'PL/pgSQL procedural language';
 SET search_path = public, pg_catalog;
 
 --
--- Name: conference_acl_usertype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: conference_acl_usertype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE conference_acl_usertype AS ENUM (
@@ -35,10 +35,10 @@ CREATE TYPE conference_acl_usertype AS ENUM (
 );
 
 
-ALTER TYPE public.conference_acl_usertype OWNER TO agaga;
+ALTER TYPE public.conference_acl_usertype OWNER TO cpbx;
 
 --
--- Name: vpbx_approvalstatus; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_approvalstatus; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_approvalstatus AS ENUM (
@@ -48,10 +48,10 @@ CREATE TYPE vpbx_approvalstatus AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_approvalstatus OWNER TO agaga;
+ALTER TYPE public.vpbx_approvalstatus OWNER TO cpbx;
 
 --
--- Name: vpbx_call_dir_for_chan; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_call_dir_for_chan; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_call_dir_for_chan AS (
@@ -63,10 +63,10 @@ CREATE TYPE vpbx_call_dir_for_chan AS (
 );
 
 
-ALTER TYPE public.vpbx_call_dir_for_chan OWNER TO agaga;
+ALTER TYPE public.vpbx_call_dir_for_chan OWNER TO cpbx;
 
 --
--- Name: vpbx_call_landingtype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_call_landingtype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_call_landingtype AS ENUM (
@@ -76,10 +76,10 @@ CREATE TYPE vpbx_call_landingtype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_call_landingtype OWNER TO agaga;
+ALTER TYPE public.vpbx_call_landingtype OWNER TO cpbx;
 
 --
--- Name: vpbx_callcentre_override_status; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_callcentre_override_status; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_callcentre_override_status AS ENUM (
@@ -89,10 +89,10 @@ CREATE TYPE vpbx_callcentre_override_status AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_callcentre_override_status OWNER TO agaga;
+ALTER TYPE public.vpbx_callcentre_override_status OWNER TO cpbx;
 
 --
--- Name: vpbx_calldirection; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_calldirection; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_calldirection AS ENUM (
@@ -105,10 +105,10 @@ CREATE TYPE vpbx_calldirection AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_calldirection OWNER TO agaga;
+ALTER TYPE public.vpbx_calldirection OWNER TO cpbx;
 
 --
--- Name: vpbx_callrecording; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_callrecording; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_callrecording AS ENUM (
@@ -117,17 +117,17 @@ CREATE TYPE vpbx_callrecording AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_callrecording OWNER TO agaga;
+ALTER TYPE public.vpbx_callrecording OWNER TO cpbx;
 
 --
--- Name: TYPE vpbx_callrecording; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: TYPE vpbx_callrecording; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON TYPE vpbx_callrecording IS 'статус записи переговоров';
 
 
 --
--- Name: vpbx_callsequence; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_callsequence; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_callsequence AS ENUM (
@@ -136,10 +136,10 @@ CREATE TYPE vpbx_callsequence AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_callsequence OWNER TO agaga;
+ALTER TYPE public.vpbx_callsequence OWNER TO cpbx;
 
 --
--- Name: vpbx_calltype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_calltype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_calltype AS ENUM (
@@ -150,10 +150,10 @@ CREATE TYPE vpbx_calltype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_calltype OWNER TO agaga;
+ALTER TYPE public.vpbx_calltype OWNER TO cpbx;
 
 --
--- Name: vpbx_cc_actionsource; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_cc_actionsource; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_cc_actionsource AS ENUM (
@@ -163,10 +163,10 @@ CREATE TYPE vpbx_cc_actionsource AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_cc_actionsource OWNER TO agaga;
+ALTER TYPE public.vpbx_cc_actionsource OWNER TO cpbx;
 
 --
--- Name: vpbx_cc_presence_status; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_cc_presence_status; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_cc_presence_status AS ENUM (
@@ -179,10 +179,10 @@ CREATE TYPE vpbx_cc_presence_status AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_cc_presence_status OWNER TO agaga;
+ALTER TYPE public.vpbx_cc_presence_status OWNER TO cpbx;
 
 --
--- Name: vpbx_cc_status; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_cc_status; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_cc_status AS ENUM (
@@ -195,10 +195,10 @@ CREATE TYPE vpbx_cc_status AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_cc_status OWNER TO agaga;
+ALTER TYPE public.vpbx_cc_status OWNER TO cpbx;
 
 --
--- Name: vpbx_conf_web_accessmode_type; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_conf_web_accessmode_type; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_conf_web_accessmode_type AS ENUM (
@@ -210,10 +210,10 @@ CREATE TYPE vpbx_conf_web_accessmode_type AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_conf_web_accessmode_type OWNER TO agaga;
+ALTER TYPE public.vpbx_conf_web_accessmode_type OWNER TO cpbx;
 
 --
--- Name: vpbx_conference_feature_type; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_conference_feature_type; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_conference_feature_type AS ENUM (
@@ -222,10 +222,10 @@ CREATE TYPE vpbx_conference_feature_type AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_conference_feature_type OWNER TO agaga;
+ALTER TYPE public.vpbx_conference_feature_type OWNER TO cpbx;
 
 --
--- Name: vpbx_contexttype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_contexttype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_contexttype AS ENUM (
@@ -235,10 +235,10 @@ CREATE TYPE vpbx_contexttype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_contexttype OWNER TO agaga;
+ALTER TYPE public.vpbx_contexttype OWNER TO cpbx;
 
 --
--- Name: vpbx_created_from; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_created_from; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_created_from AS ENUM (
@@ -248,10 +248,10 @@ CREATE TYPE vpbx_created_from AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_created_from OWNER TO agaga;
+ALTER TYPE public.vpbx_created_from OWNER TO cpbx;
 
 --
--- Name: vpbx_createdby; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_createdby; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_createdby AS ENUM (
@@ -260,10 +260,10 @@ CREATE TYPE vpbx_createdby AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_createdby OWNER TO agaga;
+ALTER TYPE public.vpbx_createdby OWNER TO cpbx;
 
 --
--- Name: vpbx_crmoperator_que_participation_status; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_crmoperator_que_participation_status; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_crmoperator_que_participation_status AS ENUM (
@@ -272,10 +272,10 @@ CREATE TYPE vpbx_crmoperator_que_participation_status AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_crmoperator_que_participation_status OWNER TO agaga;
+ALTER TYPE public.vpbx_crmoperator_que_participation_status OWNER TO cpbx;
 
 --
--- Name: vpbx_crmoperator_state; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_crmoperator_state; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_crmoperator_state AS ENUM (
@@ -287,10 +287,10 @@ CREATE TYPE vpbx_crmoperator_state AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_crmoperator_state OWNER TO agaga;
+ALTER TYPE public.vpbx_crmoperator_state OWNER TO cpbx;
 
 --
--- Name: vpbx_crmoperator_status; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_crmoperator_status; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_crmoperator_status AS ENUM (
@@ -304,10 +304,10 @@ CREATE TYPE vpbx_crmoperator_status AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_crmoperator_status OWNER TO agaga;
+ALTER TYPE public.vpbx_crmoperator_status OWNER TO cpbx;
 
 --
--- Name: vpbx_diversion_status; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_diversion_status; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_diversion_status AS ENUM (
@@ -317,10 +317,10 @@ CREATE TYPE vpbx_diversion_status AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_diversion_status OWNER TO agaga;
+ALTER TYPE public.vpbx_diversion_status OWNER TO cpbx;
 
 --
--- Name: vpbx_extensionrecord; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_extensionrecord; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_extensionrecord AS ENUM (
@@ -330,10 +330,10 @@ CREATE TYPE vpbx_extensionrecord AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_extensionrecord OWNER TO agaga;
+ALTER TYPE public.vpbx_extensionrecord OWNER TO cpbx;
 
 --
--- Name: vpbx_faxspool_recordtype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_faxspool_recordtype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_faxspool_recordtype AS ENUM (
@@ -342,10 +342,10 @@ CREATE TYPE vpbx_faxspool_recordtype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_faxspool_recordtype OWNER TO agaga;
+ALTER TYPE public.vpbx_faxspool_recordtype OWNER TO cpbx;
 
 --
--- Name: vpbx_featurekey_type; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_featurekey_type; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_featurekey_type AS ENUM (
@@ -355,10 +355,10 @@ CREATE TYPE vpbx_featurekey_type AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_featurekey_type OWNER TO agaga;
+ALTER TYPE public.vpbx_featurekey_type OWNER TO cpbx;
 
 --
--- Name: vpbx_featurepermission; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_featurepermission; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_featurepermission AS ENUM (
@@ -368,10 +368,10 @@ CREATE TYPE vpbx_featurepermission AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_featurepermission OWNER TO agaga;
+ALTER TYPE public.vpbx_featurepermission OWNER TO cpbx;
 
 --
--- Name: vpbx_features_repos_purpose; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_features_repos_purpose; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_features_repos_purpose AS ENUM (
@@ -380,10 +380,10 @@ CREATE TYPE vpbx_features_repos_purpose AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_features_repos_purpose OWNER TO agaga;
+ALTER TYPE public.vpbx_features_repos_purpose OWNER TO cpbx;
 
 --
--- Name: vpbx_features_get_tp; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_features_get_tp; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_features_get_tp AS (
@@ -401,10 +401,10 @@ CREATE TYPE vpbx_features_get_tp AS (
 );
 
 
-ALTER TYPE public.vpbx_features_get_tp OWNER TO agaga;
+ALTER TYPE public.vpbx_features_get_tp OWNER TO cpbx;
 
 --
--- Name: vpbx_incoming_trunk_access_rights; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_incoming_trunk_access_rights; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_incoming_trunk_access_rights AS ENUM (
@@ -413,10 +413,10 @@ CREATE TYPE vpbx_incoming_trunk_access_rights AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_incoming_trunk_access_rights OWNER TO agaga;
+ALTER TYPE public.vpbx_incoming_trunk_access_rights OWNER TO cpbx;
 
 --
--- Name: vpbx_internal_acl_action_type; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_internal_acl_action_type; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_internal_acl_action_type AS ENUM (
@@ -428,10 +428,10 @@ CREATE TYPE vpbx_internal_acl_action_type AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_internal_acl_action_type OWNER TO agaga;
+ALTER TYPE public.vpbx_internal_acl_action_type OWNER TO cpbx;
 
 --
--- Name: vpbx_internal_acl_list_type; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_internal_acl_list_type; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_internal_acl_list_type AS ENUM (
@@ -440,10 +440,10 @@ CREATE TYPE vpbx_internal_acl_list_type AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_internal_acl_list_type OWNER TO agaga;
+ALTER TYPE public.vpbx_internal_acl_list_type OWNER TO cpbx;
 
 --
--- Name: vpbx_internal_acl_rec_type; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_internal_acl_rec_type; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_internal_acl_rec_type AS ENUM (
@@ -452,10 +452,10 @@ CREATE TYPE vpbx_internal_acl_rec_type AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_internal_acl_rec_type OWNER TO agaga;
+ALTER TYPE public.vpbx_internal_acl_rec_type OWNER TO cpbx;
 
 --
--- Name: vpbx_legalentitytype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_legalentitytype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_legalentitytype AS ENUM (
@@ -464,10 +464,10 @@ CREATE TYPE vpbx_legalentitytype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_legalentitytype OWNER TO agaga;
+ALTER TYPE public.vpbx_legalentitytype OWNER TO cpbx;
 
 --
--- Name: vpbx_mediarepos_mediatype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_mediarepos_mediatype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_mediarepos_mediatype AS ENUM (
@@ -478,10 +478,10 @@ CREATE TYPE vpbx_mediarepos_mediatype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_mediarepos_mediatype OWNER TO agaga;
+ALTER TYPE public.vpbx_mediarepos_mediatype OWNER TO cpbx;
 
 --
--- Name: vpbx_number_status; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_number_status; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_number_status AS ENUM (
@@ -491,10 +491,10 @@ CREATE TYPE vpbx_number_status AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_number_status OWNER TO agaga;
+ALTER TYPE public.vpbx_number_status OWNER TO cpbx;
 
 --
--- Name: vpbx_object_record_type; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_object_record_type; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_object_record_type AS ENUM (
@@ -504,10 +504,10 @@ CREATE TYPE vpbx_object_record_type AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_object_record_type OWNER TO agaga;
+ALTER TYPE public.vpbx_object_record_type OWNER TO cpbx;
 
 --
--- Name: vpbx_operatorstatus; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_operatorstatus; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_operatorstatus AS ENUM (
@@ -519,10 +519,10 @@ CREATE TYPE vpbx_operatorstatus AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_operatorstatus OWNER TO agaga;
+ALTER TYPE public.vpbx_operatorstatus OWNER TO cpbx;
 
 --
--- Name: vpbx_originateacceptrefuse; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_originateacceptrefuse; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_originateacceptrefuse AS ENUM (
@@ -532,10 +532,10 @@ CREATE TYPE vpbx_originateacceptrefuse AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_originateacceptrefuse OWNER TO agaga;
+ALTER TYPE public.vpbx_originateacceptrefuse OWNER TO cpbx;
 
 --
--- Name: vpbx_outgoing_trunk_type; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_outgoing_trunk_type; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_outgoing_trunk_type AS ENUM (
@@ -544,10 +544,10 @@ CREATE TYPE vpbx_outgoing_trunk_type AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_outgoing_trunk_type OWNER TO agaga;
+ALTER TYPE public.vpbx_outgoing_trunk_type OWNER TO cpbx;
 
 --
--- Name: vpbx_outgoingcallspermission; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_outgoingcallspermission; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_outgoingcallspermission AS ENUM (
@@ -557,10 +557,10 @@ CREATE TYPE vpbx_outgoingcallspermission AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_outgoingcallspermission OWNER TO agaga;
+ALTER TYPE public.vpbx_outgoingcallspermission OWNER TO cpbx;
 
 --
--- Name: vpbx_pcg_grouptype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_pcg_grouptype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_pcg_grouptype AS ENUM (
@@ -569,10 +569,10 @@ CREATE TYPE vpbx_pcg_grouptype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_pcg_grouptype OWNER TO agaga;
+ALTER TYPE public.vpbx_pcg_grouptype OWNER TO cpbx;
 
 --
--- Name: vpbx_peertype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_peertype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_peertype AS ENUM (
@@ -581,10 +581,10 @@ CREATE TYPE vpbx_peertype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_peertype OWNER TO agaga;
+ALTER TYPE public.vpbx_peertype OWNER TO cpbx;
 
 --
--- Name: vpbx_phonebook_record_type; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_phonebook_record_type; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_phonebook_record_type AS ENUM (
@@ -594,17 +594,17 @@ CREATE TYPE vpbx_phonebook_record_type AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_phonebook_record_type OWNER TO agaga;
+ALTER TYPE public.vpbx_phonebook_record_type OWNER TO cpbx;
 
 --
--- Name: TYPE vpbx_phonebook_record_type; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: TYPE vpbx_phonebook_record_type; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON TYPE vpbx_phonebook_record_type IS 'тип записи для телефонной книги';
 
 
 --
--- Name: vpbx_posts_permissions; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_posts_permissions; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_posts_permissions AS ENUM (
@@ -614,10 +614,10 @@ CREATE TYPE vpbx_posts_permissions AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_posts_permissions OWNER TO agaga;
+ALTER TYPE public.vpbx_posts_permissions OWNER TO cpbx;
 
 --
--- Name: vpbx_posttype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_posttype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_posttype AS ENUM (
@@ -627,10 +627,10 @@ CREATE TYPE vpbx_posttype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_posttype OWNER TO agaga;
+ALTER TYPE public.vpbx_posttype OWNER TO cpbx;
 
 --
--- Name: vpbx_propertytype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_propertytype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_propertytype AS ENUM (
@@ -643,10 +643,10 @@ CREATE TYPE vpbx_propertytype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_propertytype OWNER TO agaga;
+ALTER TYPE public.vpbx_propertytype OWNER TO cpbx;
 
 --
--- Name: vpbx_pstn_number_misc_welcomerec_status; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_pstn_number_misc_welcomerec_status; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_pstn_number_misc_welcomerec_status AS ENUM (
@@ -657,10 +657,10 @@ CREATE TYPE vpbx_pstn_number_misc_welcomerec_status AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_pstn_number_misc_welcomerec_status OWNER TO agaga;
+ALTER TYPE public.vpbx_pstn_number_misc_welcomerec_status OWNER TO cpbx;
 
 --
--- Name: vpbx_queprioritytype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_queprioritytype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_queprioritytype AS ENUM (
@@ -670,10 +670,10 @@ CREATE TYPE vpbx_queprioritytype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_queprioritytype OWNER TO agaga;
+ALTER TYPE public.vpbx_queprioritytype OWNER TO cpbx;
 
 --
--- Name: vpbx_reccurenceinterval; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_reccurenceinterval; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_reccurenceinterval AS ENUM (
@@ -684,10 +684,10 @@ CREATE TYPE vpbx_reccurenceinterval AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_reccurenceinterval OWNER TO agaga;
+ALTER TYPE public.vpbx_reccurenceinterval OWNER TO cpbx;
 
 --
--- Name: vpbx_recordcallset; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_recordcallset; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_recordcallset AS ENUM (
@@ -698,10 +698,10 @@ CREATE TYPE vpbx_recordcallset AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_recordcallset OWNER TO agaga;
+ALTER TYPE public.vpbx_recordcallset OWNER TO cpbx;
 
 --
--- Name: vpbx_repos_obj_status; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_repos_obj_status; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_repos_obj_status AS ENUM (
@@ -713,10 +713,10 @@ CREATE TYPE vpbx_repos_obj_status AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_repos_obj_status OWNER TO agaga;
+ALTER TYPE public.vpbx_repos_obj_status OWNER TO cpbx;
 
 --
--- Name: vpbx_reposgraph; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_reposgraph; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_reposgraph AS (
@@ -726,10 +726,10 @@ CREATE TYPE vpbx_reposgraph AS (
 );
 
 
-ALTER TYPE public.vpbx_reposgraph OWNER TO agaga;
+ALTER TYPE public.vpbx_reposgraph OWNER TO cpbx;
 
 --
--- Name: vpbx_route_action; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_route_action; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_route_action AS ENUM (
@@ -746,10 +746,10 @@ CREATE TYPE vpbx_route_action AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_route_action OWNER TO agaga;
+ALTER TYPE public.vpbx_route_action OWNER TO cpbx;
 
 --
--- Name: vpbx_sip_callingpres; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_sip_callingpres; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_sip_callingpres AS ENUM (
@@ -765,10 +765,10 @@ CREATE TYPE vpbx_sip_callingpres AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_sip_callingpres OWNER TO agaga;
+ALTER TYPE public.vpbx_sip_callingpres OWNER TO cpbx;
 
 --
--- Name: vpbx_sip_extensiontype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_sip_extensiontype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_sip_extensiontype AS ENUM (
@@ -778,10 +778,10 @@ CREATE TYPE vpbx_sip_extensiontype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_sip_extensiontype OWNER TO agaga;
+ALTER TYPE public.vpbx_sip_extensiontype OWNER TO cpbx;
 
 --
--- Name: vpbx_sip_tablerec_type; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_sip_tablerec_type; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_sip_tablerec_type AS ENUM (
@@ -790,10 +790,10 @@ CREATE TYPE vpbx_sip_tablerec_type AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_sip_tablerec_type OWNER TO agaga;
+ALTER TYPE public.vpbx_sip_tablerec_type OWNER TO cpbx;
 
 --
--- Name: vpbx_sip_transport; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_sip_transport; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_sip_transport AS ENUM (
@@ -803,10 +803,10 @@ CREATE TYPE vpbx_sip_transport AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_sip_transport OWNER TO agaga;
+ALTER TYPE public.vpbx_sip_transport OWNER TO cpbx;
 
 --
--- Name: vpbx_sip_type; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_sip_type; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_sip_type AS ENUM (
@@ -816,10 +816,10 @@ CREATE TYPE vpbx_sip_type AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_sip_type OWNER TO agaga;
+ALTER TYPE public.vpbx_sip_type OWNER TO cpbx;
 
 --
--- Name: vpbx_special_feature_status; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_special_feature_status; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_special_feature_status AS ENUM (
@@ -828,10 +828,10 @@ CREATE TYPE vpbx_special_feature_status AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_special_feature_status OWNER TO agaga;
+ALTER TYPE public.vpbx_special_feature_status OWNER TO cpbx;
 
 --
--- Name: vpbx_status; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_status; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_status AS ENUM (
@@ -842,10 +842,10 @@ CREATE TYPE vpbx_status AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_status OWNER TO agaga;
+ALTER TYPE public.vpbx_status OWNER TO cpbx;
 
 --
--- Name: vpbx_tempmedia_accesstype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_tempmedia_accesstype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_tempmedia_accesstype AS ENUM (
@@ -854,10 +854,10 @@ CREATE TYPE vpbx_tempmedia_accesstype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_tempmedia_accesstype OWNER TO agaga;
+ALTER TYPE public.vpbx_tempmedia_accesstype OWNER TO cpbx;
 
 --
--- Name: vpbx_tfi; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_tfi; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_tfi AS ENUM (
@@ -867,10 +867,10 @@ CREATE TYPE vpbx_tfi AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_tfi OWNER TO agaga;
+ALTER TYPE public.vpbx_tfi OWNER TO cpbx;
 
 --
--- Name: vpbx_timeframe_encoded; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_timeframe_encoded; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_timeframe_encoded AS (
@@ -881,38 +881,38 @@ CREATE TYPE vpbx_timeframe_encoded AS (
 );
 
 
-ALTER TYPE public.vpbx_timeframe_encoded OWNER TO agaga;
+ALTER TYPE public.vpbx_timeframe_encoded OWNER TO cpbx;
 
 --
--- Name: COLUMN vpbx_timeframe_encoded.time_range; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN vpbx_timeframe_encoded.time_range; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN vpbx_timeframe_encoded.time_range IS 'запакованный диапазон времени - байты от 1 до 4: <минуты с >, <часы с>, <минуты до>,<часы до> (исп. shr и маску), null - любой';
 
 
 --
--- Name: COLUMN vpbx_timeframe_encoded.dayofmonth; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN vpbx_timeframe_encoded.dayofmonth; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN vpbx_timeframe_encoded.dayofmonth IS 'день месяца - битовая карта  0..30 - от 1 до 31';
 
 
 --
--- Name: COLUMN vpbx_timeframe_encoded.rmonth; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN vpbx_timeframe_encoded.rmonth; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN vpbx_timeframe_encoded.rmonth IS 'месяцы битовая карта 0..11 по порядку - янв февр март апрель май июнь июль авг сентябрь октябрь декабрь';
 
 
 --
--- Name: COLUMN vpbx_timeframe_encoded.dayofweek; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN vpbx_timeframe_encoded.dayofweek; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN vpbx_timeframe_encoded.dayofweek IS 'дни недели';
 
 
 --
--- Name: vpbx_uacuas; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_uacuas; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_uacuas AS ENUM (
@@ -921,10 +921,10 @@ CREATE TYPE vpbx_uacuas AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_uacuas OWNER TO agaga;
+ALTER TYPE public.vpbx_uacuas OWNER TO cpbx;
 
 --
--- Name: vpbx_undeftruefalse; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_undeftruefalse; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_undeftruefalse AS ENUM (
@@ -934,10 +934,10 @@ CREATE TYPE vpbx_undeftruefalse AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_undeftruefalse OWNER TO agaga;
+ALTER TYPE public.vpbx_undeftruefalse OWNER TO cpbx;
 
 --
--- Name: vpbx_unit_ownertype; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_unit_ownertype; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_unit_ownertype AS ENUM (
@@ -949,10 +949,10 @@ CREATE TYPE vpbx_unit_ownertype AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_unit_ownertype OWNER TO agaga;
+ALTER TYPE public.vpbx_unit_ownertype OWNER TO cpbx;
 
 --
--- Name: vpbx_user_status; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_user_status; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_user_status AS ENUM (
@@ -964,10 +964,10 @@ CREATE TYPE vpbx_user_status AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_user_status OWNER TO agaga;
+ALTER TYPE public.vpbx_user_status OWNER TO cpbx;
 
 --
--- Name: vpbx_users_loging_result; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_users_loging_result; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_users_loging_result AS ENUM (
@@ -981,10 +981,10 @@ CREATE TYPE vpbx_users_loging_result AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_users_loging_result OWNER TO agaga;
+ALTER TYPE public.vpbx_users_loging_result OWNER TO cpbx;
 
 --
--- Name: vpbx_yesno; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_yesno; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_yesno AS ENUM (
@@ -993,10 +993,10 @@ CREATE TYPE vpbx_yesno AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_yesno OWNER TO agaga;
+ALTER TYPE public.vpbx_yesno OWNER TO cpbx;
 
 --
--- Name: vpbx_yesnoalways; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_yesnoalways; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_yesnoalways AS ENUM (
@@ -1006,10 +1006,10 @@ CREATE TYPE vpbx_yesnoalways AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_yesnoalways OWNER TO agaga;
+ALTER TYPE public.vpbx_yesnoalways OWNER TO cpbx;
 
 --
--- Name: vpbx_yesnonever; Type: TYPE; Schema: public; Owner: agaga
+-- Name: vpbx_yesnonever; Type: TYPE; Schema: public; Owner: cpbx
 --
 
 CREATE TYPE vpbx_yesnonever AS ENUM (
@@ -1019,10 +1019,10 @@ CREATE TYPE vpbx_yesnonever AS ENUM (
 );
 
 
-ALTER TYPE public.vpbx_yesnonever OWNER TO agaga;
+ALTER TYPE public.vpbx_yesnonever OWNER TO cpbx;
 
 --
--- Name: check_callcentre_schedule(integer); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: check_callcentre_schedule(integer); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION check_callcentre_schedule(vpbxidp integer DEFAULT NULL::integer) RETURNS boolean
@@ -1056,10 +1056,10 @@ CREATE FUNCTION check_callcentre_schedule(vpbxidp integer DEFAULT NULL::integer)
 $$;
 
 
-ALTER FUNCTION public.check_callcentre_schedule(vpbxidp integer) OWNER TO agaga;
+ALTER FUNCTION public.check_callcentre_schedule(vpbxidp integer) OWNER TO cpbx;
 
 --
--- Name: convert_number(text); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: convert_number(text); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION convert_number(number text) RETURNS text
@@ -1078,10 +1078,10 @@ return number;
 $_$;
 
 
-ALTER FUNCTION public.convert_number(number text) OWNER TO agaga;
+ALTER FUNCTION public.convert_number(number text) OWNER TO cpbx;
 
 --
--- Name: extract_callerid(text); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: extract_callerid(text); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION extract_callerid(number text) RETURNS text[]
@@ -1101,14 +1101,14 @@ number = regexp_replace(number,'<([0-9]{1,6})>','');
 $$;
 
 
-ALTER FUNCTION public.extract_callerid(number text) OWNER TO agaga;
+ALTER FUNCTION public.extract_callerid(number text) OWNER TO cpbx;
 
 SET default_tablespace = '';
 
 SET default_with_oids = false;
 
 --
--- Name: directions; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: directions; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE directions (
@@ -1132,10 +1132,10 @@ CREATE TABLE directions (
 );
 
 
-ALTER TABLE public.directions OWNER TO agaga;
+ALTER TABLE public.directions OWNER TO cpbx;
 
 --
--- Name: search_direction(text); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: search_direction(text); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION search_direction(direction text) RETURNS SETOF directions
@@ -1153,10 +1153,10 @@ CREATE FUNCTION search_direction(direction text) RETURNS SETOF directions
    $_$;
 
 
-ALTER FUNCTION public.search_direction(direction text) OWNER TO agaga;
+ALTER FUNCTION public.search_direction(direction text) OWNER TO cpbx;
 
 --
--- Name: search_direction(text, integer, integer); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: search_direction(text, integer, integer); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION search_direction(direction text, dclass integer, dtype integer) RETURNS SETOF directions
@@ -1173,10 +1173,10 @@ CREATE FUNCTION search_direction(direction text, dclass integer, dtype integer) 
    $_$;
 
 
-ALTER FUNCTION public.search_direction(direction text, dclass integer, dtype integer) OWNER TO agaga;
+ALTER FUNCTION public.search_direction(direction text, dclass integer, dtype integer) OWNER TO cpbx;
 
 --
--- Name: trg(); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: trg(); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION trg() RETURNS trigger
@@ -1188,10 +1188,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.trg() OWNER TO agaga;
+ALTER FUNCTION public.trg() OWNER TO cpbx;
 
 --
--- Name: update_directions_cdr(); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: update_directions_cdr(); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION update_directions_cdr() RETURNS trigger
@@ -1211,10 +1211,10 @@ NEW.dstname := clidname.direction;
 $$;
 
 
-ALTER FUNCTION public.update_directions_cdr() OWNER TO agaga;
+ALTER FUNCTION public.update_directions_cdr() OWNER TO cpbx;
 
 --
--- Name: vpbx_callcentre_operators_activity(); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: vpbx_callcentre_operators_activity(); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION vpbx_callcentre_operators_activity() RETURNS TABLE(extens integer, avgactivity time without time zone)
@@ -1279,10 +1279,10 @@ BEGIN
 $$;
 
 
-ALTER FUNCTION public.vpbx_callcentre_operators_activity() OWNER TO agaga;
+ALTER FUNCTION public.vpbx_callcentre_operators_activity() OWNER TO cpbx;
 
 --
--- Name: vpbx_conf_confexpiry(); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: vpbx_conf_confexpiry(); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION vpbx_conf_confexpiry() RETURNS timestamp without time zone
@@ -1291,10 +1291,10 @@ CREATE FUNCTION vpbx_conf_confexpiry() RETURNS timestamp without time zone
 $$;
 
 
-ALTER FUNCTION public.vpbx_conf_confexpiry() OWNER TO agaga;
+ALTER FUNCTION public.vpbx_conf_confexpiry() OWNER TO cpbx;
 
 --
--- Name: vpbx_conf_free(integer); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: vpbx_conf_free(integer); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION vpbx_conf_free(vpbxidp integer DEFAULT NULL::integer) RETURNS TABLE(ext integer)
@@ -1308,10 +1308,10 @@ CREATE FUNCTION vpbx_conf_free(vpbxidp integer DEFAULT NULL::integer) RETURNS TA
  $$;
 
 
-ALTER FUNCTION public.vpbx_conf_free(vpbxidp integer) OWNER TO agaga;
+ALTER FUNCTION public.vpbx_conf_free(vpbxidp integer) OWNER TO cpbx;
 
 --
--- Name: vpbx_conf_uniqueconf(); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: vpbx_conf_uniqueconf(); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION vpbx_conf_uniqueconf() RETURNS character varying
@@ -1322,10 +1322,10 @@ WHERE pin NOT IN(SELECT pin FROM conference LIMIT 1)
 $$;
 
 
-ALTER FUNCTION public.vpbx_conf_uniqueconf() OWNER TO agaga;
+ALTER FUNCTION public.vpbx_conf_uniqueconf() OWNER TO cpbx;
 
 --
--- Name: vpbx_crm_working_hour(); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: vpbx_crm_working_hour(); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION vpbx_crm_working_hour() RETURNS boolean
@@ -1348,10 +1348,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.vpbx_crm_working_hour() OWNER TO agaga;
+ALTER FUNCTION public.vpbx_crm_working_hour() OWNER TO cpbx;
 
 --
--- Name: vpbx_crm_working_hour(integer); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: vpbx_crm_working_hour(integer); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION vpbx_crm_working_hour(vpbxidp integer DEFAULT NULL::integer) RETURNS boolean
@@ -1372,10 +1372,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.vpbx_crm_working_hour(vpbxidp integer) OWNER TO agaga;
+ALTER FUNCTION public.vpbx_crm_working_hour(vpbxidp integer) OWNER TO cpbx;
 
 --
--- Name: vpbx_free_extensions(integer); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: vpbx_free_extensions(integer); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION vpbx_free_extensions(vpbxid_in integer) RETURNS integer[]
@@ -1399,10 +1399,10 @@ END;
 $$;
 
 
-ALTER FUNCTION public.vpbx_free_extensions(vpbxid_in integer) OWNER TO agaga;
+ALTER FUNCTION public.vpbx_free_extensions(vpbxid_in integer) OWNER TO cpbx;
 
 --
--- Name: vpbx_get_call_direction_data_for_channel(text[], integer); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: vpbx_get_call_direction_data_for_channel(text[], integer); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION vpbx_get_call_direction_data_for_channel(num text[], root integer) RETURNS SETOF vpbx_call_dir_for_chan
@@ -1433,10 +1433,10 @@ FROM u
 $_$;
 
 
-ALTER FUNCTION public.vpbx_get_call_direction_data_for_channel(num text[], root integer) OWNER TO agaga;
+ALTER FUNCTION public.vpbx_get_call_direction_data_for_channel(num text[], root integer) OWNER TO cpbx;
 
 --
--- Name: vpbx_get_default_conf_accesscode(); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: vpbx_get_default_conf_accesscode(); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION vpbx_get_default_conf_accesscode() RETURNS integer
@@ -1458,10 +1458,10 @@ BEGIN
  $$;
 
 
-ALTER FUNCTION public.vpbx_get_default_conf_accesscode() OWNER TO agaga;
+ALTER FUNCTION public.vpbx_get_default_conf_accesscode() OWNER TO cpbx;
 
 --
--- Name: vpbx_get_num_properties(text[], integer); Type: FUNCTION; Schema: public; Owner: agaga
+-- Name: vpbx_get_num_properties(text[], integer); Type: FUNCTION; Schema: public; Owner: cpbx
 --
 
 CREATE FUNCTION vpbx_get_num_properties(num text[], root integer) RETURNS SETOF record
@@ -1502,10 +1502,10 @@ SELECT r.id, r.parent FROM directions r,z WHERE class=700  AND root=$2  AND r.id
 $_$;
 
 
-ALTER FUNCTION public.vpbx_get_num_properties(num text[], root integer) OWNER TO agaga;
+ALTER FUNCTION public.vpbx_get_num_properties(num text[], root integer) OWNER TO cpbx;
 
 --
--- Name: authcode; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: authcode; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE authcode (
@@ -1515,10 +1515,10 @@ CREATE TABLE authcode (
 );
 
 
-ALTER TABLE public.authcode OWNER TO agaga;
+ALTER TABLE public.authcode OWNER TO cpbx;
 
 --
--- Name: authcode_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: authcode_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE authcode_id_seq
@@ -1529,17 +1529,17 @@ CREATE SEQUENCE authcode_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.authcode_id_seq OWNER TO agaga;
+ALTER TABLE public.authcode_id_seq OWNER TO cpbx;
 
 --
--- Name: authcode_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: authcode_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE authcode_id_seq OWNED BY authcode.id;
 
 
 --
--- Name: call_destination; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: call_destination; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE call_destination (
@@ -1551,10 +1551,10 @@ CREATE TABLE call_destination (
 );
 
 
-ALTER TABLE public.call_destination OWNER TO agaga;
+ALTER TABLE public.call_destination OWNER TO cpbx;
 
 --
--- Name: call_destination_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: call_destination_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE call_destination_id_seq
@@ -1565,17 +1565,17 @@ CREATE SEQUENCE call_destination_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.call_destination_id_seq OWNER TO agaga;
+ALTER TABLE public.call_destination_id_seq OWNER TO cpbx;
 
 --
--- Name: call_destination_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: call_destination_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE call_destination_id_seq OWNED BY call_destination.id;
 
 
 --
--- Name: callcentre_call_que_operators_log; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: callcentre_call_que_operators_log; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE callcentre_call_que_operators_log (
@@ -1592,10 +1592,10 @@ CREATE TABLE callcentre_call_que_operators_log (
 );
 
 
-ALTER TABLE public.callcentre_call_que_operators_log OWNER TO agaga;
+ALTER TABLE public.callcentre_call_que_operators_log OWNER TO cpbx;
 
 --
--- Name: callcentre_call_que_operators_log_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: callcentre_call_que_operators_log_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE callcentre_call_que_operators_log_id_seq
@@ -1606,17 +1606,17 @@ CREATE SEQUENCE callcentre_call_que_operators_log_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.callcentre_call_que_operators_log_id_seq OWNER TO agaga;
+ALTER TABLE public.callcentre_call_que_operators_log_id_seq OWNER TO cpbx;
 
 --
--- Name: callcentre_call_que_operators_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: callcentre_call_que_operators_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE callcentre_call_que_operators_log_id_seq OWNED BY callcentre_call_que_operators_log.id;
 
 
 --
--- Name: pbx_settings_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: pbx_settings_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE pbx_settings_seq
@@ -1627,10 +1627,10 @@ CREATE SEQUENCE pbx_settings_seq
     CACHE 1;
 
 
-ALTER TABLE public.pbx_settings_seq OWNER TO agaga;
+ALTER TABLE public.pbx_settings_seq OWNER TO cpbx;
 
 --
--- Name: pbx_settings; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: pbx_settings; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE pbx_settings (
@@ -1646,10 +1646,10 @@ CREATE TABLE pbx_settings (
 );
 
 
-ALTER TABLE public.pbx_settings OWNER TO agaga;
+ALTER TABLE public.pbx_settings OWNER TO cpbx;
 
 --
--- Name: pbx_workinghour; Type: VIEW; Schema: public; Owner: agaga
+-- Name: pbx_workinghour; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW pbx_workinghour AS
@@ -1658,10 +1658,10 @@ CREATE VIEW pbx_workinghour AS
    FROM pbx_settings p;
 
 
-ALTER TABLE public.pbx_workinghour OWNER TO agaga;
+ALTER TABLE public.pbx_workinghour OWNER TO cpbx;
 
 --
--- Name: callcentre_status; Type: VIEW; Schema: public; Owner: agaga
+-- Name: callcentre_status; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW callcentre_status AS
@@ -1673,10 +1673,10 @@ CREATE VIEW callcentre_status AS
    LEFT JOIN pbx_settings pbs ON ((pbs.vpbxid = pwh.vpbxid)));
 
 
-ALTER TABLE public.callcentre_status OWNER TO agaga;
+ALTER TABLE public.callcentre_status OWNER TO cpbx;
 
 --
--- Name: callcentre_time_spots_choice; Type: VIEW; Schema: public; Owner: agaga
+-- Name: callcentre_time_spots_choice; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW callcentre_time_spots_choice AS
@@ -1684,10 +1684,10 @@ CREATE VIEW callcentre_time_spots_choice AS
    FROM generate_series(0, ((24 * 60) - 1)) g(x);
 
 
-ALTER TABLE public.callcentre_time_spots_choice OWNER TO agaga;
+ALTER TABLE public.callcentre_time_spots_choice OWNER TO cpbx;
 
 --
--- Name: callcentre_working_schedule; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: callcentre_working_schedule; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE callcentre_working_schedule (
@@ -1721,10 +1721,10 @@ CREATE TABLE callcentre_working_schedule (
 );
 
 
-ALTER TABLE public.callcentre_working_schedule OWNER TO agaga;
+ALTER TABLE public.callcentre_working_schedule OWNER TO cpbx;
 
 --
--- Name: callcentre_working_schedule_vpbx_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: callcentre_working_schedule_vpbx_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE callcentre_working_schedule_vpbx_id_seq
@@ -1735,17 +1735,17 @@ CREATE SEQUENCE callcentre_working_schedule_vpbx_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.callcentre_working_schedule_vpbx_id_seq OWNER TO agaga;
+ALTER TABLE public.callcentre_working_schedule_vpbx_id_seq OWNER TO cpbx;
 
 --
--- Name: callcentre_working_schedule_vpbx_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: callcentre_working_schedule_vpbx_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE callcentre_working_schedule_vpbx_id_seq OWNED BY callcentre_working_schedule.vpbx_id;
 
 
 --
--- Name: cdr; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: cdr; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE cdr (
@@ -1787,136 +1787,136 @@ CREATE TABLE cdr (
 );
 
 
-ALTER TABLE public.cdr OWNER TO agaga;
+ALTER TABLE public.cdr OWNER TO cpbx;
 
 --
--- Name: TABLE cdr; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: TABLE cdr; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON TABLE cdr IS 'ахтунг ахтунг - это стандартная таблица CDR Астериска в которую пишет сам Астериск. Поля добавленные дополнительные. Поля не менять!';
 
 
 --
--- Name: COLUMN cdr.calldate; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.calldate; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.calldate IS 'дата когда вызов был отвечен';
 
 
 --
--- Name: COLUMN cdr.clid; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.clid; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.clid IS 'АОН';
 
 
 --
--- Name: COLUMN cdr.src; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.src; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.src IS 'Астериск Channel полностью для номера A';
 
 
 --
--- Name: COLUMN cdr.dst; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.dst; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.dst IS 'Астериск Channel полностью для номера B';
 
 
 --
--- Name: COLUMN cdr.duration; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.duration; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.duration IS 'дительность вызова общая';
 
 
 --
--- Name: COLUMN cdr.billsec; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.billsec; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.billsec IS 'длительность вызова после установления соединения';
 
 
 --
--- Name: COLUMN cdr.disposition; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.disposition; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.disposition IS 'причина завершения вызова ''абонент ответил'', ''нет ответа'', ''занято'', ''вызов не прошел''';
 
 
 --
--- Name: COLUMN cdr.src_id; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.src_id; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.src_id IS 'ссылка на внтуренний номер если номер A - внутренний номер, иначе ссылка на dummy id 1';
 
 
 --
--- Name: COLUMN cdr.dst_id; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.dst_id; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.dst_id IS 'ссылка на внтуренний номер если номер B - внутренний номер, иначе ссылка на dummy id 1';
 
 
 --
--- Name: COLUMN cdr.call_type; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.call_type; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.call_type IS 'тип вызова - входящий, исходящий, перевод';
 
 
 --
--- Name: COLUMN cdr.call_direction; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.call_direction; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.call_direction IS 'направление вызова - ''внтур-внтур'', ''внутр-ТФОП'',''ТФОП-внутр'',''ТФОП-ТФОП''';
 
 
 --
--- Name: COLUMN cdr.recorded_call_ref; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.recorded_call_ref; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.recorded_call_ref IS 'ссылка на записанный разговор в репозитории записи или если нет - на id 1 dummy';
 
 
 --
--- Name: COLUMN cdr.record_duration; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.record_duration; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.record_duration IS 'длительность записанного разговора';
 
 
 --
--- Name: COLUMN cdr.pstn_num_incoming; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.pstn_num_incoming; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.pstn_num_incoming IS 'номер ТФОП на который пришел входящий вызов';
 
 
 --
--- Name: COLUMN cdr.operatorstatus; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.operatorstatus; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.operatorstatus IS 'статус оператора';
 
 
 --
--- Name: COLUMN cdr.backupdate; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.backupdate; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.backupdate IS 'дата резервного копирования записи переговоров';
 
 
 --
--- Name: COLUMN cdr.recordedname; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN cdr.recordedname; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN cdr.recordedname IS 'имя файла записи переговоров';
 
 
 --
--- Name: cdr_callcentre_calls_missed; Type: VIEW; Schema: public; Owner: agaga
+-- Name: cdr_callcentre_calls_missed; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW cdr_callcentre_calls_missed AS
@@ -1940,10 +1940,10 @@ CREATE VIEW cdr_callcentre_calls_missed AS
           WHERE ((((cdr.dcontext)::text = 'callcentre'::text) AND ((cdr.disposition)::text <> 'ANSWERED'::text)) AND (cdr.duration > 7))) c;
 
 
-ALTER TABLE public.cdr_callcentre_calls_missed OWNER TO agaga;
+ALTER TABLE public.cdr_callcentre_calls_missed OWNER TO cpbx;
 
 --
--- Name: callcentrestat; Type: VIEW; Schema: public; Owner: agaga
+-- Name: callcentrestat; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW callcentrestat AS
@@ -1978,10 +1978,10 @@ CREATE VIEW callcentrestat AS
            FROM cdr_callcentre_calls_missed) AS missedintegral;
 
 
-ALTER TABLE public.callcentrestat OWNER TO agaga;
+ALTER TABLE public.callcentrestat OWNER TO cpbx;
 
 --
--- Name: cdr_callcentre_calls_answered; Type: VIEW; Schema: public; Owner: agaga
+-- Name: cdr_callcentre_calls_answered; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW cdr_callcentre_calls_answered AS
@@ -2012,10 +2012,10 @@ CREATE VIEW cdr_callcentre_calls_answered AS
   WHERE (array_length(t.operatoranswerednum, 1) > 0);
 
 
-ALTER TABLE public.cdr_callcentre_calls_answered OWNER TO agaga;
+ALTER TABLE public.cdr_callcentre_calls_answered OWNER TO cpbx;
 
 --
--- Name: cdr_callcentre_calls_answered_operators_average; Type: VIEW; Schema: public; Owner: agaga
+-- Name: cdr_callcentre_calls_answered_operators_average; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW cdr_callcentre_calls_answered_operators_average AS
@@ -2047,10 +2047,10 @@ CREATE VIEW cdr_callcentre_calls_answered_operators_average AS
   ORDER BY integral.operatoranswerednum;
 
 
-ALTER TABLE public.cdr_callcentre_calls_answered_operators_average OWNER TO agaga;
+ALTER TABLE public.cdr_callcentre_calls_answered_operators_average OWNER TO cpbx;
 
 --
--- Name: sip_mailbox; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: sip_mailbox; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE sip_mailbox
@@ -2061,10 +2061,10 @@ CREATE SEQUENCE sip_mailbox
     CACHE 1;
 
 
-ALTER TABLE public.sip_mailbox OWNER TO agaga;
+ALTER TABLE public.sip_mailbox OWNER TO cpbx;
 
 --
--- Name: sip_serial; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: sip_serial; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE sip_serial
@@ -2075,10 +2075,10 @@ CREATE SEQUENCE sip_serial
     CACHE 1;
 
 
-ALTER TABLE public.sip_serial OWNER TO agaga;
+ALTER TABLE public.sip_serial OWNER TO cpbx;
 
 --
--- Name: sip; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: sip; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE sip (
@@ -2159,7 +2159,7 @@ CREATE TABLE sip (
     register character varying(3),
     ctrunkentryref integer,
     pickupgroup character varying,
-    istemplate boolean DEFAULT false,
+    istemplate integer DEFAULT 0,
     extension integer,
     extensiontype vpbx_sip_extensiontype DEFAULT 'regular'::vpbx_sip_extensiontype,
     operatorstatus vpbx_operatorstatus DEFAULT 'ABSENT'::vpbx_operatorstatus,
@@ -2201,542 +2201,542 @@ CREATE TABLE sip (
 );
 
 
-ALTER TABLE public.sip OWNER TO agaga;
+ALTER TABLE public.sip OWNER TO cpbx;
 
 --
--- Name: TABLE sip; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: TABLE sip; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON TABLE sip IS 'таблица sip устройств Астериска - менять нельзя! содержит специфичные для SIP устройства параметры. некоторые из них нужно разрешить менять пользователю для своей учетной записи.';
 
 
 --
--- Name: COLUMN sip.context; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.context; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.context IS 'в случае типа транк - здесь должно быть vpbx_pstn_in';
 
 
 --
--- Name: COLUMN sip.callingpres; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.callingpres; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.callingpres IS 'не надо';
 
 
 --
--- Name: COLUMN sip.deny; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.deny; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.deny IS 'если установлено ограничение для регистрации по IP то здесь должно стоять "all"';
 
 
 --
--- Name: COLUMN sip.permit; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.permit; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.permit IS 'список разрешенных ip адресов, масок или подсетей через точку запятой, с которых разрешено осуществлять регистрацию для данной учетной записи';
 
 
 --
--- Name: COLUMN sip.secret; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.secret; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.secret IS 'пароль для SIP регистрации  в незашифрованном виде';
 
 
 --
--- Name: COLUMN sip.md5secret; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.md5secret; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.md5secret IS 'пароль для SIP регистрации в виде MD5';
 
 
 --
--- Name: COLUMN sip.remotesecret; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.remotesecret; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.remotesecret IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.transport; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.transport; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.transport IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.host; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.host; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.host IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.nat; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.nat; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.nat IS 'разрешить выбирать пользователю - nat или не nat подключение используется. по умолчанию - nat';
 
 
 --
--- Name: COLUMN sip.type; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.type; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.type IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.accountcode; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.accountcode; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.accountcode IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.amaflags; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.amaflags; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.amaflags IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.callerid; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.callerid; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.callerid IS 'не нужно - сам выставляю';
 
 
 --
--- Name: COLUMN sip.defaultip; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.defaultip; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.defaultip IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.dtmfmode; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.dtmfmode; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.dtmfmode IS 'по умолчанию оставить как есть - NULL, разрешить выбирать пользователю между inband|info|rfc2833 для устранение проблем прохождения DTMF';
 
 
 --
--- Name: COLUMN sip.fromuser; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.fromuser; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.fromuser IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.fromdomain; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.fromdomain; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.fromdomain IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.insecure; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.insecure; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.insecure IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.language; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.language; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.language IS 'оставить как есть';
 
 
 --
--- Name: COLUMN sip.mailbox; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.mailbox; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.mailbox IS 'MWI - пока не решил как это делать лучше';
 
 
 --
--- Name: COLUMN sip.qualify; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.qualify; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.qualify IS 'keepalive для аппарата за nat. дать выбрать пользователю - yes|no. по умолчанию - yes';
 
 
 --
--- Name: COLUMN sip.regexten; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.regexten; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.regexten IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.rtptimeout; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.rtptimeout; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.rtptimeout IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.rtpholdtimeout; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.rtpholdtimeout; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.rtpholdtimeout IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.setvar; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.setvar; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.setvar IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.allow; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.allow; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.allow IS 'набор разрешенных кодеков через запятую - нужно возможно разрешить пользователю выбирать и расставлять приоритеты (приоритет в порядке следования)';
 
 
 --
--- Name: COLUMN sip.fullcontact; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.fullcontact; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.fullcontact IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.ipaddr; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.ipaddr; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.ipaddr IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.port; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.port; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.port IS 'желательно дать пользователю смены порта для учетной записи - выбор от 1 до 65535';
 
 
 --
--- Name: COLUMN sip.defaultuser; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.defaultuser; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.defaultuser IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.subscribecontext; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.subscribecontext; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.subscribecontext IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.directmedia; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.directmedia; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.directmedia IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.trustrpid; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.trustrpid; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.trustrpid IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.sendrpid; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.sendrpid; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.sendrpid IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.progressinband; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.progressinband; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.progressinband IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.promiscredir; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.promiscredir; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.promiscredir IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.useclientcode; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.useclientcode; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.useclientcode IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.callcounter; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.callcounter; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.callcounter IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.busylevel; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.busylevel; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.busylevel IS 'сколько принимать одновременно вызовов с уведомлением - дать пользователю устанавливать';
 
 
 --
--- Name: COLUMN sip.allowoverlap; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.allowoverlap; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.allowoverlap IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.allowsubscribe; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.allowsubscribe; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.allowsubscribe IS 'не нужно - оставить дефолт';
 
 
 --
--- Name: COLUMN sip.allowtransfer; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.allowtransfer; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.allowtransfer IS 'разрешить ли функцию перевода вызова локально для этой учетной записи - возможно дать пользователю выбрать через web интерфейс';
 
 
 --
--- Name: COLUMN sip.ignoresdpversion; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.ignoresdpversion; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.ignoresdpversion IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.template; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.template; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.template IS 'шаблон для наследования - не нужно';
 
 
 --
--- Name: COLUMN sip.videosupport; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.videosupport; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.videosupport IS 'поддержка видео - можно дать выбрать пользователю';
 
 
 --
--- Name: COLUMN sip.maxcallbitrate; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.maxcallbitrate; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.maxcallbitrate IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.rfc2833compensate; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.rfc2833compensate; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.rfc2833compensate IS 'не нужно';
 
 
 --
--- Name: COLUMN sip."session-timers"; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip."session-timers"; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip."session-timers" IS 'не нужно';
 
 
 --
--- Name: COLUMN sip."session-expires"; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip."session-expires"; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip."session-expires" IS 'не нужно';
 
 
 --
--- Name: COLUMN sip."session-minse"; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip."session-minse"; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip."session-minse" IS 'не нужно';
 
 
 --
--- Name: COLUMN sip."session-refresher"; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip."session-refresher"; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip."session-refresher" IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.t38pt_usertpsource; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.t38pt_usertpsource; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.t38pt_usertpsource IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.outboundproxy; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.outboundproxy; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.outboundproxy IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.callbackextension; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.callbackextension; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.callbackextension IS 'в случае транка здесь нужно поставить id данной записи в текстовом виде!!! (заметка для разработчика CRUD)';
 
 
 --
--- Name: COLUMN sip.registertrying; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.registertrying; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.registertrying IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.timert1; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.timert1; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.timert1 IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.timerb; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.timerb; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.timerb IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.qualifyfreq; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.qualifyfreq; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.qualifyfreq IS 'не нужно менять';
 
 
 --
--- Name: COLUMN sip.contactpermit; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.contactpermit; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.contactpermit IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.contactdeny; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.contactdeny; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.contactdeny IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.lastms; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.lastms; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.lastms IS 'счетчик - не трогать';
 
 
 --
--- Name: COLUMN sip.regserver; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.regserver; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.regserver IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.regseconds; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.regseconds; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.regseconds IS 'не нужно';
 
 
 --
--- Name: COLUMN sip.useragent; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.useragent; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.useragent IS 'сюда Астериск пишет название клиентского устройства которое зарегистрировалось';
 
 
 --
--- Name: COLUMN sip.rec_type; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.rec_type; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.rec_type IS 'тип записи - ''phone'' или ''incomingtrunk''';
 
 
 --
--- Name: COLUMN sip.extension; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.extension; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.extension IS 'внутренний номер';
 
 
 --
--- Name: COLUMN sip.callrecording; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.callrecording; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.callrecording IS 'статус записи переговоров для пира';
 
 
 --
--- Name: COLUMN sip.extensiongroup; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.extensiongroup; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.extensiongroup IS 'ссылка на группы внутренних номеров';
 
 
 --
--- Name: COLUMN sip.transfer; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.transfer; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.transfer IS 'разрешен ли перевод вызова';
 
 
 --
--- Name: COLUMN sip.statuschange; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.statuschange; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.statuschange IS 'разрешено ли изменение статуса для оператора колл-центра';
 
 
 --
--- Name: COLUMN sip.incoming; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.incoming; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.incoming IS 'разрешен ли прием входящих вызовов';
 
 
 --
--- Name: COLUMN sip.hold; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.hold; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.hold IS 'разрешено ли удержание вызовов';
 
 
 --
--- Name: COLUMN sip.forwarding; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.forwarding; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.forwarding IS 'разрешена ли переадресация вызовов';
 
 
 --
--- Name: COLUMN sip.memberofcallcentreque; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: COLUMN sip.memberofcallcentreque; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON COLUMN sip.memberofcallcentreque IS 'является ли оператор участником очереди на прием звонков (допустимо только для операторов колл-центра)';
 
 
 --
--- Name: cdr_callcentre_operator_stat; Type: VIEW; Schema: public; Owner: agaga
+-- Name: cdr_callcentre_operator_stat; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW cdr_callcentre_operator_stat AS
@@ -2793,10 +2793,10 @@ UNION
   ORDER BY 1;
 
 
-ALTER TABLE public.cdr_callcentre_operator_stat OWNER TO agaga;
+ALTER TABLE public.cdr_callcentre_operator_stat OWNER TO cpbx;
 
 --
--- Name: cdr_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: cdr_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE cdr_id_seq
@@ -2807,17 +2807,17 @@ CREATE SEQUENCE cdr_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.cdr_id_seq OWNER TO agaga;
+ALTER TABLE public.cdr_id_seq OWNER TO cpbx;
 
 --
--- Name: cdr_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: cdr_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE cdr_id_seq OWNED BY cdr.id;
 
 
 --
--- Name: cel; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: cel; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE cel (
@@ -2846,10 +2846,10 @@ CREATE TABLE cel (
 );
 
 
-ALTER TABLE public.cel OWNER TO agaga;
+ALTER TABLE public.cel OWNER TO cpbx;
 
 --
--- Name: cel_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: cel_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE cel_id_seq
@@ -2860,17 +2860,17 @@ CREATE SEQUENCE cel_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.cel_id_seq OWNER TO agaga;
+ALTER TABLE public.cel_id_seq OWNER TO cpbx;
 
 --
--- Name: cel_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: cel_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE cel_id_seq OWNED BY cel.id;
 
 
 --
--- Name: conference; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: conference; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE conference (
@@ -2897,10 +2897,10 @@ CREATE TABLE conference (
 );
 
 
-ALTER TABLE public.conference OWNER TO agaga;
+ALTER TABLE public.conference OWNER TO cpbx;
 
 --
--- Name: conference_free; Type: VIEW; Schema: public; Owner: agaga
+-- Name: conference_free; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW conference_free AS
@@ -2909,10 +2909,10 @@ CREATE VIEW conference_free AS
    FROM pbx_settings p;
 
 
-ALTER TABLE public.conference_free OWNER TO agaga;
+ALTER TABLE public.conference_free OWNER TO cpbx;
 
 --
--- Name: conference_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: conference_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE conference_id_seq
@@ -2923,17 +2923,17 @@ CREATE SEQUENCE conference_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.conference_id_seq OWNER TO agaga;
+ALTER TABLE public.conference_id_seq OWNER TO cpbx;
 
 --
--- Name: conference_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: conference_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE conference_id_seq OWNED BY conference.id;
 
 
 --
--- Name: conference_serial; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: conference_serial; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE conference_serial
@@ -2944,10 +2944,10 @@ CREATE SEQUENCE conference_serial
     CACHE 1;
 
 
-ALTER TABLE public.conference_serial OWNER TO agaga;
+ALTER TABLE public.conference_serial OWNER TO cpbx;
 
 --
--- Name: conference_settings; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: conference_settings; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE conference_settings (
@@ -2959,10 +2959,10 @@ CREATE TABLE conference_settings (
 );
 
 
-ALTER TABLE public.conference_settings OWNER TO agaga;
+ALTER TABLE public.conference_settings OWNER TO cpbx;
 
 --
--- Name: conferencefree; Type: VIEW; Schema: public; Owner: agaga
+-- Name: conferencefree; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW conferencefree AS
@@ -2974,10 +2974,10 @@ CREATE VIEW conferencefree AS
   ORDER BY random();
 
 
-ALTER TABLE public.conferencefree OWNER TO agaga;
+ALTER TABLE public.conferencefree OWNER TO cpbx;
 
 --
--- Name: context; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: context; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE context (
@@ -2992,10 +2992,10 @@ CREATE TABLE context (
 );
 
 
-ALTER TABLE public.context OWNER TO agaga;
+ALTER TABLE public.context OWNER TO cpbx;
 
 --
--- Name: context_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: context_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE context_id_seq
@@ -3006,17 +3006,17 @@ CREATE SEQUENCE context_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.context_id_seq OWNER TO agaga;
+ALTER TABLE public.context_id_seq OWNER TO cpbx;
 
 --
--- Name: context_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: context_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE context_id_seq OWNED BY context.id;
 
 
 --
--- Name: crmoperators; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: crmoperators; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE crmoperators (
@@ -3033,10 +3033,10 @@ CREATE TABLE crmoperators (
 );
 
 
-ALTER TABLE public.crmoperators OWNER TO agaga;
+ALTER TABLE public.crmoperators OWNER TO cpbx;
 
 --
--- Name: default_deny_permit; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: default_deny_permit; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE default_deny_permit (
@@ -3046,10 +3046,10 @@ CREATE TABLE default_deny_permit (
 );
 
 
-ALTER TABLE public.default_deny_permit OWNER TO agaga;
+ALTER TABLE public.default_deny_permit OWNER TO cpbx;
 
 --
--- Name: extensiondefaults; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: extensiondefaults; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE extensiondefaults (
@@ -3079,10 +3079,10 @@ CREATE TABLE extensiondefaults (
 );
 
 
-ALTER TABLE public.extensiondefaults OWNER TO agaga;
+ALTER TABLE public.extensiondefaults OWNER TO cpbx;
 
 --
--- Name: extensiongroupprofile; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: extensiongroupprofile; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE extensiongroupprofile (
@@ -3099,10 +3099,10 @@ CREATE TABLE extensiongroupprofile (
 );
 
 
-ALTER TABLE public.extensiongroupprofile OWNER TO agaga;
+ALTER TABLE public.extensiongroupprofile OWNER TO cpbx;
 
 --
--- Name: extensiongroupprofile_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: extensiongroupprofile_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE extensiongroupprofile_id_seq
@@ -3113,17 +3113,17 @@ CREATE SEQUENCE extensiongroupprofile_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.extensiongroupprofile_id_seq OWNER TO agaga;
+ALTER TABLE public.extensiongroupprofile_id_seq OWNER TO cpbx;
 
 --
--- Name: extensiongroupprofile_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: extensiongroupprofile_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE extensiongroupprofile_id_seq OWNED BY extensiongroupprofile.id;
 
 
 --
--- Name: extensiongroups; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: extensiongroups; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE extensiongroups (
@@ -3157,17 +3157,17 @@ CREATE TABLE extensiongroups (
 );
 
 
-ALTER TABLE public.extensiongroups OWNER TO agaga;
+ALTER TABLE public.extensiongroups OWNER TO cpbx;
 
 --
--- Name: TABLE extensiongroups; Type: COMMENT; Schema: public; Owner: agaga
+-- Name: TABLE extensiongroups; Type: COMMENT; Schema: public; Owner: cpbx
 --
 
 COMMENT ON TABLE extensiongroups IS 'группы внутренних номеров';
 
 
 --
--- Name: extensiongroups_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: extensiongroups_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE extensiongroups_id_seq
@@ -3178,17 +3178,17 @@ CREATE SEQUENCE extensiongroups_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.extensiongroups_id_seq OWNER TO agaga;
+ALTER TABLE public.extensiongroups_id_seq OWNER TO cpbx;
 
 --
--- Name: extensiongroups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: extensiongroups_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE extensiongroups_id_seq OWNED BY extensiongroups.id;
 
 
 --
--- Name: extensionprofile; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: extensionprofile; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE extensionprofile (
@@ -3212,10 +3212,10 @@ CREATE TABLE extensionprofile (
 );
 
 
-ALTER TABLE public.extensionprofile OWNER TO agaga;
+ALTER TABLE public.extensionprofile OWNER TO cpbx;
 
 --
--- Name: extensionprofile_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: extensionprofile_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE extensionprofile_id_seq
@@ -3226,17 +3226,17 @@ CREATE SEQUENCE extensionprofile_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.extensionprofile_id_seq OWNER TO agaga;
+ALTER TABLE public.extensionprofile_id_seq OWNER TO cpbx;
 
 --
--- Name: extensionprofile_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: extensionprofile_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE extensionprofile_id_seq OWNED BY extensionprofile.id;
 
 
 --
--- Name: faxspool; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: faxspool; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE faxspool (
@@ -3250,10 +3250,10 @@ CREATE TABLE faxspool (
 );
 
 
-ALTER TABLE public.faxspool OWNER TO agaga;
+ALTER TABLE public.faxspool OWNER TO cpbx;
 
 --
--- Name: faxspool_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: faxspool_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE faxspool_id_seq
@@ -3264,17 +3264,17 @@ CREATE SEQUENCE faxspool_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.faxspool_id_seq OWNER TO agaga;
+ALTER TABLE public.faxspool_id_seq OWNER TO cpbx;
 
 --
--- Name: faxspool_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: faxspool_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE faxspool_id_seq OWNED BY faxspool.id;
 
 
 --
--- Name: faxspoollog; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: faxspoollog; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE faxspoollog (
@@ -3288,10 +3288,10 @@ CREATE TABLE faxspoollog (
 );
 
 
-ALTER TABLE public.faxspoollog OWNER TO agaga;
+ALTER TABLE public.faxspoollog OWNER TO cpbx;
 
 --
--- Name: faxspoollog_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: faxspoollog_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE faxspoollog_id_seq
@@ -3302,17 +3302,17 @@ CREATE SEQUENCE faxspoollog_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.faxspoollog_id_seq OWNER TO agaga;
+ALTER TABLE public.faxspoollog_id_seq OWNER TO cpbx;
 
 --
--- Name: faxspoollog_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: faxspoollog_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE faxspoollog_id_seq OWNED BY faxspoollog.id;
 
 
 --
--- Name: faxusers; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: faxusers; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE faxusers (
@@ -3324,10 +3324,10 @@ CREATE TABLE faxusers (
 );
 
 
-ALTER TABLE public.faxusers OWNER TO agaga;
+ALTER TABLE public.faxusers OWNER TO cpbx;
 
 --
--- Name: faxusers_extra_email; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: faxusers_extra_email; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE faxusers_extra_email (
@@ -3338,10 +3338,10 @@ CREATE TABLE faxusers_extra_email (
 );
 
 
-ALTER TABLE public.faxusers_extra_email OWNER TO agaga;
+ALTER TABLE public.faxusers_extra_email OWNER TO cpbx;
 
 --
--- Name: faxusers_extra_email_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: faxusers_extra_email_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE faxusers_extra_email_id_seq
@@ -3352,17 +3352,17 @@ CREATE SEQUENCE faxusers_extra_email_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.faxusers_extra_email_id_seq OWNER TO agaga;
+ALTER TABLE public.faxusers_extra_email_id_seq OWNER TO cpbx;
 
 --
--- Name: faxusers_extra_email_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: faxusers_extra_email_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE faxusers_extra_email_id_seq OWNED BY faxusers_extra_email.id;
 
 
 --
--- Name: faxusers_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: faxusers_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE faxusers_id_seq
@@ -3373,17 +3373,17 @@ CREATE SEQUENCE faxusers_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.faxusers_id_seq OWNER TO agaga;
+ALTER TABLE public.faxusers_id_seq OWNER TO cpbx;
 
 --
--- Name: faxusers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: faxusers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE faxusers_id_seq OWNED BY faxusers.id;
 
 
 --
--- Name: faxusers_jointemails; Type: VIEW; Schema: public; Owner: agaga
+-- Name: faxusers_jointemails; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW faxusers_jointemails AS
@@ -3399,10 +3399,10 @@ UNION
            FROM faxusers;
 
 
-ALTER TABLE public.faxusers_jointemails OWNER TO agaga;
+ALTER TABLE public.faxusers_jointemails OWNER TO cpbx;
 
 --
--- Name: free_extensions; Type: VIEW; Schema: public; Owner: agaga
+-- Name: free_extensions; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW free_extensions AS
@@ -3416,10 +3416,10 @@ CREATE VIEW free_extensions AS
     LATERAL unnest(vpbx_free_extensions(p.vpbxid)) extension(extension);
 
 
-ALTER TABLE public.free_extensions OWNER TO agaga;
+ALTER TABLE public.free_extensions OWNER TO cpbx;
 
 --
--- Name: functions; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: functions; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE functions (
@@ -3429,10 +3429,10 @@ CREATE TABLE functions (
 );
 
 
-ALTER TABLE public.functions OWNER TO agaga;
+ALTER TABLE public.functions OWNER TO cpbx;
 
 --
--- Name: functions_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: functions_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE functions_id_seq
@@ -3443,17 +3443,17 @@ CREATE SEQUENCE functions_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.functions_id_seq OWNER TO agaga;
+ALTER TABLE public.functions_id_seq OWNER TO cpbx;
 
 --
--- Name: functions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: functions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE functions_id_seq OWNED BY functions.id;
 
 
 --
--- Name: ivr; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: ivr; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE ivr (
@@ -3464,10 +3464,10 @@ CREATE TABLE ivr (
 );
 
 
-ALTER TABLE public.ivr OWNER TO agaga;
+ALTER TABLE public.ivr OWNER TO cpbx;
 
 --
--- Name: ivr_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: ivr_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE ivr_id_seq
@@ -3478,17 +3478,17 @@ CREATE SEQUENCE ivr_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.ivr_id_seq OWNER TO agaga;
+ALTER TABLE public.ivr_id_seq OWNER TO cpbx;
 
 --
--- Name: ivr_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: ivr_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE ivr_id_seq OWNED BY ivr.id;
 
 
 --
--- Name: mediarepos; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: mediarepos; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE mediarepos (
@@ -3504,10 +3504,10 @@ CREATE TABLE mediarepos (
 );
 
 
-ALTER TABLE public.mediarepos OWNER TO agaga;
+ALTER TABLE public.mediarepos OWNER TO cpbx;
 
 --
--- Name: mediarepos_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: mediarepos_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE mediarepos_id_seq
@@ -3518,17 +3518,17 @@ CREATE SEQUENCE mediarepos_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.mediarepos_id_seq OWNER TO agaga;
+ALTER TABLE public.mediarepos_id_seq OWNER TO cpbx;
 
 --
--- Name: mediarepos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: mediarepos_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE mediarepos_id_seq OWNED BY mediarepos.id;
 
 
 --
--- Name: musiconhold; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: musiconhold; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE musiconhold (
@@ -3544,10 +3544,10 @@ CREATE TABLE musiconhold (
 );
 
 
-ALTER TABLE public.musiconhold OWNER TO agaga;
+ALTER TABLE public.musiconhold OWNER TO cpbx;
 
 --
--- Name: musiconhold_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: musiconhold_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE musiconhold_id_seq
@@ -3558,17 +3558,17 @@ CREATE SEQUENCE musiconhold_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.musiconhold_id_seq OWNER TO agaga;
+ALTER TABLE public.musiconhold_id_seq OWNER TO cpbx;
 
 --
--- Name: musiconhold_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: musiconhold_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE musiconhold_id_seq OWNED BY musiconhold.id;
 
 
 --
--- Name: musiconhold_view; Type: VIEW; Schema: public; Owner: agaga
+-- Name: musiconhold_view; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW musiconhold_view AS
@@ -3627,10 +3627,10 @@ UNION ALL
            FROM musiconhold;
 
 
-ALTER TABLE public.musiconhold_view OWNER TO agaga;
+ALTER TABLE public.musiconhold_view OWNER TO cpbx;
 
 --
--- Name: number_match; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: number_match; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE number_match (
@@ -3641,10 +3641,10 @@ CREATE TABLE number_match (
 );
 
 
-ALTER TABLE public.number_match OWNER TO agaga;
+ALTER TABLE public.number_match OWNER TO cpbx;
 
 --
--- Name: number_match_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: number_match_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE number_match_id_seq
@@ -3655,17 +3655,17 @@ CREATE SEQUENCE number_match_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.number_match_id_seq OWNER TO agaga;
+ALTER TABLE public.number_match_id_seq OWNER TO cpbx;
 
 --
--- Name: number_match_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: number_match_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE number_match_id_seq OWNED BY number_match.id;
 
 
 --
--- Name: number_range; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: number_range; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE number_range (
@@ -3675,10 +3675,10 @@ CREATE TABLE number_range (
 );
 
 
-ALTER TABLE public.number_range OWNER TO agaga;
+ALTER TABLE public.number_range OWNER TO cpbx;
 
 --
--- Name: number_range_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: number_range_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE number_range_id_seq
@@ -3689,17 +3689,17 @@ CREATE SEQUENCE number_range_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.number_range_id_seq OWNER TO agaga;
+ALTER TABLE public.number_range_id_seq OWNER TO cpbx;
 
 --
--- Name: number_range_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: number_range_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE number_range_id_seq OWNED BY number_range.id;
 
 
 --
--- Name: operator_status_log; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: operator_status_log; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE operator_status_log (
@@ -3711,10 +3711,10 @@ CREATE TABLE operator_status_log (
 );
 
 
-ALTER TABLE public.operator_status_log OWNER TO agaga;
+ALTER TABLE public.operator_status_log OWNER TO cpbx;
 
 --
--- Name: operator_status_log_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: operator_status_log_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE operator_status_log_id_seq
@@ -3725,17 +3725,17 @@ CREATE SEQUENCE operator_status_log_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.operator_status_log_id_seq OWNER TO agaga;
+ALTER TABLE public.operator_status_log_id_seq OWNER TO cpbx;
 
 --
--- Name: operator_status_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: operator_status_log_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE operator_status_log_id_seq OWNED BY operator_status_log.id;
 
 
 --
--- Name: schedule_replacements; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: schedule_replacements; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE schedule_replacements (
@@ -3749,10 +3749,10 @@ CREATE TABLE schedule_replacements (
 );
 
 
-ALTER TABLE public.schedule_replacements OWNER TO agaga;
+ALTER TABLE public.schedule_replacements OWNER TO cpbx;
 
 --
--- Name: pbx_working_hour_fromdb; Type: VIEW; Schema: public; Owner: agaga
+-- Name: pbx_working_hour_fromdb; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW pbx_working_hour_fromdb AS
@@ -3771,10 +3771,10 @@ CREATE VIEW pbx_working_hour_fromdb AS
           WHERE (s.rdate = date_trunc('day'::text, now()))) p ON ((p.vpbxid = r.vpbxid)));
 
 
-ALTER TABLE public.pbx_working_hour_fromdb OWNER TO agaga;
+ALTER TABLE public.pbx_working_hour_fromdb OWNER TO cpbx;
 
 --
--- Name: pickupgroup_name_serial; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: pickupgroup_name_serial; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE pickupgroup_name_serial
@@ -3785,10 +3785,10 @@ CREATE SEQUENCE pickupgroup_name_serial
     CACHE 1;
 
 
-ALTER TABLE public.pickupgroup_name_serial OWNER TO agaga;
+ALTER TABLE public.pickupgroup_name_serial OWNER TO cpbx;
 
 --
--- Name: pickupgroup; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: pickupgroup; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE pickupgroup (
@@ -3799,10 +3799,10 @@ CREATE TABLE pickupgroup (
 );
 
 
-ALTER TABLE public.pickupgroup OWNER TO agaga;
+ALTER TABLE public.pickupgroup OWNER TO cpbx;
 
 --
--- Name: recordedcalls; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: recordedcalls; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE recordedcalls (
@@ -3812,10 +3812,10 @@ CREATE TABLE recordedcalls (
 );
 
 
-ALTER TABLE public.recordedcalls OWNER TO agaga;
+ALTER TABLE public.recordedcalls OWNER TO cpbx;
 
 --
--- Name: recorded_calls_size; Type: VIEW; Schema: public; Owner: agaga
+-- Name: recorded_calls_size; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW recorded_calls_size AS
@@ -3823,10 +3823,10 @@ CREATE VIEW recorded_calls_size AS
            FROM recordedcalls)) AS total;
 
 
-ALTER TABLE public.recorded_calls_size OWNER TO agaga;
+ALTER TABLE public.recorded_calls_size OWNER TO cpbx;
 
 --
--- Name: recordedcalls_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: recordedcalls_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE recordedcalls_id_seq
@@ -3837,17 +3837,17 @@ CREATE SEQUENCE recordedcalls_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.recordedcalls_id_seq OWNER TO agaga;
+ALTER TABLE public.recordedcalls_id_seq OWNER TO cpbx;
 
 --
--- Name: recordedcalls_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: recordedcalls_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE recordedcalls_id_seq OWNED BY recordedcalls.id;
 
 
 --
--- Name: regentries; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: regentries; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE regentries (
@@ -3857,10 +3857,10 @@ CREATE TABLE regentries (
 );
 
 
-ALTER TABLE public.regentries OWNER TO agaga;
+ALTER TABLE public.regentries OWNER TO cpbx;
 
 --
--- Name: regentries_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: regentries_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE regentries_id_seq
@@ -3871,17 +3871,17 @@ CREATE SEQUENCE regentries_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.regentries_id_seq OWNER TO agaga;
+ALTER TABLE public.regentries_id_seq OWNER TO cpbx;
 
 --
--- Name: regentries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: regentries_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE regentries_id_seq OWNED BY regentries.id;
 
 
 --
--- Name: route; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: route; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE route (
@@ -3893,10 +3893,10 @@ CREATE TABLE route (
 );
 
 
-ALTER TABLE public.route OWNER TO agaga;
+ALTER TABLE public.route OWNER TO cpbx;
 
 --
--- Name: route_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: route_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE route_id_seq
@@ -3907,17 +3907,17 @@ CREATE SEQUENCE route_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.route_id_seq OWNER TO agaga;
+ALTER TABLE public.route_id_seq OWNER TO cpbx;
 
 --
--- Name: route_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: route_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE route_id_seq OWNED BY route.id;
 
 
 --
--- Name: schedule_replacements_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: schedule_replacements_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE schedule_replacements_id_seq
@@ -3928,17 +3928,17 @@ CREATE SEQUENCE schedule_replacements_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.schedule_replacements_id_seq OWNER TO agaga;
+ALTER TABLE public.schedule_replacements_id_seq OWNER TO cpbx;
 
 --
--- Name: schedule_replacements_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: schedule_replacements_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE schedule_replacements_id_seq OWNED BY schedule_replacements.id;
 
 
 --
--- Name: shortdialtable; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: shortdialtable; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE shortdialtable (
@@ -3950,10 +3950,10 @@ CREATE TABLE shortdialtable (
 );
 
 
-ALTER TABLE public.shortdialtable OWNER TO agaga;
+ALTER TABLE public.shortdialtable OWNER TO cpbx;
 
 --
--- Name: shortdialtable_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: shortdialtable_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE shortdialtable_id_seq
@@ -3964,17 +3964,17 @@ CREATE SEQUENCE shortdialtable_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.shortdialtable_id_seq OWNER TO agaga;
+ALTER TABLE public.shortdialtable_id_seq OWNER TO cpbx;
 
 --
--- Name: shortdialtable_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: shortdialtable_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE shortdialtable_id_seq OWNED BY shortdialtable.id;
 
 
 --
--- Name: sip_devices_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: sip_devices_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE sip_devices_id_seq
@@ -3985,17 +3985,17 @@ CREATE SEQUENCE sip_devices_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.sip_devices_id_seq OWNER TO agaga;
+ALTER TABLE public.sip_devices_id_seq OWNER TO cpbx;
 
 --
--- Name: sip_devices_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: sip_devices_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE sip_devices_id_seq OWNED BY sip.id;
 
 
 --
--- Name: sip_free_extensions; Type: VIEW; Schema: public; Owner: agaga
+-- Name: sip_free_extensions; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW sip_free_extensions AS
@@ -4008,10 +4008,10 @@ CREATE VIEW sip_free_extensions AS
    FROM p;
 
 
-ALTER TABLE public.sip_free_extensions OWNER TO agaga;
+ALTER TABLE public.sip_free_extensions OWNER TO cpbx;
 
 --
--- Name: skype_aliases; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: skype_aliases; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE skype_aliases (
@@ -4025,10 +4025,10 @@ CREATE TABLE skype_aliases (
 );
 
 
-ALTER TABLE public.skype_aliases OWNER TO agaga;
+ALTER TABLE public.skype_aliases OWNER TO cpbx;
 
 --
--- Name: skype_aliases_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: skype_aliases_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE skype_aliases_id_seq
@@ -4039,17 +4039,17 @@ CREATE SEQUENCE skype_aliases_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.skype_aliases_id_seq OWNER TO agaga;
+ALTER TABLE public.skype_aliases_id_seq OWNER TO cpbx;
 
 --
--- Name: skype_aliases_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: skype_aliases_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE skype_aliases_id_seq OWNED BY skype_aliases.id;
 
 
 --
--- Name: temp_media; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: temp_media; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE temp_media (
@@ -4064,10 +4064,10 @@ CREATE TABLE temp_media (
 );
 
 
-ALTER TABLE public.temp_media OWNER TO agaga;
+ALTER TABLE public.temp_media OWNER TO cpbx;
 
 --
--- Name: temp_media_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: temp_media_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE temp_media_id_seq
@@ -4078,17 +4078,17 @@ CREATE SEQUENCE temp_media_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.temp_media_id_seq OWNER TO agaga;
+ALTER TABLE public.temp_media_id_seq OWNER TO cpbx;
 
 --
--- Name: temp_media_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: temp_media_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE temp_media_id_seq OWNED BY temp_media.id;
 
 
 --
--- Name: trunkassoc; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: trunkassoc; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE trunkassoc (
@@ -4099,10 +4099,10 @@ CREATE TABLE trunkassoc (
 );
 
 
-ALTER TABLE public.trunkassoc OWNER TO agaga;
+ALTER TABLE public.trunkassoc OWNER TO cpbx;
 
 --
--- Name: trunkassoc_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: trunkassoc_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE trunkassoc_id_seq
@@ -4113,17 +4113,17 @@ CREATE SEQUENCE trunkassoc_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.trunkassoc_id_seq OWNER TO agaga;
+ALTER TABLE public.trunkassoc_id_seq OWNER TO cpbx;
 
 --
--- Name: trunkassoc_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: trunkassoc_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE trunkassoc_id_seq OWNED BY trunkassoc.id;
 
 
 --
--- Name: trunkdestinations; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: trunkdestinations; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE trunkdestinations (
@@ -4135,10 +4135,10 @@ CREATE TABLE trunkdestinations (
 );
 
 
-ALTER TABLE public.trunkdestinations OWNER TO agaga;
+ALTER TABLE public.trunkdestinations OWNER TO cpbx;
 
 --
--- Name: trunkdestinations_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: trunkdestinations_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE trunkdestinations_id_seq
@@ -4149,17 +4149,17 @@ CREATE SEQUENCE trunkdestinations_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.trunkdestinations_id_seq OWNER TO agaga;
+ALTER TABLE public.trunkdestinations_id_seq OWNER TO cpbx;
 
 --
--- Name: trunkdestinations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: trunkdestinations_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE trunkdestinations_id_seq OWNED BY trunkdestinations.id;
 
 
 --
--- Name: user; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: user; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE "user" (
@@ -4175,10 +4175,10 @@ CREATE TABLE "user" (
 );
 
 
-ALTER TABLE public."user" OWNER TO agaga;
+ALTER TABLE public."user" OWNER TO cpbx;
 
 --
--- Name: user_role; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: user_role; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE user_role (
@@ -4189,10 +4189,10 @@ CREATE TABLE user_role (
 );
 
 
-ALTER TABLE public.user_role OWNER TO agaga;
+ALTER TABLE public.user_role OWNER TO cpbx;
 
 --
--- Name: user_role_linker; Type: VIEW; Schema: public; Owner: agaga
+-- Name: user_role_linker; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW user_role_linker AS
@@ -4201,10 +4201,10 @@ CREATE VIEW user_role_linker AS
    FROM "user";
 
 
-ALTER TABLE public.user_role_linker OWNER TO agaga;
+ALTER TABLE public.user_role_linker OWNER TO cpbx;
 
 --
--- Name: user_user_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: user_user_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE user_user_id_seq
@@ -4215,17 +4215,17 @@ CREATE SEQUENCE user_user_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.user_user_id_seq OWNER TO agaga;
+ALTER TABLE public.user_user_id_seq OWNER TO cpbx;
 
 --
--- Name: user_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: user_user_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE user_user_id_seq OWNED BY "user".user_id;
 
 
 --
--- Name: user_vpbx_linker; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: user_vpbx_linker; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE user_vpbx_linker (
@@ -4234,10 +4234,10 @@ CREATE TABLE user_vpbx_linker (
 );
 
 
-ALTER TABLE public.user_vpbx_linker OWNER TO agaga;
+ALTER TABLE public.user_vpbx_linker OWNER TO cpbx;
 
 --
--- Name: voicemail; Type: VIEW; Schema: public; Owner: agaga
+-- Name: voicemail; Type: VIEW; Schema: public; Owner: cpbx
 --
 
 CREATE VIEW voicemail AS
@@ -4269,10 +4269,10 @@ CREATE VIEW voicemail AS
    FROM sip;
 
 
-ALTER TABLE public.voicemail OWNER TO agaga;
+ALTER TABLE public.voicemail OWNER TO cpbx;
 
 --
--- Name: voicemail_users_mailbox_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: voicemail_users_mailbox_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE voicemail_users_mailbox_seq
@@ -4283,10 +4283,10 @@ CREATE SEQUENCE voicemail_users_mailbox_seq
     CACHE 1;
 
 
-ALTER TABLE public.voicemail_users_mailbox_seq OWNER TO agaga;
+ALTER TABLE public.voicemail_users_mailbox_seq OWNER TO cpbx;
 
 --
--- Name: vpbx_entities; Type: TABLE; Schema: public; Owner: agaga; Tablespace: 
+-- Name: vpbx_entities; Type: TABLE; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE TABLE vpbx_entities (
@@ -4300,10 +4300,10 @@ CREATE TABLE vpbx_entities (
 );
 
 
-ALTER TABLE public.vpbx_entities OWNER TO agaga;
+ALTER TABLE public.vpbx_entities OWNER TO cpbx;
 
 --
--- Name: vpbx_entities_id_seq; Type: SEQUENCE; Schema: public; Owner: agaga
+-- Name: vpbx_entities_id_seq; Type: SEQUENCE; Schema: public; Owner: cpbx
 --
 
 CREATE SEQUENCE vpbx_entities_id_seq
@@ -4314,248 +4314,248 @@ CREATE SEQUENCE vpbx_entities_id_seq
     CACHE 1;
 
 
-ALTER TABLE public.vpbx_entities_id_seq OWNER TO agaga;
+ALTER TABLE public.vpbx_entities_id_seq OWNER TO cpbx;
 
 --
--- Name: vpbx_entities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: agaga
+-- Name: vpbx_entities_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: cpbx
 --
 
 ALTER SEQUENCE vpbx_entities_id_seq OWNED BY vpbx_entities.id;
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY authcode ALTER COLUMN id SET DEFAULT nextval('authcode_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY call_destination ALTER COLUMN id SET DEFAULT nextval('call_destination_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY callcentre_call_que_operators_log ALTER COLUMN id SET DEFAULT nextval('callcentre_call_que_operators_log_id_seq'::regclass);
 
 
 --
--- Name: vpbx_id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: vpbx_id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY callcentre_working_schedule ALTER COLUMN vpbx_id SET DEFAULT nextval('callcentre_working_schedule_vpbx_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY cdr ALTER COLUMN id SET DEFAULT nextval('cdr_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY cel ALTER COLUMN id SET DEFAULT nextval('cel_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY conference ALTER COLUMN id SET DEFAULT nextval('conference_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY context ALTER COLUMN id SET DEFAULT nextval('context_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY extensiongroupprofile ALTER COLUMN id SET DEFAULT nextval('extensiongroupprofile_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY extensiongroups ALTER COLUMN id SET DEFAULT nextval('extensiongroups_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY extensionprofile ALTER COLUMN id SET DEFAULT nextval('extensionprofile_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY faxspool ALTER COLUMN id SET DEFAULT nextval('faxspool_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY faxspoollog ALTER COLUMN id SET DEFAULT nextval('faxspoollog_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY faxusers ALTER COLUMN id SET DEFAULT nextval('faxusers_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY faxusers_extra_email ALTER COLUMN id SET DEFAULT nextval('faxusers_extra_email_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY functions ALTER COLUMN id SET DEFAULT nextval('functions_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY ivr ALTER COLUMN id SET DEFAULT nextval('ivr_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY mediarepos ALTER COLUMN id SET DEFAULT nextval('mediarepos_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY musiconhold ALTER COLUMN id SET DEFAULT nextval('musiconhold_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY number_match ALTER COLUMN id SET DEFAULT nextval('number_match_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY number_range ALTER COLUMN id SET DEFAULT nextval('number_range_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY operator_status_log ALTER COLUMN id SET DEFAULT nextval('operator_status_log_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY recordedcalls ALTER COLUMN id SET DEFAULT nextval('recordedcalls_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY regentries ALTER COLUMN id SET DEFAULT nextval('regentries_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY route ALTER COLUMN id SET DEFAULT nextval('route_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY schedule_replacements ALTER COLUMN id SET DEFAULT nextval('schedule_replacements_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY shortdialtable ALTER COLUMN id SET DEFAULT nextval('shortdialtable_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY skype_aliases ALTER COLUMN id SET DEFAULT nextval('skype_aliases_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY temp_media ALTER COLUMN id SET DEFAULT nextval('temp_media_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY trunkassoc ALTER COLUMN id SET DEFAULT nextval('trunkassoc_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY trunkdestinations ALTER COLUMN id SET DEFAULT nextval('trunkdestinations_id_seq'::regclass);
 
 
 --
--- Name: user_id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: user_id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY "user" ALTER COLUMN user_id SET DEFAULT nextval('user_user_id_seq'::regclass);
 
 
 --
--- Name: id; Type: DEFAULT; Schema: public; Owner: agaga
+-- Name: id; Type: DEFAULT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY vpbx_entities ALTER COLUMN id SET DEFAULT nextval('vpbx_entities_id_seq'::regclass);
 
 
 --
--- Name: authcode_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: authcode_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY authcode
@@ -4563,7 +4563,7 @@ ALTER TABLE ONLY authcode
 
 
 --
--- Name: call_destination_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: call_destination_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY call_destination
@@ -4571,7 +4571,7 @@ ALTER TABLE ONLY call_destination
 
 
 --
--- Name: callcentre_call_que_operators_log_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: callcentre_call_que_operators_log_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY callcentre_call_que_operators_log
@@ -4579,7 +4579,7 @@ ALTER TABLE ONLY callcentre_call_que_operators_log
 
 
 --
--- Name: callcentre_working_schedule_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: callcentre_working_schedule_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY callcentre_working_schedule
@@ -4587,7 +4587,7 @@ ALTER TABLE ONLY callcentre_working_schedule
 
 
 --
--- Name: cdr_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: cdr_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY cdr
@@ -4595,7 +4595,7 @@ ALTER TABLE ONLY cdr
 
 
 --
--- Name: conference_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: conference_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY conference
@@ -4603,7 +4603,7 @@ ALTER TABLE ONLY conference
 
 
 --
--- Name: conference_settings_accesscode_key; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: conference_settings_accesscode_key; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY conference_settings
@@ -4611,7 +4611,7 @@ ALTER TABLE ONLY conference_settings
 
 
 --
--- Name: conference_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: conference_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY conference_settings
@@ -4619,7 +4619,7 @@ ALTER TABLE ONLY conference_settings
 
 
 --
--- Name: context_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: context_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY context
@@ -4627,7 +4627,7 @@ ALTER TABLE ONLY context
 
 
 --
--- Name: default_deny_permit_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: default_deny_permit_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY default_deny_permit
@@ -4635,7 +4635,7 @@ ALTER TABLE ONLY default_deny_permit
 
 
 --
--- Name: extensiondefaults_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: extensiondefaults_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY extensiondefaults
@@ -4643,7 +4643,7 @@ ALTER TABLE ONLY extensiondefaults
 
 
 --
--- Name: extensiongroupprofile_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: extensiongroupprofile_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY extensiongroupprofile
@@ -4651,7 +4651,7 @@ ALTER TABLE ONLY extensiongroupprofile
 
 
 --
--- Name: extensiongroups_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: extensiongroups_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY extensiongroups
@@ -4659,7 +4659,7 @@ ALTER TABLE ONLY extensiongroups
 
 
 --
--- Name: extensionprofile_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: extensionprofile_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY extensionprofile
@@ -4667,7 +4667,7 @@ ALTER TABLE ONLY extensionprofile
 
 
 --
--- Name: faxspool_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: faxspool_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY faxspool
@@ -4675,7 +4675,7 @@ ALTER TABLE ONLY faxspool
 
 
 --
--- Name: faxspoollog_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: faxspoollog_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY faxspoollog
@@ -4683,7 +4683,7 @@ ALTER TABLE ONLY faxspoollog
 
 
 --
--- Name: faxusers_extra_email_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: faxusers_extra_email_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY faxusers_extra_email
@@ -4691,7 +4691,7 @@ ALTER TABLE ONLY faxusers_extra_email
 
 
 --
--- Name: faxusers_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: faxusers_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY faxusers
@@ -4699,7 +4699,7 @@ ALTER TABLE ONLY faxusers
 
 
 --
--- Name: functions_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: functions_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY functions
@@ -4707,7 +4707,7 @@ ALTER TABLE ONLY functions
 
 
 --
--- Name: ivr_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: ivr_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY ivr
@@ -4715,7 +4715,7 @@ ALTER TABLE ONLY ivr
 
 
 --
--- Name: mediarepos_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: mediarepos_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY mediarepos
@@ -4723,7 +4723,7 @@ ALTER TABLE ONLY mediarepos
 
 
 --
--- Name: musiconhold_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: musiconhold_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY musiconhold
@@ -4731,7 +4731,7 @@ ALTER TABLE ONLY musiconhold
 
 
 --
--- Name: number_match_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: number_match_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY number_match
@@ -4739,7 +4739,7 @@ ALTER TABLE ONLY number_match
 
 
 --
--- Name: number_range_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: number_range_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY number_range
@@ -4747,7 +4747,7 @@ ALTER TABLE ONLY number_range
 
 
 --
--- Name: number_unique; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: number_unique; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY skype_aliases
@@ -4755,7 +4755,7 @@ ALTER TABLE ONLY skype_aliases
 
 
 --
--- Name: pbx_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: pbx_settings_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY pbx_settings
@@ -4763,7 +4763,7 @@ ALTER TABLE ONLY pbx_settings
 
 
 --
--- Name: pickupgroup_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: pickupgroup_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY pickupgroup
@@ -4771,7 +4771,7 @@ ALTER TABLE ONLY pickupgroup
 
 
 --
--- Name: recordedcalls_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: recordedcalls_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY recordedcalls
@@ -4779,7 +4779,7 @@ ALTER TABLE ONLY recordedcalls
 
 
 --
--- Name: regentries_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: regentries_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY regentries
@@ -4787,7 +4787,7 @@ ALTER TABLE ONLY regentries
 
 
 --
--- Name: route_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: route_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY route
@@ -4795,7 +4795,7 @@ ALTER TABLE ONLY route
 
 
 --
--- Name: schedule_replacements_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: schedule_replacements_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY schedule_replacements
@@ -4803,7 +4803,7 @@ ALTER TABLE ONLY schedule_replacements
 
 
 --
--- Name: schedule_replacements_rdate; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: schedule_replacements_rdate; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY schedule_replacements
@@ -4811,7 +4811,7 @@ ALTER TABLE ONLY schedule_replacements
 
 
 --
--- Name: shortdialtable_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: shortdialtable_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY shortdialtable
@@ -4819,7 +4819,7 @@ ALTER TABLE ONLY shortdialtable
 
 
 --
--- Name: sip_devices_name_unique; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: sip_devices_name_unique; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY sip
@@ -4827,7 +4827,7 @@ ALTER TABLE ONLY sip
 
 
 --
--- Name: sip_devices_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: sip_devices_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY sip
@@ -4835,7 +4835,7 @@ ALTER TABLE ONLY sip
 
 
 --
--- Name: skype_aliases_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: skype_aliases_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY skype_aliases
@@ -4843,7 +4843,7 @@ ALTER TABLE ONLY skype_aliases
 
 
 --
--- Name: temp_media_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: temp_media_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY temp_media
@@ -4851,7 +4851,7 @@ ALTER TABLE ONLY temp_media
 
 
 --
--- Name: trunkassoc_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: trunkassoc_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY trunkassoc
@@ -4859,7 +4859,7 @@ ALTER TABLE ONLY trunkassoc
 
 
 --
--- Name: user_email_key; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: user_email_key; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY "user"
@@ -4867,7 +4867,7 @@ ALTER TABLE ONLY "user"
 
 
 --
--- Name: user_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: user_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY "user"
@@ -4875,7 +4875,7 @@ ALTER TABLE ONLY "user"
 
 
 --
--- Name: user_role_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: user_role_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY user_role
@@ -4883,7 +4883,7 @@ ALTER TABLE ONLY user_role
 
 
 --
--- Name: user_username_key; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: user_username_key; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY "user"
@@ -4891,7 +4891,7 @@ ALTER TABLE ONLY "user"
 
 
 --
--- Name: user_vpbx_linker_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: user_vpbx_linker_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY user_vpbx_linker
@@ -4899,7 +4899,7 @@ ALTER TABLE ONLY user_vpbx_linker
 
 
 --
--- Name: user_vpbx_linker_userid_uq; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: user_vpbx_linker_userid_uq; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY user_vpbx_linker
@@ -4907,7 +4907,7 @@ ALTER TABLE ONLY user_vpbx_linker
 
 
 --
--- Name: vpbx_entities_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: vpbx_entities_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY vpbx_entities
@@ -4915,7 +4915,7 @@ ALTER TABLE ONLY vpbx_entities
 
 
 --
--- Name: vpbx_operator_status_log_pkey; Type: CONSTRAINT; Schema: public; Owner: agaga; Tablespace: 
+-- Name: vpbx_operator_status_log_pkey; Type: CONSTRAINT; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 ALTER TABLE ONLY operator_status_log
@@ -4923,98 +4923,98 @@ ALTER TABLE ONLY operator_status_log
 
 
 --
--- Name: cdr_linkedid; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: cdr_linkedid; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX cdr_linkedid ON cdr USING btree (linkedid);
 
 
 --
--- Name: directions_class; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: directions_class; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX directions_class ON directions USING btree (class);
 
 
 --
--- Name: directions_id; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: directions_id; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX directions_id ON directions USING btree (id);
 
 
 --
--- Name: directions_name; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: directions_name; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX directions_name ON directions USING btree (name);
 
 
 --
--- Name: directions_parent; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: directions_parent; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX directions_parent ON directions USING btree (parent);
 
 
 --
--- Name: directions_root; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: directions_root; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX directions_root ON directions USING btree (root);
 
 
 --
--- Name: faxusers_email_idx; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: faxusers_email_idx; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX faxusers_email_idx ON faxusers USING btree (email);
 
 
 --
--- Name: faxusers_extra_email_idx; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: faxusers_extra_email_idx; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX faxusers_extra_email_idx ON faxusers_extra_email USING btree (email);
 
 
 --
--- Name: operator_status_log_changed; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: operator_status_log_changed; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX operator_status_log_changed ON operator_status_log USING btree (changed);
 
 
 --
--- Name: operator_status_log_extension; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: operator_status_log_extension; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX operator_status_log_extension ON operator_status_log USING btree (extension);
 
 
 --
--- Name: rdate_date_index; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: rdate_date_index; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX rdate_date_index ON schedule_replacements USING btree (rdate);
 
 
 --
--- Name: sip_idx_extenl; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: sip_idx_extenl; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX sip_idx_extenl ON sip USING btree (extension, vpbxid, peertype);
 
 
 --
--- Name: sip_mailbox_index; Type: INDEX; Schema: public; Owner: agaga; Tablespace: 
+-- Name: sip_mailbox_index; Type: INDEX; Schema: public; Owner: cpbx; Tablespace: 
 --
 
 CREATE INDEX sip_mailbox_index ON sip USING btree (mailbox);
 
 
 --
--- Name: sip_insert_new_peername_extension; Type: RULE; Schema: public; Owner: agaga
+-- Name: sip_insert_new_peername_extension; Type: RULE; Schema: public; Owner: cpbx
 --
 
 CREATE RULE sip_insert_new_peername_extension AS
@@ -5024,7 +5024,7 @@ CREATE RULE sip_insert_new_peername_extension AS
 
 
 --
--- Name: user_update_id_value; Type: RULE; Schema: public; Owner: agaga
+-- Name: user_update_id_value; Type: RULE; Schema: public; Owner: cpbx
 --
 
 CREATE RULE user_update_id_value AS
@@ -5032,21 +5032,21 @@ CREATE RULE user_update_id_value AS
 
 
 --
--- Name: update_directions; Type: TRIGGER; Schema: public; Owner: agaga
+-- Name: update_directions; Type: TRIGGER; Schema: public; Owner: cpbx
 --
 
 CREATE TRIGGER update_directions BEFORE INSERT ON cdr FOR EACH ROW EXECUTE PROCEDURE update_directions_cdr();
 
 
 --
--- Name: user_idupdate; Type: TRIGGER; Schema: public; Owner: agaga
+-- Name: user_idupdate; Type: TRIGGER; Schema: public; Owner: cpbx
 --
 
 CREATE TRIGGER user_idupdate BEFORE INSERT ON "user" FOR EACH ROW EXECUTE PROCEDURE trg();
 
 
 --
--- Name: authcode_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: authcode_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY authcode
@@ -5054,7 +5054,7 @@ ALTER TABLE ONLY authcode
 
 
 --
--- Name: call_destination_peerid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: call_destination_peerid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY call_destination
@@ -5062,7 +5062,7 @@ ALTER TABLE ONLY call_destination
 
 
 --
--- Name: call_destination_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: call_destination_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY call_destination
@@ -5070,7 +5070,7 @@ ALTER TABLE ONLY call_destination
 
 
 --
--- Name: callcentre_call_que_operators_log_callref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: callcentre_call_que_operators_log_callref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY callcentre_call_que_operators_log
@@ -5078,7 +5078,7 @@ ALTER TABLE ONLY callcentre_call_que_operators_log
 
 
 --
--- Name: callcentre_call_que_operators_log_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: callcentre_call_que_operators_log_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY callcentre_call_que_operators_log
@@ -5086,7 +5086,7 @@ ALTER TABLE ONLY callcentre_call_que_operators_log
 
 
 --
--- Name: callcentre_working_schedule_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: callcentre_working_schedule_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY callcentre_working_schedule
@@ -5094,7 +5094,7 @@ ALTER TABLE ONLY callcentre_working_schedule
 
 
 --
--- Name: cdr_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: cdr_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY cdr
@@ -5102,7 +5102,7 @@ ALTER TABLE ONLY cdr
 
 
 --
--- Name: cel_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: cel_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY cel
@@ -5110,7 +5110,7 @@ ALTER TABLE ONLY cel
 
 
 --
--- Name: conference_ownerref; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: conference_ownerref; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY conference
@@ -5118,7 +5118,7 @@ ALTER TABLE ONLY conference
 
 
 --
--- Name: conference_settings_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: conference_settings_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY conference_settings
@@ -5126,7 +5126,7 @@ ALTER TABLE ONLY conference_settings
 
 
 --
--- Name: conference_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: conference_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY conference
@@ -5134,7 +5134,7 @@ ALTER TABLE ONLY conference
 
 
 --
--- Name: context_funcref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: context_funcref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY context
@@ -5142,7 +5142,7 @@ ALTER TABLE ONLY context
 
 
 --
--- Name: context_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: context_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY context
@@ -5150,7 +5150,7 @@ ALTER TABLE ONLY context
 
 
 --
--- Name: contextref_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: contextref_fk; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY trunkassoc
@@ -5158,7 +5158,7 @@ ALTER TABLE ONLY trunkassoc
 
 
 --
--- Name: crmoperators_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: crmoperators_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY crmoperators
@@ -5166,7 +5166,7 @@ ALTER TABLE ONLY crmoperators
 
 
 --
--- Name: default_deny_permit_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: default_deny_permit_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY default_deny_permit
@@ -5174,7 +5174,7 @@ ALTER TABLE ONLY default_deny_permit
 
 
 --
--- Name: extensiongroupprofile_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: extensiongroupprofile_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY extensiongroupprofile
@@ -5182,7 +5182,7 @@ ALTER TABLE ONLY extensiongroupprofile
 
 
 --
--- Name: extensionprofile_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: extensionprofile_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY extensionprofile
@@ -5190,7 +5190,7 @@ ALTER TABLE ONLY extensionprofile
 
 
 --
--- Name: faxspool_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: faxspool_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY faxspool
@@ -5198,7 +5198,7 @@ ALTER TABLE ONLY faxspool
 
 
 --
--- Name: faxspoollog_spoolref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: faxspoollog_spoolref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY faxspoollog
@@ -5206,7 +5206,7 @@ ALTER TABLE ONLY faxspoollog
 
 
 --
--- Name: faxspoollog_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: faxspoollog_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY faxspoollog
@@ -5214,7 +5214,7 @@ ALTER TABLE ONLY faxspoollog
 
 
 --
--- Name: faxusers_extra_email_userref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: faxusers_extra_email_userref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY faxusers_extra_email
@@ -5222,7 +5222,7 @@ ALTER TABLE ONLY faxusers_extra_email
 
 
 --
--- Name: faxusers_extra_email_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: faxusers_extra_email_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY faxusers_extra_email
@@ -5230,7 +5230,7 @@ ALTER TABLE ONLY faxusers_extra_email
 
 
 --
--- Name: faxusers_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: faxusers_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY faxusers
@@ -5238,7 +5238,7 @@ ALTER TABLE ONLY faxusers
 
 
 --
--- Name: internalref_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: internalref_fk; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY context
@@ -5246,7 +5246,7 @@ ALTER TABLE ONLY context
 
 
 --
--- Name: ivr_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: ivr_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY ivr
@@ -5254,7 +5254,7 @@ ALTER TABLE ONLY ivr
 
 
 --
--- Name: ivrref_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: ivrref_fk; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY context
@@ -5262,7 +5262,7 @@ ALTER TABLE ONLY context
 
 
 --
--- Name: mediarepos_greeting_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: mediarepos_greeting_fk; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY pbx_settings
@@ -5270,7 +5270,7 @@ ALTER TABLE ONLY pbx_settings
 
 
 --
--- Name: mediarepos_greetingofftime_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: mediarepos_greetingofftime_fk; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY pbx_settings
@@ -5278,7 +5278,7 @@ ALTER TABLE ONLY pbx_settings
 
 
 --
--- Name: mediarepos_mohtone_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: mediarepos_mohtone_fk; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY pbx_settings
@@ -5286,7 +5286,7 @@ ALTER TABLE ONLY pbx_settings
 
 
 --
--- Name: mediarepos_ringingtone_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: mediarepos_ringingtone_fk; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY pbx_settings
@@ -5294,7 +5294,7 @@ ALTER TABLE ONLY pbx_settings
 
 
 --
--- Name: musiconhold_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: musiconhold_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY musiconhold
@@ -5302,7 +5302,7 @@ ALTER TABLE ONLY musiconhold
 
 
 --
--- Name: number_match_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: number_match_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY number_match
@@ -5310,7 +5310,7 @@ ALTER TABLE ONLY number_match
 
 
 --
--- Name: number_range_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: number_range_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY number_range
@@ -5318,7 +5318,7 @@ ALTER TABLE ONLY number_range
 
 
 --
--- Name: operator_status_log_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: operator_status_log_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY operator_status_log
@@ -5326,7 +5326,7 @@ ALTER TABLE ONLY operator_status_log
 
 
 --
--- Name: pickupgroup_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: pickupgroup_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY pickupgroup
@@ -5334,7 +5334,7 @@ ALTER TABLE ONLY pickupgroup
 
 
 --
--- Name: recordedcalls_cdrref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: recordedcalls_cdrref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY recordedcalls
@@ -5342,7 +5342,7 @@ ALTER TABLE ONLY recordedcalls
 
 
 --
--- Name: regentries_numbermatchref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: regentries_numbermatchref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY regentries
@@ -5350,7 +5350,7 @@ ALTER TABLE ONLY regentries
 
 
 --
--- Name: route_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: route_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY route
@@ -5358,7 +5358,7 @@ ALTER TABLE ONLY route
 
 
 --
--- Name: schedule_replacements_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: schedule_replacements_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY schedule_replacements
@@ -5366,7 +5366,7 @@ ALTER TABLE ONLY schedule_replacements
 
 
 --
--- Name: shortdialtable_peerid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: shortdialtable_peerid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY shortdialtable
@@ -5374,7 +5374,7 @@ ALTER TABLE ONLY shortdialtable
 
 
 --
--- Name: shortdialtable_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: shortdialtable_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY shortdialtable
@@ -5382,7 +5382,7 @@ ALTER TABLE ONLY shortdialtable
 
 
 --
--- Name: sip_extensiongroup_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: sip_extensiongroup_fk; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY sip
@@ -5390,7 +5390,7 @@ ALTER TABLE ONLY sip
 
 
 --
--- Name: sip_namedcallgroup_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: sip_namedcallgroup_fk; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY sip
@@ -5398,7 +5398,7 @@ ALTER TABLE ONLY sip
 
 
 --
--- Name: sip_namedpickupgroup_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: sip_namedpickupgroup_fk; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY sip
@@ -5406,7 +5406,7 @@ ALTER TABLE ONLY sip
 
 
 --
--- Name: sip_routeref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: sip_routeref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY sip
@@ -5414,7 +5414,7 @@ ALTER TABLE ONLY sip
 
 
 --
--- Name: sip_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: sip_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY sip
@@ -5422,7 +5422,7 @@ ALTER TABLE ONLY sip
 
 
 --
--- Name: skype_aliases_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: skype_aliases_vpbx_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY skype_aliases
@@ -5430,7 +5430,7 @@ ALTER TABLE ONLY skype_aliases
 
 
 --
--- Name: skype_aliases_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: skype_aliases_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY skype_aliases
@@ -5438,7 +5438,7 @@ ALTER TABLE ONLY skype_aliases
 
 
 --
--- Name: trunkassoc_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: trunkassoc_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY trunkassoc
@@ -5446,7 +5446,7 @@ ALTER TABLE ONLY trunkassoc
 
 
 --
--- Name: trunkdestinations_numbermatchref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: trunkdestinations_numbermatchref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY trunkdestinations
@@ -5454,7 +5454,7 @@ ALTER TABLE ONLY trunkdestinations
 
 
 --
--- Name: trunkdestinations_routeref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: trunkdestinations_routeref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY trunkdestinations
@@ -5462,7 +5462,7 @@ ALTER TABLE ONLY trunkdestinations
 
 
 --
--- Name: trunkdestinations_trunkref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: trunkdestinations_trunkref_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY trunkdestinations
@@ -5470,7 +5470,7 @@ ALTER TABLE ONLY trunkdestinations
 
 
 --
--- Name: trunkdestinations_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: trunkdestinations_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY trunkdestinations
@@ -5478,7 +5478,7 @@ ALTER TABLE ONLY trunkdestinations
 
 
 --
--- Name: trunkref_fk; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: trunkref_fk; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY trunkassoc
@@ -5486,7 +5486,7 @@ ALTER TABLE ONLY trunkassoc
 
 
 --
--- Name: user_vpbx_linker_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: user_vpbx_linker_userid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY user_vpbx_linker
@@ -5494,7 +5494,7 @@ ALTER TABLE ONLY user_vpbx_linker
 
 
 --
--- Name: user_vpbx_linker_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: user_vpbx_linker_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY user_vpbx_linker
@@ -5502,7 +5502,7 @@ ALTER TABLE ONLY user_vpbx_linker
 
 
 --
--- Name: user_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: user_vpbxid_fkey; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY "user"
@@ -5510,7 +5510,7 @@ ALTER TABLE ONLY "user"
 
 
 --
--- Name: vpbx_cdr_fk_dst; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: vpbx_cdr_fk_dst; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY cdr
@@ -5518,7 +5518,7 @@ ALTER TABLE ONLY cdr
 
 
 --
--- Name: vpbx_cdr_fk_src; Type: FK CONSTRAINT; Schema: public; Owner: agaga
+-- Name: vpbx_cdr_fk_src; Type: FK CONSTRAINT; Schema: public; Owner: cpbx
 --
 
 ALTER TABLE ONLY cdr
@@ -5526,12 +5526,12 @@ ALTER TABLE ONLY cdr
 
 
 --
--- Name: public; Type: ACL; Schema: -; Owner: kartemiev
+-- Name: public; Type: ACL; Schema: -; Owner: cpbx
 --
 
 REVOKE ALL ON SCHEMA public FROM PUBLIC;
-REVOKE ALL ON SCHEMA public FROM kartemiev;
-GRANT ALL ON SCHEMA public TO kartemiev;
+REVOKE ALL ON SCHEMA public FROM cpbx;
+GRANT ALL ON SCHEMA public TO cpbx;
 GRANT ALL ON SCHEMA public TO PUBLIC;
 
 
@@ -5553,7 +5553,7 @@ SET client_min_messages = warning;
 SET search_path = public, pg_catalog;
 
 --
--- Data for Name: directions; Type: TABLE DATA; Schema: public; Owner: agaga
+-- Data for Name: directions; Type: TABLE DATA; Schema: public; Owner: cpbx
 --
 
 COPY directions (id, class, type, parent, name, sname, root, state, bgntm, modtm, partm, gid, uid, oid, gright, uright, oright) FROM stdin;
@@ -36003,7 +36003,7 @@ COPY directions (id, class, type, parent, name, sname, root, state, bgntm, modtm
 
 
 --
--- Data for Name: functions; Type: TABLE DATA; Schema: public; Owner: agaga
+-- Data for Name: functions; Type: TABLE DATA; Schema: public; Owner: cpbx
 --
 
 COPY functions (id, custname, custdesc) FROM stdin;
@@ -36012,14 +36012,14 @@ COPY functions (id, custname, custdesc) FROM stdin;
 
 
 --
--- Name: functions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: agaga
+-- Name: functions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: cpbx
 --
 
 SELECT pg_catalog.setval('functions_id_seq', 1, true);
 
 
 --
--- Data for Name: user_role; Type: TABLE DATA; Schema: public; Owner: agaga
+-- Data for Name: user_role; Type: TABLE DATA; Schema: public; Owner: cpbx
 --
 
 COPY user_role (role_id, is_default, parent, description) FROM stdin;
