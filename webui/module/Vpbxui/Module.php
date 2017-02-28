@@ -411,7 +411,6 @@ class Module
             'Vpbxui\Controller\Users' => 'Vpbxui\Controller\UsersController',
             'Vpbxui\Controller\UserRoles' => 'Vpbxui\Controller\UserRolesController',      
             'Vpbxui\Controller\InternalProfile' => 'Vpbxui\Controller\InternalProfileController',
-            'Vpbxui\Controller\InternalGroupProfile' => 'Vpbxui\Controller\InternalGroupProfileController',
             'Vpbxui\Controller\Offday' =>   'Vpbxui\Controller\OffdayController',    
          	'Vpbxui\Controller\SkypeAlias' => 'Vpbxui\Controller\SkypeAliasController',
          	'Vpbxui\Controller\Trunk' => 'Vpbxui\Controller\TrunkController',
@@ -423,7 +422,8 @@ class Module
           	'Vpbxui\Controller\CallCentreSettings' => 'Vpbxui\Controller\CallCentreSettingsController'
             ),
         'factories'=> array(
-            'Vpbxui\Controller\Internal' => 'Vpbxui\Controller\InternalControllerFactory',            
+        	'Vpbxui\Controller\InternalGroupProfile' => 'Vpbxui\Controller\InternalGroupProfileControllerFactory',        		
+        	'Vpbxui\Controller\Internal' => 'Vpbxui\Controller\InternalControllerFactory',            
         	'Vpbxui\Controller\Monitoring'=>'Vpbxui\Controller\MonitoringControllerFactory',        		
             'Vpbxui\Controller\StatController' => 'Vpbxui\Controller\StatControllerFactory',
             'Vpbxui\Controller\UserController'=>'Vpbxui\Controller\UserControllerFactory', 

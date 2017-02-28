@@ -6,13 +6,18 @@ use Vpbxui\ExtensionGroupProfile\Form\ExtensionGroupProfileForm;
 use Vpbxui\ExtensionGroupProfile\Model\ExtensionGroupProfile;
 use Zend\View\Model\ViewModel;
 use Zend\Db\Sql\Select;
+use Vpbxui\ExtensionGroupProfile\Model\ExtensionGroupProfileTable;
 
 class InternalGroupProfileController extends AbstractActionController
 {
-    protected  $extensionProfileGroupTable;
+    protected  $extensionGroupProfileTable;
     protected $query = array();
     protected $filters = array();
     
+    public function __construct(ExtensionGroupProfileTable $extensionGroupProfileTable)
+    {
+    	$this->extensionGroupProfileTable = $extensionGroupProfileTable;
+    }
 
     public function indexAction()
     {
@@ -27,7 +32,7 @@ class InternalGroupProfileController extends AbstractActionController
         $select = new Select();
         $select->order($order_by . ' ' . $order);
 
-        $extensionProfileGroups =  $this->getExtensionProfileGroupTable()->fetchAll($select);      
+        $extensionProfileGroups =  $this->extensionGroupProfileTable->fetchAll($select);      
           return new ViewModel(array(
             'extensionprofilegroups' => $extensionProfileGroups
         ));
@@ -46,7 +51,7 @@ class InternalGroupProfileController extends AbstractActionController
 
             if ($form->isValid()) {
                $extensionProfileGroup->exchangeArray($form->getData());
-                $this->getExtensionProfileGroupTable()->saveExtensionGroupProfile($extensionProfileGroup);
+                $this->extensionGroupProfileTable->saveExtensionGroupProfile($extensionProfileGroup);
                 // Redirect to list of albums
                 return $this->redirect()->toRoute('vpbxui/settings/profile/group',$this->getQuery());
             }
@@ -65,7 +70,7 @@ class InternalGroupProfileController extends AbstractActionController
                 'action' => 'add'
             ));
         }
-        $extensionGroupProfile = $this->getExtensionProfileGroupTable()->getExtensionGroupProfile($id);
+        $extensionGroupProfile = $this->extensionGroupProfileTable->getExtensionGroupProfile($id);
 
         $form  = new ExtensionGroupProfileForm();
         $form->bind($extensionGroupProfile);
@@ -77,7 +82,7 @@ class InternalGroupProfileController extends AbstractActionController
             $form->setData($request->getPost());
 
             if ($form->isValid()) {
-                $this->getExtensionProfileGroupTable()->saveExtensionGroupProfile($form->getData());
+                $this->extensionGroupProfileTable->saveExtensionGroupProfile($form->getData());
                 // Redirect to list of albums
                 return $this->redirect()->toRoute('vpbxui/settings/profile/group',$this->getQuery());
             }
@@ -105,14 +110,14 @@ class InternalGroupProfileController extends AbstractActionController
     		if ($del == 'Да') {
     			$id = (int) $request->getPost('id');
     		  			 
-    			$this->getExtensionProfileGroupTable()->deleteExtensionGroupProfile($id);
+    			$this->extensionGroupProfileTable->deleteExtensionGroupProfile($id);
     		}
     
     		// Redirect to list of albums
     		return $this->redirect()->toRoute('vpbxui/settings/profile/group',$this->getQuery());
     	}
-    	$extensionGroupProfile = $this->getExtensionProfileGroupTable()
-    	->getExtensionGroupProfile($id);
+    	$extensionGroupProfile = $this->extensionGroupProfileTable
+    									->getExtensionGroupProfile($id);
     	
     
     	return array(
@@ -120,13 +125,6 @@ class InternalGroupProfileController extends AbstractActionController
     			'extensiongroupprofile' => $extensionGroupProfile
     	);
     }
-	protected function getExtensionProfileGroupTable() {
-	    if (!$this->extensionGroupProfileTable) {
-	    	$sm = $this->getServiceLocator();
-	    	$this->extensionGroupProfileTable = $sm->get('Vpbxui\ExtensionGroupProfile\Model\ExtensionGroupProfileTable');
-	    }
-		return $this->extensionGroupProfileTable;
-	}
 	public function addQueryParam($queryParam) {
 	    $this->query[] = $queryParam;
 	    return $this;

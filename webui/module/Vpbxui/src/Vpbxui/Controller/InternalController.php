@@ -155,14 +155,13 @@ class InternalController extends AbstractActionController  {
         $form = $this->extensionProfilePickerForm;
         $request = $this->getRequest();
         if ($request->isPost()) {
-            $sm = $this->serviceLocator;
-            $extensionprofile = $this->extensionProfilePicker;
+             $extensionprofile = $this->extensionProfilePicker;
             $form->setInputFilter($extensionprofile->getInputFilter());
             $form->setData($request->getPost());
-
-            if ($form->isValid()) {
+             if ($form->isValid()) {            	 
                $extensionprofile->exchangeArray($form->getData());
                $extensionProfileTable = $this->extensionProfileTable;
+
                $extensionProfileRecord = $extensionProfileTable->getExtensionProfile($extensionprofile->profile);
                $profileName = $extensionProfileRecord->profilename;
                if (0==!$extensionProfileRecord->id){

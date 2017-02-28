@@ -14,7 +14,7 @@
 return array(
    'db' => array(
         'driver'         => 'Pdo',
-        'dsn'            => 'pgsql:dbname=agaga;host=127.0.0.1'
+        'dsn'            => 'pgsql:dbname=cpbx;host=127.0.0.1'
     ),
     'service_manager' => array(
         'factories' => array(

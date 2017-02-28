@@ -13,7 +13,7 @@
 
 return array(
     'db' => array(
-        'username' => 'test',
-        'password' => 'test',
+        'username' => 'cpbx',
+        'password' => 'cpbx',
     ),
 );

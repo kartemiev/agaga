@@ -40,9 +40,7 @@ class ExtensionProfilePicker implements InputFilterAwareInterface
      public function getInputFilter()
      {          
       	if (!$this->inputFilter) {
-      	    
-            $dbAdapter = $this->dbAdapter;
-      	     
+      	          	     
       	    
      		$inputFilter = new InputFilter();
      		$factory     = new InputFactory();
@@ -50,6 +48,7 @@ class ExtensionProfilePicker implements InputFilterAwareInterface
      		$profileOptions = $this->getProfileOptions();
   
      		
+     		/*
      		$inputFilter->add($factory->createInput(array(
      				'name'     => 'profile',
      				'required' => true,     		
@@ -67,7 +66,7 @@ class ExtensionProfilePicker implements InputFilterAwareInterface
      				),
      		)));
  
-     		 
+     		 */
      		$this->inputFilter = $inputFilter;
      	}
      
@@ -81,7 +80,9 @@ class ExtensionProfilePicker implements InputFilterAwareInterface
          foreach ($extensionProfiles as $extensionProfile)
          {
              $profiles[] = (string)$extensionProfile->id;             
-         }
+         }         
+         var_dump($profiles);
+         
           return $profiles;
      }
      
