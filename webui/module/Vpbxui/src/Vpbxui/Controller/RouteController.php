@@ -4,6 +4,8 @@ namespace Vpbxui\Controller;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Vpbxui\Route\Model\Route;
+use Zend\Stdlib\Hydrator\ObjectProperty;
+use Vpbxui\TrunkDestination\Model\TrunkDestination;
  
 class RouteController extends AbstractActionController
 {	
@@ -154,9 +156,9 @@ class RouteController extends AbstractActionController
 		$formdata = $this->getRouteForm()
 						 ->getData();
  
+		$trunkdestinations =  $formdata['destinations'];
+	 
 		
-		$trunkdestinations =  $formdata->destinations;
-	
 		$trunkDestinationTable = $this->getTrunkDestinationTable();
 		$trunkDestinationTable->deleteTrunkDestinationAll($routeid);
 
@@ -165,8 +167,11 @@ class RouteController extends AbstractActionController
 		{
 			foreach ($trunkdestinations as $trunkdestination)
 			{
-				$trunkdestination->routeref = $routeid;
-				$trunkDestinationTable->saveTrunkDestination($trunkdestination);
+				$trunkdestination['routeref'] = $routeid;
+				$hydrator = new ObjectProperty();
+				$object = new TrunkDestination();
+				$object = $hydrator->hydrate($trunkdestination, $object);				
+				$trunkDestinationTable->saveTrunkDestination($object);
 			}
 		}
 	}

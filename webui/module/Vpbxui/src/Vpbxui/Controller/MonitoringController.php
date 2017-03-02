@@ -44,7 +44,9 @@ class MonitoringController  extends AbstractActionController {
                
                $this->flashMessenger()->addErrorMessage('ошибка подключения к Астериск');
           }
-         $extensions = $this->extensionTable->fetchAll();
+
+          $extensions = $this->extensionTable->fetchAll();
+    
           foreach ($statuses as $key=>$status)
          {
               foreach ($extensions as $extension)

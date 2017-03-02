@@ -81,8 +81,7 @@ class ExtensionProfilePicker implements InputFilterAwareInterface
          {
              $profiles[] = (string)$extensionProfile->id;             
          }         
-         var_dump($profiles);
-         
+          
           return $profiles;
      }
      

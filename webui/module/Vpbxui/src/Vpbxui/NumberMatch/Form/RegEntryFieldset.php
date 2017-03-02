@@ -10,7 +10,6 @@ class RegEntryFieldset extends Fieldset
 {
     public function __construct($name = null)
     {
-    	$this->trunkTable = $trunkTable;
         parent::__construct('regentries');
       
         $this->setHydrator(new ObjectPropertyHydrator(false))

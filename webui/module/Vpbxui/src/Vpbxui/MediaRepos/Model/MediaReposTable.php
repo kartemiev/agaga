@@ -19,7 +19,7 @@ class MediaReposTable implements  MediaReposTableInterface
     {
     	$resultSet = $this->tableGateway->select(function (Select $select) use ($filter){
             $select->order('id');
-            $select->where($filter);
+         //   $select->where($filter);
         });
             $resultSet->buffer();
 

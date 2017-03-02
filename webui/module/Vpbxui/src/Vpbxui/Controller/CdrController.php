@@ -277,13 +277,14 @@ class CdrController extends AbstractActionController {
          );
          
          if (isset($scopeFiltersPgSql[$scope])){
-             $filter->expression('calldate>='.$scopeFiltersPgSql[$scope]);         }         
+             $filter->expression('calldate>='.$scopeFiltersPgSql[$scope]);         
+         }         
     }
     protected function addSearchFilters($filter,$filters, &$itemsPerPage)
     {
     	$map = $this->getFetchSqlMap();
     	if ($filters){
-         array_walk(array_shift(array_values($filters)), function($fil,$name) use ($map,&$filter, &$itemsPerPage){
+         array_walk(array_shift(array_values($filters)), function($fil,$name) use ($map, $filter, $itemsPerPage){
          	$where = new Where();
              if(isset($map[$name]))
             {

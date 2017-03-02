@@ -45,7 +45,7 @@ class ExtensionDefaultsController extends AbstractActionController {
         $headLink = $this->getServiceLocator()->get('viewhelpermanager')->get('headLink');
         $headLink->appendStylesheet('/css/slider.css');
         return array(
-            'id' => $id,
+        //    'id' => $id,
             'form' => $form,
         	'flashMessages' => $this->flashMessenger()->getMessages()        		
         );

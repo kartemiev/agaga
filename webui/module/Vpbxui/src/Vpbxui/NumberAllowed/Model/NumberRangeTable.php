@@ -15,7 +15,10 @@ class NumberRangeTable {
     public function fetchAll($filter = null)
     {
     	$resultSet = $this->tableGateway->select(function($select) use ($filter) {
-    	    $select->where($filter);
+    		if (null!=$filter)
+    		{
+    			$select->where($filter);
+    		}
     	});
         $resultSet->buffer();
     	return $resultSet;
@@ -56,6 +59,6 @@ class NumberRangeTable {
     }
     public function deleteAll()
     {
-        $this->tableGateway->delete();
+        $this->tableGateway->delete(array());
     }      
 }

@@ -17,6 +17,7 @@ class MediaRepos implements InputFilterAwareInterface
     public  $mediatype;
     public $duration;
     public $extension;
+    protected $inputFilter;
     public function exchangeArray($data)
     {
         $this->id     = (isset($data['id'])) ? $data['id'] : null;
@@ -44,7 +45,6 @@ class MediaRepos implements InputFilterAwareInterface
     {
         if (!$this->inputFilter) {
              
-            $dbAdapter = $this->dbAdapter;
     
              
             $inputFilter = new InputFilter();

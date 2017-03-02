@@ -17,8 +17,8 @@ class AuthCodeController extends AbstractActionController
 	}
  	public function indexAction()
 	{
-		$filter = new Where();
-		$filter->equalTo('', $right);
+	//	$filter = new Where();
+//		$filter->equalTo('', $right);
 		
 		$authcodes =  $this->authCodeTable->fetchAll();
 							 

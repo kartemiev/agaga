@@ -108,17 +108,22 @@ class ExtensionDefaultsForm extends Form{
      	));
      	
      	$this->add(array(
-     			'type' => 'Zend\Form\Element\Radio',
+     			'type' => 'Zend\Form\Element\Select',
      			'name' => 'extensionrecord',
-     			'options' => array(
-     					'label' => 'Запись переговоров',
-     					'value_options' => array(
+     			'attributes' =>  array(
+     					'id' => 'extensionrecord',
+     					'options' => array(
      							'undefined'=> '',
      							'active' => 'включена',
      							'disabled' => 'выключена',
      					),
-     			)
+     			),
+     			'options' => array(
+     					'label' => 'запись переговоров',
+     			),
+     	
      	));
+     	
      	
      	
      	$this->add(array(

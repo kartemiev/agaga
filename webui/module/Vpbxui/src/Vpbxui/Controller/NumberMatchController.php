@@ -5,6 +5,8 @@ use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 use Vpbxui\NumberMatch\Model\NumberMatch;
 use Vpbxui\NumberMatch\Form\NumberMatchForm;
+use Zend\Stdlib\Hydrator\ObjectProperty;
+use Vpbxui\RegEntry\Model\RegEntry;
 
 class NumberMatchController extends AbstractActionController
 {	
@@ -167,7 +169,7 @@ class NumberMatchController extends AbstractActionController
 			foreach ($regentries as $regentry)
 			{
 				$regentry->numbermatchref = $numbermatchid;
-				$regEntryTable->saveRegEntry($regentry);
+  				$regEntryTable->saveRegEntry($regentry);
 			}
 		}
 	}

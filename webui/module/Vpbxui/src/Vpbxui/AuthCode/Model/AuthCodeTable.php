@@ -4,6 +4,7 @@ namespace Vpbxui\AuthCode\Model;
 use Zend\Db\TableGateway\TableGateway;
 use Vpbxui\AuthCode\Model\AuthCode;
 use Vpbxui\AuthCode\Model\AuthCodeTableInterface;
+use Zend\Db\Sql\Select;
 
 class AuthCodeTable implements AuthCodeTableInterface
 {
@@ -29,8 +30,14 @@ class AuthCodeTable implements AuthCodeTableInterface
     public function fetchAll($filter = NULL, $orderseq = NULL)
     {
     	$resultSet = $this->tableGateway->select(function (Select $select) use ($filter,$orderseq) {
-    		$select->where($filter);
-    		$select->order($orderseq);
+    		if (null!=$filter)
+    		{
+    			$select->where($filter);
+    		}
+    		if (null!=$orderseq)
+    		{
+    			$select->order($orderseq);
+    		}
     	});
     	$resultSet->buffer();
     

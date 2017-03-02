@@ -16,7 +16,10 @@ class NumberMatchTable implements NumberMatchTableInterface {
     public function fetchAll($filter=null,$orderseq=null)
     {
     	$resultSet = $this->tableGateway->select(function (Select $select) use ($filter,$orderseq){
-            $select->where($filter);
+    		if (null!=$filter)
+    		{
+            	$select->where($filter);
+    		}
      });
             $resultSet->buffer();
 

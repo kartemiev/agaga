@@ -361,7 +361,7 @@ return array(
                     ),
                 ),
                 
-                array(
+/*                array(
                 		'label' => 'авторизационные коды',
                 		'title'=>'просмотр авторизационных кодов',
                 		'route' => 'vpbxui/settings/authcode',
@@ -386,7 +386,7 @@ return array(
                 		),
                 ),
                 
-                
+  */              
                 array(
                 		'label' => 'по умолчанию',
                 		'title'=>'настройки для действующие по умолчанию для абонентов',

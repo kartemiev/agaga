@@ -105,7 +105,6 @@ class InternalController extends AbstractActionController  {
         ->get('submit')
         ->setLabel('Добавить');
         
-        
         $request = $this->getRequest();
         if ($request->isPost()) {
             $extension = $this->extension;
@@ -134,13 +133,16 @@ class InternalController extends AbstractActionController  {
                 $this->redirect()->toRoute('vpbxui/internal', array('action' => 'profile'));
             }
             $profile = (int)$profile;
-            $extensionProfileTable = $this->extensionProfileTable;
-            $extensionProfile = $extensionProfileTable->getExtensionProfile($profile);
-            unset($extensionProfile->id);
-            $form->bind($extensionProfile);
-            $form->get('diversion_noanswer_duration')
+   			if (0!==$profile)
+   			{
+           		$extensionProfileTable = $this->extensionProfileTable;
+            	$extensionProfile = $extensionProfileTable->getExtensionProfile($profile);
+            	unset($extensionProfile->id);
+            	$form->bind($extensionProfile);
+            	$form->get('diversion_noanswer_duration')
             	 ->setValue('5');      
-           $this->extensionAddSetDefaultFormValues($form);      
+           		$this->extensionAddSetDefaultFormValues($form);      
+   			}
         }        
 
          
@@ -158,17 +160,21 @@ class InternalController extends AbstractActionController  {
              $extensionprofile = $this->extensionProfilePicker;
             $form->setInputFilter($extensionprofile->getInputFilter());
             $form->setData($request->getPost());
-             if ($form->isValid()) {            	 
-               $extensionprofile->exchangeArray($form->getData());
+               if ($form->isValid()) {
+               $post = $request->getPost();
+               $profile = (int)$post['profile'];               
                $extensionProfileTable = $this->extensionProfileTable;
-
-               $extensionProfileRecord = $extensionProfileTable->getExtensionProfile($extensionprofile->profile);
-               $profileName = $extensionProfileRecord->profilename;
-               if (0==!$extensionProfileRecord->id){
-                $this->flashMessenger()->addMessage('Загружены настройки профиля абонента "<b>'.$profileName.'</b>"');        
-               }        
+                if (0!==$profile)
+               {
+               	$extensionProfileRecord = $extensionProfileTable->getExtensionProfile($profile);
+               	$profileName = $extensionProfileRecord->profilename;
+               
+               	if (0==!$extensionProfileRecord->id){
+               	 $this->flashMessenger()->addMessage('Загружены настройки профиля абонента "<b>'.$profileName.'</b>"');        
+               	}
+               }
                 return $this->redirect()->toRoute('vpbxui/internal',
-                    array('action'=>'add','id' => $extensionprofile->profile));
+                    array('action'=>'add','id' => $profile));
             }
         }        
         return array('form' => $form);            
