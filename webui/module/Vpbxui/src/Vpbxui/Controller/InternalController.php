@@ -351,7 +351,7 @@ class InternalController extends AbstractActionController  {
     protected function saveCallDestinations($id, $form)
     {
     	$formdata = $form->getData();
-    	if (is_array($formdata))
+     	if (is_array($formdata))
     	{
      		$numbers = array();
     		foreach ($formdata['numbers'] as $callDestinationRec)
@@ -371,7 +371,7 @@ class InternalController extends AbstractActionController  {
     		foreach ($numbers as $number)
     		{
     			$number->peerid = $id;
-    			$callDestinationTable->SaveCallDestination($number);
+    			$this->callDestinationTable->SaveCallDestination($number);
     		}    	 
     	}
     }

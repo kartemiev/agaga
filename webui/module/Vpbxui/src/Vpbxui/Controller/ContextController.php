@@ -150,7 +150,7 @@ class ContextController extends AbstractActionController
 	protected function saveTrunkAssoc($id) /* one-to-many */
 	{		
 		$formdata = $this->getContextForm()->getData();
-		$trunks = $formdata->trunks;
+ 		$trunks = $formdata['trunks'];
 	 
 		$trunkAssocTable = $this->getTrunkAssocTable();
  		$trunkAssocTable->deleteTrunkAssocByContext($id); 	 

@@ -23,7 +23,9 @@ class ReloadCommand {
         $response = $a->send(new CommandAction("sip reload"));
         $a->Close();
        
-        }  catch (ClientException $e){}
+        }  catch (ClientException $e){        	
+        	return null;
+        }
         	return $response;
     }
 }

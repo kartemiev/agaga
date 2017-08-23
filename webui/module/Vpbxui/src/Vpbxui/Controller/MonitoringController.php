@@ -46,7 +46,8 @@ class MonitoringController  extends AbstractActionController {
           }
 
           $extensions = $this->extensionTable->fetchAll();
-    
+		  $statuses = (is_null($statuses))?array():$statuses;
+          
           foreach ($statuses as $key=>$status)
          {
               foreach ($extensions as $extension)

@@ -80,7 +80,6 @@ class CallCentreSchedule
     {
     	if (!$this->inputFilter) {
     		 
-    		$dbAdapter = $this->dbAdapter;
     
     		 
     		$inputFilter = new InputFilter();

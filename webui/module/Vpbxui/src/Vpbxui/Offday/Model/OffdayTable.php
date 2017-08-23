@@ -38,7 +38,6 @@ class OffdayTable implements OffdayTableInterface {
    
     public function getOffdayByDate($date)
     {
-        $id  = (int) $id;
         $rowset = $this->tableGateway->select(array('rdate' => $date));
         $row = $rowset->current();
         return $row;
@@ -47,7 +46,7 @@ class OffdayTable implements OffdayTableInterface {
     
     public function saveOffday(Offday $offday)
     {
-        
+
     	$data = array(
     		'rdate' => $offday->rdate,
     	    'isworking' => $offday->isworking,
@@ -56,9 +55,16 @@ class OffdayTable implements OffdayTableInterface {
     		'start_time'=>$offday->start_time,
     		'end_time'=>$offday->end_time,
     	    'name' => $offday->name,
-    	    'comment' => $offday->comment,    	 
+    	    'comment' => $offday->comment,
     	);
-    	$id = (int)$offday->id;
+    	if (isset($offday->id))
+        {
+            $id = (int)$offday->id;
+        }
+        else
+        {
+            $id = 0;
+        }
     	if ($id == 0) {
     		$this->tableGateway->insert($data);
     	} else {

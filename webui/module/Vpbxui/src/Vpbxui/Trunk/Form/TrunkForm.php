@@ -75,7 +75,7 @@ class TrunkForm extends Form
     	$this->add(array(
     			'name' => 'port',
     			'attributes' => array(
-    					'type'  => 'input',
+    					'type'  => 'search'
     			),
     			'options' => array(
     					'label' => 'порт',
@@ -87,7 +87,7 @@ class TrunkForm extends Form
     	$this->add(array(
     			'name' => 'secret',
     			'attributes' => array(
-    					'type'  => 'password',
+    					'type'  => 'search',
     			),
     			'options' => array(
     					'label' => 'пароль',

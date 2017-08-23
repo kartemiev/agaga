@@ -57,6 +57,10 @@ class ReportScopeFilterControllerPlugin extends AbstractPlugin {
             if ($dateStart!=='' && $dateEnd!==''){
                 $filter = array("calldate>'$dateStart'","calldate<'".$dateEnd."'"); 
             }
+            else
+            {
+                $filter = array();
+            }
             return $filter;
     }
 }

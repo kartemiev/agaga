@@ -411,30 +411,6 @@ return array(
                 		),
                 		),
                 ),
-                array(
-                		'label' => 'алиасы Skype',
-                		'title'=>'просмотр списка алиасов Skype',
-                		'route' => 'vpbxui/settings/skypealias',
-                		'privilege' => 'list',
-                		'controller'=>'Vpbxui\Controller\SkypeAlias',
-                		'action' => 'index',
-                		'resource'   => 'mvc:settingsskypealias.vpbxui', // resource
-                		'pages' => array(
-                				array(
-                						'label' => 'добавить',
-                						'title'=>'добавить новый алиас Skype',
-                						'route' => 'vpbxui/settings/skypealias',
-                						'module'     => 'vpbxui',
-                						'controller' => 'Vpbxui\Controller\SkypeAlias',                						
-                						'action'     => 'add',
-                						'resource'   => 'mvc:settingsskypealias.vpbxui', // resource                						
-                 						'privilege' => 'add',
-                						'visible'    => true, // not visible
-                						'pages'=>array(),
-                						'params'=>array()
-                				),
-                		),
-                ),        
 
                 array(
                 		'label' => 'транки',
@@ -598,35 +574,6 @@ return array(
                             'pages'=>array(
                         
                         ),                        
-                        ),
-                        
-                        array(
-                            'label' => 'импорт CSV',
-                            'title'=>'импорт CSV',
-                            'route'=>'vpbxui/settings/offdays',
-                            'module'     => 'vpbxui',
-                            'controller' => 'Vpbxui\Controller\Offday',
-                            'action'     => 'import',
-                            'resource'   => 'mvc:settingsoffdays.vpbxui', // resource
-                            'privilege' => 'import',
-                            'visible'    => true, // not visible
-                            'pages'=>array(
-                        
-                            ),                                                
-                        ),
-                        array(
-                            'label' => 'экспорт CSV',
-                            'title'=>'экспорт CSV',
-                            'route'=>'vpbxui/settings/offdays',
-                            'module'     => 'vpbxui',
-                            'controller' => 'Vpbxui\Controller\Offday',
-                            'action'     => 'export',
-                            'resource'   => 'mvc:settingsoffdays.vpbxui', // resource
-                            'privilege' => 'export',
-                            'visible'    => true, // not visible
-                            'pages'=>array(
-                        
-                            ),
                         ),
                         
                     ),

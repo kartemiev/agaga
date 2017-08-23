@@ -7,7 +7,8 @@ $(
     $("#updatednotification").show();
     updateTimeStamp();
 setInterval(function() {
-    $('#monitoringview').load(window.location + ' #monitoringview',function(){
+	var url = window.location + ' #monitoringview';
+     $('#monitoringview').load(url,function(){
       updateTimeStamp();
     }); 
 }, 2000);

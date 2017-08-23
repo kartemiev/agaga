@@ -1,7 +1,7 @@
 <?php
 namespace Vpbxui\Prune\Model;
 
-use  PAMI\Client\IClient;
+use PAMI\Client\IClient;
 use PAMI\Listener\IEventListener;
 use PAMI\Message\Event\EventMessage;
 use PAMI\Message\Action\CommandAction;
@@ -22,7 +22,8 @@ class PruneCommand {
 	        $a->open();       
             $response = $a->send(new CommandAction("sip prune realtime {$peerName}"));
             $a->Close();
-        }  catch (ClientException $e){            
+        }  catch (ClientException $e){  
+        	return null;
         }
         	return $response;
     }

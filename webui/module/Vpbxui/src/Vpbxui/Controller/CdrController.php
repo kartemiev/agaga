@@ -130,7 +130,7 @@ class CdrController extends AbstractActionController {
          $page = $this->params()->fromQuery('page');
          $limit = $this->params()->fromQuery('page_limit');
          
-         $offset = ($page-1)*limit;
+         $offset = ($page-1)*$limit;
          $sql = "SELECT DISTINCT(to_char(calldate,'DD-MM-YYYY')) AS calldate FROM cdr WHERE to_char(calldate,'DD-MM-YYYY') LIKE ? ORDER BY calldate DESC";                
          $adapter = $this->getCdrTable()->getTableGateway()->getAdapter(); 
           $dateresult = $adapter->query($sql, array(preg_quote($like)."%"));
@@ -147,7 +147,7 @@ class CdrController extends AbstractActionController {
              $obj = null;
          }
          $viewmodel  = new JsonModel(             
-             array('total'=>$date->total,'results'=>$dates)
+             array('total'=>$total,'results'=>$dates)
          );
          $viewmodel->setJsonpCallback($this->params()->fromQuery('callback'));
          
@@ -277,7 +277,7 @@ class CdrController extends AbstractActionController {
          );
          
          if (isset($scopeFiltersPgSql[$scope])){
-             $filter->expression('calldate>='.$scopeFiltersPgSql[$scope]);         
+             $filter->expression('calldate>='.$scopeFiltersPgSql[$scope],array());
          }         
     }
     protected function addSearchFilters($filter,$filters, &$itemsPerPage)

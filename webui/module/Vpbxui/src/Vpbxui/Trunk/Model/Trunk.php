@@ -60,8 +60,7 @@ class Trunk implements InputFilterAwareInterface
 	{
 		if (!$this->inputFilter) {
 			 
-			$dbAdapter = $this->dbAdapter;
-	
+ 	
 			 
 			$inputFilter = new InputFilter();
 			$factory     = new InputFactory();
